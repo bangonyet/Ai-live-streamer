@@ -5,12 +5,14 @@
 <title>AI Live Streamer - @creatortiktok</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{background:#03040b;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
-#univ{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 50% 45%,#1e1b4b 0%,#070a14 55%,#020308 100%)}
-.nebula{position:fixed;inset:-50%;z-index:-1;background:conic-gradient(from 0deg,transparent,rgba(45,212,191,.18),rgba(168,85,247,.25),rgba(236,72,153,.18),transparent);animation:spin 22s linear infinite;pointer-events:none}
+body{background:#02030a;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
+#univ{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 50% 45%,#2e1065 0%,#0f172a 48%,#020308 100%)}
+.nebula{position:fixed;inset:-40%;z-index:-1;background:conic-gradient(from 45deg,transparent,rgba(45,212,191,.32),rgba(168,85,247,.4),rgba(236,72,153,.32),transparent);filter:blur(32px);animation:spin 20s linear infinite;pointer-events:none}
+.ring{position:fixed;top:46%;left:50%;width:540px;height:190px;margin:-95px 0 0 -270px;z-index:-1;border-radius:50%;border:3px solid rgba(56,189,248,.45);box-shadow:0 0 45px rgba(168,85,247,.65),inset 0 0 35px rgba(45,212,191,.5);transform:rotate(-18deg);animation:pulse 4s ease-in-out infinite alternate;pointer-events:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-.card{background:rgba(12,18,34,.75);backdrop-filter:blur(16px);border:1px solid rgba(45,212,191,.35);box-shadow:0 10px 35px rgba(0,0,0,.65)}
-.neon{border:1px solid #2dd4bf;box-shadow:0 0 15px rgba(45,212,191,.35);transition:.2s}
+@keyframes pulse{from{opacity:.55;transform:rotate(-18deg) scale(.96)}to{opacity:1;transform:rotate(-14deg) scale(1.04)}}
+.card{background:rgba(10,15,30,.72);backdrop-filter:blur(16px);border:1px solid rgba(45,212,191,.4);box-shadow:0 12px 40px rgba(0,0,0,.75)}
+.neon{border:1px solid #2dd4bf;box-shadow:0 0 15px rgba(45,212,191,.4);transition:.2s}
 .slide{display:none}.slide.active{display:block;animation:up .25s ease}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
@@ -19,6 +21,8 @@ body{background:#03040b;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
 
 <canvas id="univ"></canvas>
 <div class="nebula"></div>
+<div class="ring"></div>
+
 
 <header class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mb-4">
   <div>
@@ -59,9 +63,8 @@ body{background:#03040b;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
         <label class="block w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer text-sm">📁 Upload Foto Avatar<input type="file" accept="image/*" class="hidden" onchange="loadAv(event)"></label>
       </div>
     </div>
-    <button onclick="go(3)" class="mt-5 px-6 py-2.5 bg-teal-400 text-slate-950 font-bold rounded-xl text-sm">Lanjut Pilih Niche →</button>
-  </div>
-    <button onclick="go(3)" class="mt-5 px-6 py-2 bg-teal-400 text-slate-950 font-bold rounded-xl">Lanjut Niche →</button>
+      <button onclick="go(3)" class="mt-5 px-6 py-2.5 bg-teal-400 text-slate-950 font-bold rounded-xl text-sm">Lanjut Pilih Niche →</button>
+
   </div>
   <div id="s3" class="slide card rounded-2xl p-6 text-center">
     <h2 class="text-lg font-bold mb-4">3. Pilih Niche Live</h2>
@@ -181,20 +184,26 @@ const cv=document.getElementById('univ'),cx=cv.getContext('2d');
 let w,h,stArr=[],mtArr=[];
 function rsz(){w=cv.width=innerWidth;h=cv.height=innerHeight}
 rsz();onresize=rsz;
-for(let i=0;i<70;i++)stArr.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.6+.4,v:Math.random()*.5+.15,c:['#2dd4bf','#a855f7','#f472b6','#fff'][i%4]});
-for(let i=0;i<4;i++)mtArr.push({x:Math.random()*w,y:Math.random()*h*.5,l:Math.random()*70+40,v:Math.random()*4+3});
+for(let i=0;i<130;i++)stArr.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.2+.6,v:Math.random()*.4+.1,a:Math.random(),c:['#2dd4bf','#c084fc','#f472b6','#38bdf8','#fff'][i%5]});
+for(let i=0;i<7;i++)mtArr.push({x:Math.random()*w,y:Math.random()*h*.6,l:Math.random()*110+60,v:Math.random()*5+4});
 (function loop(){
   cx.clearRect(0,0,w,h);
-  stArr.forEach(s=>{s.y-=s.v;if(s.y<0){s.y=h;s.x=Math.random()*w}cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fillStyle=s.c;cx.fill()});
+  stArr.forEach(s=>{
+    s.y-=s.v;s.a+=.04;if(s.y<0){s.y=h;s.x=Math.random()*w}
+    cx.globalAlpha=.4+Math.abs(Math.sin(s.a))*.6;
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fillStyle=s.c;cx.fill();
+  });
+  cx.globalAlpha=1;
   mtArr.forEach(m=>{
-    m.x-=m.v;m.y+=m.v*.7;
-    if(m.x<-100||m.y>h+100){m.x=w+Math.random()*200;m.y=Math.random()*h*.4}
-    let g=cx.createLinearGradient(m.x,m.y,m.x+m.l,m.y-m.l*.7);
-    g.addColorStop(0,'#fff');g.addColorStop(.4,'#38bdf8');g.addColorStop(1,'transparent');
-    cx.strokeStyle=g;cx.lineWidth=2;cx.beginPath();cx.moveTo(m.x,m.y);cx.lineTo(m.x+m.l,m.y-m.l*.7);cx.stroke();
+    m.x-=m.v;m.y+=m.v*.65;
+    if(m.x<-150||m.y>h+150){m.x=w+Math.random()*250;m.y=Math.random()*h*.45}
+    let g=cx.createLinearGradient(m.x,m.y,m.x+m.l,m.y-m.l*.65);
+    g.addColorStop(0,'#fff');g.addColorStop(.3,'#38bdf8');g.addColorStop(.7,'#c084fc');g.addColorStop(1,'transparent');
+    cx.strokeStyle=g;cx.lineWidth=2.5;cx.beginPath();cx.moveTo(m.x,m.y);cx.lineTo(m.x+m.l,m.y-m.l*.65);cx.stroke();
   });
   requestAnimationFrame(loop);
 })();
+
 go(1);
 </script>
 </body>
