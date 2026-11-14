@@ -5,15 +5,22 @@
 <title>AI Live Streamer - @creatortiktok</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{background:#0b0f19;color:#f8fafc;font-family:sans-serif}
-.card{background:rgba(20,27,45,.9);border:1px solid rgba(45,212,191,.3);box-shadow:0 0 25px rgba(45,212,191,.1)}
-.neon{border:1px solid #2dd4bf;box-shadow:0 0 12px rgba(45,212,191,.3)}
-.slide{display:none}.slide.active{display:block}
+body{background:#03040b;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
+#univ{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 50% 45%,#1e1b4b 0%,#070a14 55%,#020308 100%)}
+.nebula{position:fixed;inset:-50%;z-index:-1;background:conic-gradient(from 0deg,transparent,rgba(45,212,191,.18),rgba(168,85,247,.25),rgba(236,72,153,.18),transparent);animation:spin 22s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.card{background:rgba(12,18,34,.75);backdrop-filter:blur(16px);border:1px solid rgba(45,212,191,.35);box-shadow:0 10px 35px rgba(0,0,0,.65)}
+.neon{border:1px solid #2dd4bf;box-shadow:0 0 15px rgba(45,212,191,.35);transition:.2s}
+.slide{display:none}.slide.active{display:block;animation:up .25s ease}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4">
 
-<<header class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mb-4">
+<canvas id="univ"></canvas>
+<div class="nebula"></div>
+
+<header class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mb-4">
   <div>
     <b class="text-teal-400">AI Live Streamer</b>
     <p id="userDisplay" class="text-[11px] text-slate-400">Belum Login</p>
@@ -26,27 +33,34 @@ body{background:#0b0f19;color:#f8fafc;font-family:sans-serif}
 
 <main class="max-w-4xl w-full mx-auto my-auto">
   <div id="s1" class="slide active max-w-md mx-auto card rounded-2xl p-6 text-center space-y-3">
-    <h2 class="text-xl font-bold mb-2">1. Masuk ke Studio AI Live</h2>
+    <h2 class="text-xl font-bold mb-1">1. Masuk ke Studio AI Live</h2>
     <p class="text-xs text-slate-400 mb-3">Masukkan akun untuk memulai sesi live</p>
-    <input id="loginInput" type="text" placeholder="Username TikTok / Email / No. HP" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-teal-400">
+    <input id="loginInput" type="text" placeholder="Username TikTok / Email / No. HP" class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-teal-500/40 text-sm text-white focus:outline-none focus:border-teal-400">
     <button onclick="loginUser('Form')" class="w-full py-3 rounded-xl bg-teal-400 text-slate-950 font-bold text-sm">✉️ Masuk dengan Akun</button>
-    <button onclick="loginUser('@creatortiktok (TikTok)')" class="w-full py-3 rounded-xl border border-purple-500 bg-slate-900 text-sm">🎵 Masuk Cepat Akun TikTok</button>
-    <button onclick="loginUser('Host Tamu (OTP)')" class="w-full py-3 rounded-xl neon bg-slate-900 text-sm">📱 Masuk Cepat Nomor HP (OTP)</button>
+    <button onclick="loginUser('@creatortiktok (TikTok)')" class="w-full py-3 rounded-xl border border-purple-500 bg-slate-900/80 text-sm">🎵 Masuk Cepat Akun TikTok</button>
+    <button onclick="loginUser('Host Tamu (OTP)')" class="w-full py-3 rounded-xl neon bg-slate-900/80 text-sm">📱 Masuk Cepat Nomor HP (OTP)</button>
   </div>
 
-
   <div id="s2" class="slide card rounded-2xl p-6 text-center">
-    <h2 class="text-lg font-bold mb-4">2. Pilih Avatar & Deteksi Wajah</h2>
+    <h2 class="text-lg font-bold mb-4">2. Pilih Avatar & Deteksi Wajah Live</h2>
     <div class="grid md:grid-cols-2 gap-4">
-      <div class="p-4 bg-slate-900 rounded-xl border border-teal-500/40">
-        <div class="text-5xl my-4">🧑‍💻</div>
-        <button onclick="st('Deteksi Live Aktif')" class="w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg">Gunakan Deteksi Live</button>
+      <div class="p-4 bg-slate-900/80 rounded-xl border border-teal-500/40 flex flex-col items-center">
+        <div class="relative w-40 h-40 rounded-xl overflow-hidden bg-slate-950 border-2 border-dashed border-teal-400 flex items-center justify-center mb-3">
+          <video id="camVid" autoplay playsinline muted class="hidden w-full h-full object-cover scale-x-[-1]"></video>
+          <span id="camPlaceholder" class="text-5xl">🧑‍💻</span>
+        </div>
+        <button onclick="startCam()" class="w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg text-sm">📸 Nyalakan Kamera Live</button>
       </div>
-      <div class="p-4 bg-slate-900 rounded-xl border border-slate-700">
-        <p id="fstat" class="text-emerald-400 text-sm my-5">✅ Wajah Jelas</p>
-        <label class="block w-full py-2 bg-slate-800 rounded-lg cursor-pointer text-sm">Upload Gambar<input type="file" class="hidden" onchange="st('Foto Diunggah')"></label>
+      <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 flex flex-col items-center">
+        <div class="w-40 h-40 rounded-xl overflow-hidden bg-slate-950 border border-slate-700 flex flex-col items-center justify-center mb-3">
+          <img id="avPreview" class="hidden w-full h-full object-cover">
+          <p id="fstat" class="text-emerald-400 text-xs px-2">✅ Siap Scan / Upload</p>
+        </div>
+        <label class="block w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer text-sm">📁 Upload Foto Avatar<input type="file" accept="image/*" class="hidden" onchange="loadAv(event)"></label>
       </div>
     </div>
+    <button onclick="go(3)" class="mt-5 px-6 py-2.5 bg-teal-400 text-slate-950 font-bold rounded-xl text-sm">Lanjut Pilih Niche →</button>
+  </div>
     <button onclick="go(3)" class="mt-5 px-6 py-2 bg-teal-400 text-slate-950 font-bold rounded-xl">Lanjut Niche →</button>
   </div>
   <div id="s3" class="slide card rounded-2xl p-6 text-center">
@@ -148,6 +162,39 @@ function cekUser(){
 }
 cekUser();
 const pkt=p=>document.getElementById('plbl').textContent=p;
+async function startCam(){
+  try{
+    let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+    let v=document.getElementById('camVid');
+    v.srcObject=s;v.classList.remove('hidden');
+    document.getElementById('camPlaceholder').classList.add('hidden');
+    document.getElementById('fstat').textContent='🟢 Kamera Live Aktif';
+  }catch(e){alert('Izin kamera ditolak / tidak tersedia')}
+}
+function loadAv(e){
+  let f=e.target.files[0];if(!f)return;
+  let img=document.getElementById('avPreview');
+  img.src=URL.createObjectURL(f);img.classList.remove('hidden');
+  document.getElementById('fstat').classList.add('hidden');
+}
+const cv=document.getElementById('univ'),cx=cv.getContext('2d');
+let w,h,stArr=[],mtArr=[];
+function rsz(){w=cv.width=innerWidth;h=cv.height=innerHeight}
+rsz();onresize=rsz;
+for(let i=0;i<70;i++)stArr.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.6+.4,v:Math.random()*.5+.15,c:['#2dd4bf','#a855f7','#f472b6','#fff'][i%4]});
+for(let i=0;i<4;i++)mtArr.push({x:Math.random()*w,y:Math.random()*h*.5,l:Math.random()*70+40,v:Math.random()*4+3});
+(function loop(){
+  cx.clearRect(0,0,w,h);
+  stArr.forEach(s=>{s.y-=s.v;if(s.y<0){s.y=h;s.x=Math.random()*w}cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fillStyle=s.c;cx.fill()});
+  mtArr.forEach(m=>{
+    m.x-=m.v;m.y+=m.v*.7;
+    if(m.x<-100||m.y>h+100){m.x=w+Math.random()*200;m.y=Math.random()*h*.4}
+    let g=cx.createLinearGradient(m.x,m.y,m.x+m.l,m.y-m.l*.7);
+    g.addColorStop(0,'#fff');g.addColorStop(.4,'#38bdf8');g.addColorStop(1,'transparent');
+    cx.strokeStyle=g;cx.lineWidth=2;cx.beginPath();cx.moveTo(m.x,m.y);cx.lineTo(m.x+m.l,m.y-m.l*.7);cx.stroke();
+  });
+  requestAnimationFrame(loop);
+})();
 go(1);
 </script>
 </body>
