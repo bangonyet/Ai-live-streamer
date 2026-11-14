@@ -4,18 +4,19 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI Live Streamer - @creatortiktok</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>
-body{background:#02030a;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
-#univ{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 50% 45%,#2e1065 0%,#0f172a 48%,#020308 100%)}
-.nebula{position:fixed;inset:-40%;z-index:-1;background:conic-gradient(from 45deg,transparent,rgba(45,212,191,.32),rgba(168,85,247,.4),rgba(236,72,153,.32),transparent);filter:blur(32px);animation:spin 20s linear infinite;pointer-events:none}
-.ring{position:fixed;top:46%;left:50%;width:540px;height:190px;margin:-95px 0 0 -270px;z-index:-1;border-radius:50%;border:3px solid rgba(56,189,248,.45);box-shadow:0 0 45px rgba(168,85,247,.65),inset 0 0 35px rgba(45,212,191,.5);transform:rotate(-18deg);animation:pulse 4s ease-in-out infinite alternate;pointer-events:none}
+ <style>
+body{background:#04050e;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
+#univ{position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(4,6,18,.35),rgba(4,6,18,.45)),url('https://unsplash.com') center/cover no-repeat;animation:zoomBg 28s ease-in-out infinite alternate}
+.nebula{position:fixed;inset:-40%;z-index:-1;background:conic-gradient(from 0deg,transparent,rgba(45,212,191,.2),rgba(168,85,247,.25),transparent);mix-blend-mode:screen;animation:spin 25s linear infinite;pointer-events:none}
+.ring{display:none}
+@keyframes zoomBg{from{transform:scale(1)}to{transform:scale(1.14)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{from{opacity:.55;transform:rotate(-18deg) scale(.96)}to{opacity:1;transform:rotate(-14deg) scale(1.04)}}
-.card{background:rgba(10,15,30,.72);backdrop-filter:blur(16px);border:1px solid rgba(45,212,191,.4);box-shadow:0 12px 40px rgba(0,0,0,.75)}
+.card{background:rgba(12,18,36,.68);backdrop-filter:blur(14px);border:1px solid rgba(45,212,191,.45);box-shadow:0 12px 40px rgba(0,0,0,.8),inset 0 0 18px rgba(45,212,191,.12)}
 .neon{border:1px solid #2dd4bf;box-shadow:0 0 15px rgba(45,212,191,.4);transition:.2s}
 .slide{display:none}.slide.active{display:block;animation:up .25s ease}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
+
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4">
 
