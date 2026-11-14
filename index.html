@@ -1,151 +1,127 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Live Streamer Studio — @creatortiktok.id</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background: radial-gradient(circle at top, #131c31 0%, #090d16 100%); color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
-    .glass { background: rgba(17, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.2); }
-    .neon-btn { background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%); box-shadow: 0 0 18px rgba(16, 185, 129, 0.35); }
-    .card-active { border-color: #10b981 !important; background: rgba(16, 185, 129, 0.12) !important; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Live Streamer - @creatortiktok</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#0b0f19;color:#f8fafc;font-family:sans-serif}
+.card{background:rgba(20,27,45,.9);border:1px solid rgba(45,212,191,.3);box-shadow:0 0 25px rgba(45,212,191,.1)}
+.neon{border:1px solid #2dd4bf;box-shadow:0 0 12px rgba(45,212,191,.3)}
+.slide{display:none}.slide.active{display:block}
+</style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between p-4">
 
-  <!-- Header -->
-  <header class="p-4 border-b border-slate-800 flex justify-between it class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold text-xs">AI LIVE</span>
-      <h1 class="font-bold text-sm sm:text-base tracking-wide">Studio AI Live <span class="text-slate-400 text-xs font-normal">by @creatortiktok.id</span></h1>
+<header class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mb-4">
+  <div><b class="text-teal-400">AI Live Streamer</b><p class="text-[11px] text-slate-400">@creatortiktok</p></div>
+  <span id="badge" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-teal-300">Slide 1 / 6</span>
+</header>
+
+<main class="max-w-4xl w-full mx-auto my-auto">
+  <div id="s1" class="slide active max-w-md mx-auto card rounded-2xl p-6 text-center space-y-3">
+    <h2 class="text-xl font-bold mb-4">1. Masuk ke Studio AI Live</h2>
+    <button onclick="go(2)" class="w-full py-3 rounded-xl neon bg-slate-900">✉️ Masuk dengan Email</button>
+    <button onclick="go(2)" class="w-full py-3 rounded-xl border border-purple-500 bg-slate-900">🎵 Masuk dengan TikTok</button>
+    <button onclick="go(2)" class="w-full py-3 rounded-xl neon bg-slate-900">📱 Masuk Nomor HP (OTP)</button>
+  </div>
+
+  <div id="s2" class="slide card rounded-2xl p-6 text-center">
+    <h2 class="text-lg font-bold mb-4">2. Pilih Avatar & Deteksi Wajah</h2>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="p-4 bg-slate-900 rounded-xl border border-teal-500/40">
+        <div class="text-5xl my-4">🧑‍💻</div>
+        <button onclick="st('Deteksi Live Aktif')" class="w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg">Gunakan Deteksi Live</button>
+      </div>
+      <div class="p-4 bg-slate-900 rounded-xl border border-slate-700">
+        <p id="fstat" class="text-emerald-400 text-sm my-5">✅ Wajah Jelas</p>
+        <label class="block w-full py-2 bg-slate-800 rounded-lg cursor-pointer text-sm">Upload Gambar<input type="file" class="hidden" onchange="st('Foto Diunggah')"></label>
+      </div>
     </div>
-    <div id="stepBadge" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-cyan-400 font-medium">Langkah 1 / 6</div>
-  </header>
+    <button onclick="go(3)" class="mt-5 px-6 py-2 bg-teal-400 text-slate-950 font-bold rounded-xl">Lanjut Niche →</button>
+  </div>
+  <div id="s3" class="slide card rounded-2xl p-6 text-center">
+    <h2 class="text-lg font-bold mb-4">3. Pilih Niche Live</h2>
+    <div class="grid md:grid-cols-3 gap-4">
+      <button onclick="niche('EDUKASI')" class="p-5 bg-slate-900 rounded-xl neon"><div class="text-3xl mb-2">🎓</div><b>EDUKASI</b></button>
+      <button onclick="niche('HIBURAN')" class="p-5 bg-slate-900 rounded-xl border border-purple-500"><div class="text-3xl mb-2">🎭</div><b>HIBURAN</b></button>
+      <button onclick="niche('JUALAN')" class="p-5 bg-slate-900 rounded-xl border border-blue-500"><div class="text-3xl mb-2">🛒</div><b>JUALAN</b></button>
+    </div>
+  </div>
 
-  <!-- Main Container -->
-  <main class="flex-1 flex items-center justify-center p-4">
-    <div class="w-full max-w-2xl glass rounded-2xl p-6 shadow-2xl">
+  <div id="s4" class="slide card rounded-2xl p-6">
+    <h2 class="text-lg font-bold mb-4">4. Host Style (<span id="nlbl" class="text-teal-400">EDUKASI</span>)</h2>
+    <div class="grid md:grid-cols-2 gap-4 items-center">
+      <div class="space-y-2">
+        <button onclick="host('Mentor Edukasi')" class="w-full text-left p-3 bg-slate-900 rounded-xl neon"><b>Mentor Edukasi</b><p class="text-xs text-slate-400">Serius & informatif</p></button>
+        <button onclick="host('Kakak Santai')" class="w-full text-left p-3 bg-slate-900 rounded-xl border border-slate-700"><b>Kakak Santai</b><p class="text-xs text-slate-400">Ramah & asik ngobrol</p></button>
+        <button onclick="host('Dosen / Ahli')" class="w-full text-left p-3 bg-slate-900 rounded-xl border border-slate-700"><b>Dosen / Ahli</b><p class="text-xs text-slate-400">Profesional & mendalam</p></button>
+      </div>
+      <div class="p-5 bg-slate-900 rounded-xl text-center">
+        <div class="text-4xl mb-2">🎙️</div><p class="text-xs text-slate-400">Host Terpilih:</p>
+        <b id="hlbl" class="text-teal-300">Mentor Edukasi</b>
+        <button onclick="go(5)" class="mt-4 w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-xl">Control Center →</button>
+      </div>
+    </div>
+  </div>
 
-      <!-- STEP 1: LOGIN -->
-      <section id="step1" class="space-y-4">
-        <div class="text-center mb-6">
-          <h2 class="text-xl font-bold text-white">Masuk ke Studio AI Live</h2>
-          <p class="text-xs text-slate-400 mt-1">Pilih metode masuk untuk mulai siaran otomatis</p>
+  <div id="s5" class="slide card rounded-2xl p-6">
+    <h2 class="text-lg font-bold mb-4">5. Control Center & Preview</h2>
+    <div class="grid md:grid-cols-2 gap-4 items-center">
+      <div class="space-y-2 text-sm">
+        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>📐 Studio & Ratio 9:16</span><input type="checkbox" checked></label>
+        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>📄 Materi Live & Script</span><input type="checkbox" checked></label>
+        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>🖼️ Pop-up Gambar</span><input type="checkbox" checked></label>
+        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>🔊 Auto-Monolog AI</span><input type="checkbox" checked></label>
+        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>🔗 Koneksi TikTok/YT/IG</span><input type="checkbox" checked></label>
+      </div>
+      <div class="p-4 bg-slate-900 rounded-xl text-center">
+        <div class="w-36 h-56 mx-auto border-2 border-teal-400 rounded-xl p-2 flex flex-col justify-between bg-slate-950">
+          <div class="flex justify-between text-[10px]"><span class="bg-red-600 px-1.5 rounded">LIVE</span><span>9:16</span></div>
+          <div class="text-4xl">🧑‍🏫</div><span class="text-[10px] text-teal-300">AI Virtual Host</span>
         </div>
-        <button onclick="goStep(2)" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center gap-3 text-sm font-medium transition">
-          <span>✉️</span> Masuk dengan Email
-        </button>
-        <button onclick="goStep(2)" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-cyan-500/40 flex items-center justify-center gap-3 text-sm font-medium text-cyan-300 transition">
-          <span>🎵</span> Masuk dengan Akun TikTok
-        </button>
-        <button onclick="goStep(2)" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center gap-3 text-sm font-medium transition">
-          <span>📱</span> Masuk dengan Nomor HP (OTP)
-        </button>
-      </section>
+        <button onclick="go(6)" class="mt-3 w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-xl text-sm">Lanjut Pembayaran →</button>
+      </div>
+    </div>
+  </div>
+  <div id="s6" class="slide card rounded-2xl p-6">
+    <h2 class="text-lg font-bold mb-4">6. Pembayaran & Live</h2>
+    <div class="grid md:grid-cols-2 gap-4 items-center">
+      <div class="space-y-2 text-sm">
+        <button onclick="pkt('Paket 2 Jam - Rp 5.500')" class="w-full flex justify-between p-3 bg-slate-900 rounded-xl neon"><span>Paket 2 Jam</span><b class="text-teal-400">5.500</b></button>
+        <button onclick="pkt('Paket 10 Jam - Rp 14.500')" class="w-full flex justify-between p-3 bg-slate-900 rounded-xl border border-slate-700"><span>Paket 10 Jam</span><b class="text-teal-400">14.500</b></button>
+        <button onclick="pkt('Paket 50 Jam - Rp 28.000')" class="w-full flex justify-between p-3 bg-slate-900 rounded-xl border border-slate-700"><span>Paket 50 Jam</span><b class="text-teal-400">28.000</b></button>
+      </div>
+      <div class="p-4 bg-slate-900 rounded-xl text-center">
+        <p class="text-xs text-teal-400 mb-2" id="plbl">Paket 2 Jam - Rp 5.500</p>
+        <div class="w-28 h-28 mx-auto bg-white text-slate-950 flex items-center justify-center font-bold rounded-lg text-xs">QRIS CODE</div>
+      </div>
+    </div>
+    <button onclick="alert('Stream AI Live siap! Masukkan Server URL & Stream Key RTMP TikTok.')" class="mt-4 w-full py-3 bg-emerald-500 text-slate-950 font-extrabold rounded-xl">🚀 MULAI LIVE (OBS / RTMP)</button>
+  </div>
+</main>
 
-      <!-- STEP 2: PILIH AVATAR -->
-      <section id="step2" class="hidden space-y-5">
-        <div class="text-center">
-          <h2 class="text-lg font-bold">2. Pilih & Deteksi Avatar AI</h2>
-          <p class="text-xs text-slate-400">Gunakan kamera HP untuk deteksi titik wajah atau unggah foto</p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-          <div class="relative aspect-square rounded-xl bg-slate-900 border-2 border-dashed border-emerald-500/60 flex flex-col items-center justify-center overflow-hidden">
-            <video id="webcam" autoplay playsinline class="hidden w-full h-full object-cover"></video>
-            <div id="facePlaceholder" class="text-center p-4">
-              <div class="text-4xl mb-2">🧑🏻‍💻</div>
-              <p class="text-xs text-emerald-400 font-medium">[ Simulasi Deteksi Wajah Live ]</p>
-            </div>
-            <div class="absolute inset-4 border border-cyan-400/40 rounded-lg pointer-events-none"></div>
-          </div>
-          <div class="space-y-3">
-            <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-center gap-2">
-              <span>✅</span> <span id="faceStatus">Wajah Jelas & Siap Diproses</span>
-            </div>
-            <button onclick="startCamera()" class="w-full py-2.5 rounded-xl neon-btn text-slate-950 font-bold text-sm">
-              Aktifkan Kamera Live
-            </button>
-            <button onclick="goStep(3)" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-sm font-semibold">
-              Lanjut Pilih Niche →
-            </button>
-          </div>
-        </div>
-      </section>
+<footer class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mt-4 text-xs">
+  <button id="prev" onclick="go(cur-1)" class="px-3 py-2 bg-slate-800 rounded-lg disabled:opacity-40">← Prev</button>
+  <span>Geser / Klik Tombol</span>
+  <button id="next" onclick="go(cur+1)" class="px-3 py-2 bg-teal-400 text-slate-950 font-bold rounded-lg disabled:opacity-40">Next →</button>
+</footer>
 
-      <!-- STEP 3: PILIH NICHE -->
-      <section id="step3" class="hidden space-y-5">
-        <div class="text-center">
-          <h2 class="text-lg font-bold">3. Pilih Niche Siaran</h2>
-          <p class="text-xs text-slate-400">AI akan menyesuaikan gaya bahasa dan topik monolog otomatis</p>
-        </div>
-        <div class="grid grid-cols-3 gap-3">
-          <button onclick="selectNiche('Edukasi', this)" class="niche-card card-active p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-center space-y-2 transition">
-            <div class="text-3xl">🎓</div>
-            <div class="font-bold text-xs sm:text-sm">EDUKASI</div>
-          </button>
-          <button onclick="selectNiche('Hiburan', this)" class="niche-card p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-center space-y-2 transition">
-            <div class="text-3xl">🎭</div>
-            <div class="font-bold text-xs sm:text-sm">HIBURAN</div>
-          </button>
-          <button onclick="selectNiche('Jualan', this)" class="niche-card p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-center space-y-2 transition">
-            <div class="text-3xl">🛒</div>
-            <div class="font-bold text-xs sm:text-sm">JUALAN</div>
-          </button>
-        </div>
-        <div class="flex justify-between pt-2">
-          <button onclick="goStep(2)" class="px-4 py-2 rounded-lg bg-slate-800 text-xs">← Kembali</button>
-          <button onclick="goStep(4)" class="px-6 py-2.5 rounded-xl neon-btn text-slate-950 font-bold text-sm">Lanjut Sub-Menu →</button>
-        </div>
-      </section>
-
-      <!-- STEP 4: SUB-MENU HOST STYLE -->
-      <section id="step4" class="hidden space-y-5">
-        <div class="text-center">
-          <h2 class="text-lg font-bold">4. Pilih Gaya Host (Host Style)</h2>
-          <p class="text-xs text-slate-400">Niche terpilih: <span id="selectedNicheLabel" class="text-emerald-400 font-bold">Edukasi</span></p>
-        </div>
-        <div class="space-y-3">
-          <div onclick="selectHost('Mentor Edukasi', this)" class="host-card card-active p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 cursor-pointer flex items-center gap-3">
-            <div class="text-2xl">👨‍🏫</div>
-            <div>
-              <div class="font-bold text-sm">Mentor Edukasi</div>
-              <div class="text-xs text-slate-400">Serius, terstruktur, informatif, dan meyakinkan penonton.</div>
-            </div>
-          </div>
-          <div onclick="selectHost('Kakak Santai', this)" class="host-card p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 cursor-pointer flex items-center gap-3">
-            <div class="text-2xl">😎</div>
-            <div>
-              <div class="font-bold text-sm">Kakak Santai</div>
-              <div class="text-xs text-slate-400">Ramah, akrab, bahasa gaul TikTok, dan interaktif.</div>
-            </div>
-          </div>
-          <div onclick="selectHost('Host Jualan Flash Sale', this)" class="host-card p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 cursor-pointer flex items-center gap-3">
-            <div class="text-2xl">🔥</div>
-            <div>
-              <div class="font-bold text-sm">Host Jualan Flash Sale</div>
-              <div class="text-xs text-slate-400">Energik, persuasif, fokus ajak klik keranjang kuning.</div>
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-between pt-2">
-          <button onclick="goStep(3)" class="px-4 py-2 rounded-lg bg-slate-800 text-xs">← Kembali</button>
-          <button onclick="goStep(5)" class="px-6 py-2.5 rounded-xl neon-btn text-slate-950 font-bold text-sm">Buka Control Center →</button>
-        </div>
-      </section>
-
-      <!-- STEP 5: CONTROL CENTER & PREVIEW -->
-      <section id="step5" class="hidden space-y-4">
-        <div class="text-center">
-          <h2 class="text-lg font-bold">5. Control Center & Preview</h2>
-          <p class="text-xs text-slate-400">Atur skrip auto-monolog dan cek kesiapan siaran</p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="space-y-2 text-xs">
-            <div class="p-2.5 rounded-lg bg-slate-800/90 flex justify-between"><span>📐 Studio & Ratio (9:16)</span><span class="text-emerald-400">✔</span></div>
-            <div class="p-2.5 rounded-lg bg-slate-800/90 flex justify-between"><span>🖼️ Pop-up Gambar Produk</span><span class="text-emerald-400">✔</span></div>
-            <div class="p-2.5 rounded-lg bg-slate-800/90 flex justify-between"><span>🎙️ Auto-Monolog AI</span><span class="text-emerald-400">✔</span></div>
-            <div class="p-2.5 rounded-lg bg-slate-800/90 flex justify-between"><span>🔗 Koneksi TikTok / YT / IG</span><span class="text-emerald-400">✔</span></div>
-            <textarea id="scriptBox" rows="2" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200" placeholder="Ketik topik produk/materi live di sini...">Halo guys yang baru join, hari ini kita bahas rahasia FYP dan promo spesial hari ini!</textarea>
-          </div>
-          <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 flex flex-col justify-between items-center text-center relative min-h-[190px]">
-            <div class="w-full flex justify-between items-center text-[10px]">
-              <span class="px-2 py-0.5 rounded bg-rose-600 font-bold animate-pulse">LIVE PREVIEW</span>
+<script>
+let cur=1;
+function go(n){
+  if(n<1||n>6)return; cur=n;
+  document.querySelectorAll('.slide').forEach(e=>e.classList.remove('active'));
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('badge').textContent=`Slide ${cur} / 6`;
+  document.getElementById('prev').disabled=cur===1;
+  document.getElementById('next').disabled=cur===6;
+}
+const st=t=>document.getElementById('fstat').textContent='✅ '+t;
+const niche=n=>{document.getElementById('nlbl').textContent=n;go(4)};
+const host=h=>document.getElementById('hlbl').textContent=h;
+const pkt=p=>document.getElementById('plbl').textContent=p;
+go(1);
+</script>
+</body>
+</html>
