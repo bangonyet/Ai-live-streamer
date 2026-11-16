@@ -4,47 +4,43 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI Live Streamer - @creatortiktok</title>
 <script src="https://cdn.tailwindcss.com"></script>
- <style>
-body{background:#04050e;color:#f8fafc;font-family:sans-serif;overflow-x:hidden}
-#univ{position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(4,6,18,.35),rgba(4,6,18,.45)),url('https://unsplash.com') center/cover no-repeat;animation:zoomBg 28s ease-in-out infinite alternate}
-.nebula{position:fixed;inset:-40%;z-index:-1;background:conic-gradient(from 0deg,transparent,rgba(45,212,191,.2),rgba(168,85,247,.25),transparent);mix-blend-mode:screen;animation:spin 25s linear infinite;pointer-events:none}
-.ring{display:none}
-@keyframes zoomBg{from{transform:scale(1)}to{transform:scale(1.14)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-.card{background:rgba(12,18,36,.68);backdrop-filter:blur(14px);border:1px solid rgba(45,212,191,.45);box-shadow:0 12px 40px rgba(0,0,0,.8),inset 0 0 18px rgba(45,212,191,.12)}
-.neon{border:1px solid #2dd4bf;box-shadow:0 0 15px rgba(45,212,191,.4);transition:.2s}
-.slide{display:none}.slide.active{display:block;animation:up .25s ease}
-@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  <style>
+  body { background-color: #04050e; color: #f8fafc; font-family: sans-serif; overflow-x: hidden; }
+  .studio-bg {
+    position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(rgba(4, 6, 18, 0.75), rgba(4, 6, 18, 0.85)),
+                url('https://unsplash.com') center/cover no-repeat;
+    filter: blur(8px); transform: scale(1.05);
+  }
+  .card { background: rgba(12, 18, 36, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(45, 212, 191, 0.45); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5); }
+  .neon { border: 1px solid #2dd4bf; box-shadow: 0 0 15px rgba(45, 212, 191, 0.4); transition: 0.2s; }
+  .slide { display: none; }
+  .slide.active { display: block; animation: up 0.35s ease; }
+  @keyframes up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 </style>
-
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4">
-
-<canvas id="univ"></canvas>
-<div class="nebula"></div>
-<div class="ring"></div>
-
-
+<div class="studio-bg"></div>
 <header class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mb-4">
   <div>
     <b class="text-teal-400">AI Live Streamer</b>
     <p id="userDisplay" class="text-[11px] text-slate-400">Belum Login</p>
   </div>
   <div class="flex items-center gap-2">
-    <button id="logoutBtn" onclick="logout()" class="hidden text-[11px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-1 rounded-lg">Keluar</button>
-    <span id="badge" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-teal-300">Slide 1 / 6</span>
+    <button id="logoutBtn" onclick="logout()" class="hidden text-xs px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40">Keluar</button>
+    <span id="badge" class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-teal-300">Slide 1 / 6</span>
   </div>
 </header>
 
 <main class="max-w-4xl w-full mx-auto my-auto">
-  <div id="s1" class="slide active max-w-md mx-auto card rounded-2xl p-6 text-center space-y-3">
-    <h2 class="text-xl font-bold mb-1">1. Masuk ke Studio AI Live</h2>
-    <p class="text-xs text-slate-400 mb-3">Masukkan akun untuk memulai sesi live</p>
-    <input id="loginInput" type="text" placeholder="Username TikTok / Email / No. HP" class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-teal-500/40 text-sm text-white focus:outline-none focus:border-teal-400">
-    <button onclick="loginUser('Form')" class="w-full py-3 rounded-xl bg-teal-400 text-slate-950 font-bold text-sm">✉️ Masuk dengan Akun</button>
-    <button onclick="loginUser('@creatortiktok (TikTok)')" class="w-full py-3 rounded-xl border border-purple-500 bg-slate-900/80 text-sm">🎵 Masuk Cepat Akun TikTok</button>
-    <button onclick="loginUser('Host Tamu (OTP)')" class="w-full py-3 rounded-xl neon bg-slate-900/80 text-sm">📱 Masuk Cepat Nomor HP (OTP)</button>
+  <div id="s1" class="slide active card rounded-2xl p-6 max-w-md mx-auto text-center space-y-3">
+    <h2 class="text-lg font-bold mb-2">1. Masuk ke Studio AI Live</h2>
+    <input id="loginInput" type="text" placeholder="Enter Username (e.g., @creatortiktok)" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-teal-500/50 text-sm focus:outline-none">
+    <button onclick="login('Email')" class="w-full py-3 rounded-xl bg-slate-900 border border-teal-500/50 text-sm font-medium hover:bg-slate-800">Masuk dengan Email</button>
+    <button onclick="login('TikTok')" class="w-full py-3 rounded-xl bg-slate-900 border border-purple-500 text-sm font-medium hover:bg-slate-800">Masuk dengan TikTok</button>
+    <button onclick="login('OTP')" class="w-full py-3 rounded-xl bg-slate-900 border border-teal-500/50 text-sm font-medium hover:bg-slate-800">Masuk dengan Nomor HP (OTP)</button>
   </div>
+
 
   <div id="s2" class="slide card rounded-2xl p-6 text-center">
     <h2 class="text-lg font-bold mb-4">2. Pilih Avatar & Deteksi Wajah Live</h2>
@@ -181,31 +177,7 @@ function loadAv(e){
   img.src=URL.createObjectURL(f);img.classList.remove('hidden');
   document.getElementById('fstat').classList.add('hidden');
 }
-const cv=document.getElementById('univ'),cx=cv.getContext('2d');
-let w,h,stArr=[],mtArr=[];
-function rsz(){w=cv.width=innerWidth;h=cv.height=innerHeight}
-rsz();onresize=rsz;
-for(let i=0;i<130;i++)stArr.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.2+.6,v:Math.random()*.4+.1,a:Math.random(),c:['#2dd4bf','#c084fc','#f472b6','#38bdf8','#fff'][i%5]});
-for(let i=0;i<7;i++)mtArr.push({x:Math.random()*w,y:Math.random()*h*.6,l:Math.random()*110+60,v:Math.random()*5+4});
-(function loop(){
-  cx.clearRect(0,0,w,h);
-  stArr.forEach(s=>{
-    s.y-=s.v;s.a+=.04;if(s.y<0){s.y=h;s.x=Math.random()*w}
-    cx.globalAlpha=.4+Math.abs(Math.sin(s.a))*.6;
-    cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fillStyle=s.c;cx.fill();
-  });
-  cx.globalAlpha=1;
-  mtArr.forEach(m=>{
-    m.x-=m.v;m.y+=m.v*.65;
-    if(m.x<-150||m.y>h+150){m.x=w+Math.random()*250;m.y=Math.random()*h*.45}
-    let g=cx.createLinearGradient(m.x,m.y,m.x+m.l,m.y-m.l*.65);
-    g.addColorStop(0,'#fff');g.addColorStop(.3,'#38bdf8');g.addColorStop(.7,'#c084fc');g.addColorStop(1,'transparent');
-    cx.strokeStyle=g;cx.lineWidth=2.5;cx.beginPath();cx.moveTo(m.x,m.y);cx.lineTo(m.x+m.l,m.y-m.l*.65);cx.stroke();
-  });
-  requestAnimationFrame(loop);
-})();
-
-go(1);
+    go(1);
 </script>
 </body>
 </html>
