@@ -265,24 +265,56 @@
     }
     const cv = document.getElementById('milkyWayCanvas'), cx = cv.getContext('2d');
     let w, h, gs = [], bs = [], mt = [], rot = 0;
-{
-      w = cv.width = window.innerWidth; h = cv.height = window.innerHeight; gs = []; bs = [];
-      const mr = Math.min(w, h) * 0.46, cols = ['#fef08a', '#bae6fd', '#f0abfc', '#c084fc', '#ffffff'];
-      for (let i = 0; i < 1200; i++) { const d = Math.pow(Math.random(), 0.7) * mr; gs.push({ d, a: (i % 4) * 1.57 + (d / mr) * 3.6 + (Math.random() - 0.5) * 0.8, r: Math.random() * 2 + 0.5, c: d < mr * 0.22 ? '#fef08a' : cols[i % 5] }); }
-      for (let i = 0; i < 180; i++) bs.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.8 + 0.4, p: Math.random() * 6 });
+    function init() {
+      w = cv.width = window.innerWidth;
+      h = cv.height = window.innerHeight;
+      gs = []; bs = [];
+      const mr = Math.min(w, h) * 0.46;
+      const cols = ['#fef08a', '#bae6fd', '#f0abfc', '#c084fc', '#fff'];
+      for (let i = 0; i < 1200; i++) {
+        const d = Math.pow(Math.random(), 0.7) * mr;
+        const a = (i % 4) * 1.57 + (d / mr) * 3.6 + (Math.random() - 0.5) * 0.8;
+        const r = Math.random() * 2 + 0.5;
+        const c = d < mr * 0.22 ? '#fef08a' : cols[i % 5];
+        gs.push({ d, a, r, c });
+      }
+      for (let i = 0; i < 180; i++) {
+        bs.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.8 + 0.4, p: Math.random() * 6 });
+      }
     }
     function draw() {
       cx.clearRect(0, 0, w, h);
       const x0 = w / 2, y0 = h / 2;
-      bs.forEach(s => { s.p += 0.03; cx.globalAlpha = 0.4 + Math.abs(Math.sin(s.p)) * 0.6; cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.28); cx.fill(); });
+      bs.forEach(s => {
+        s.p += 0.03;
+        cx.globalAlpha = 0.4 + Math.abs(Math.sin(s.p)) * 0.6;
+        cx.fillStyle = '#fff';
+        cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.28); cx.fill();
+      });
       rot += 0.001;
-      gs.forEach(g => { const a = g.a + rot; cx.globalAlpha = 0.9; cx.fillStyle = g.c; cx.beginPath(); cx.arc(x0 + Math.cos(a) * g.d, y0 + Math.sin(a) * g.d, g.r, 0, 6.28); cx.fill(); });
-      if (mt.length < 7 && Math.random() < 0.06) mt.push({ x: Math.random() * w * 1.3, y: -20, l: 95, sp: 8, c: Math.random() > 0.4 ? '#7dd3fc' : '#f0abfc' });
-      for (let i = mt.length - 1; i >= 0; i--) { const m = mt[i], ex = m.x + m.l * 0.65, ey = m.y - m.l * 0.75; const gr = cx.createLinearGradient(m.x, m.y, ex, ey); gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, m.c); gr.addColorStop(1, 'transparent'); cx.globalAlpha = 1; cx.strokeStyle = gr; cx.lineWidth = 2.5; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke(); m.x -= m.sp * 0.65; m.y += m.sp * 0.75; if (m.y > h + 90) mt.splice(i, 1); }
-      cx.globalAlpha = 1; requestAnimationFrame(draw);
+      gs.forEach(g => {
+        const a = g.a + rot;
+        cx.globalAlpha = 0.9;
+        cx.fillStyle = g.c;
+        cx.beginPath(); cx.arc(x0 + Math.cos(a) * g.d, y0 + Math.sin(a) * g.d, g.r, 0, 6.28); cx.fill();
+      });
+      if (mt.length < 7 && Math.random() < 0.06) {
+        mt.push({ x: Math.random() * w * 1.3, y: -20, l: 95, sp: 8, c: Math.random() > 0.4 ? '#7dd3fc' : '#f0abfc' });
+      }
+      for (let i = mt.length - 1; i >= 0; i--) {
+        const m = mt[i], ex = m.x + m.l * 0.65, ey = m.y - m.l * 0.75;
+        const gr = cx.createLinearGradient(m.x, m.y, ex, ey);
+        gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, m.c); gr.addColorStop(1, 'transparent');
+        cx.globalAlpha = 1; cx.strokeStyle = gr; cx.lineWidth = 2.5;
+        cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke();
+        m.x -= m.sp * 0.65; m.y += m.sp * 0.75;
+        if (m.y > h + 90) mt.splice(i, 1);
+      }
+      cx.globalAlpha = 1;
+      requestAnimationFrame(draw);
     }
-    window.addEventListener('resize', init); init(); draw(); cekUser(); go(1);
+    window.addEventListener('resize', init);
+    init(); draw(); cekUser(); go(1);
   </script>
 </body>
 </html>
-
