@@ -1,240 +1,264 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Live Streamer - @creatortiktok</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Live Streamer - @creatortiktok.id</title>
+  <script src="https://tailwindcss.com"></script>
   <style>
-  body { background-color: #04050e; color: #f8fafc; font-family: sans-serif; overflow-x: hidden; }
-  .studio-bg {
-    position: fixed; inset: 0; z-index: -1;
-    background: linear-gradient(rgba(4, 6, 18, 0.75), rgba(4, 6, 18, 0.85)),
-                url('https://unsplash.com') center/cover no-repeat;
-    filter: blur(8px); transform: scale(1.05);
-  }
-  .card { background: rgba(12, 18, 36, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(45, 212, 191, 0.45); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5); }
-  .neon { border: 1px solid #2dd4bf; box-shadow: 0 0 15px rgba(45, 212, 191, 0.4); transition: 0.2s; }
-  .slide { display: none; }
-  .slide.active { display: block; animation: up 0.35s ease; }
-  @keyframes up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-</style>
-</head>
-<body class="min-h-screen flex flex-col justify-between p-4">
-
-<header class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mb-4">
-  <div>
-    <b class="text-teal-400">AI Live Streamer</b>
-    <p id="userDisplay" class="text-[11px] text-slate-400">Belum Login</p>
-  </div>
-  <div class="flex items-center gap-2">
-    <button id="logoutBtn" onclick="logout()" class="hidden text-xs px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40">Keluar</button>
-    <span id="badge" class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-teal-300">Slide 1 / 6</span>
-  </div>
-</header>
-
-<main class="max-w-4xl w-full mx-auto my-auto">
-  <div id="s1" class="slide active card rounded-2xl p-6 max-w-md mx-auto text-center space-y-3">
-    <h2 class="text-lg font-bold mb-2">1. Masuk ke Studio AI Live</h2>
-    <input id="loginInput" type="text" placeholder="Enter Username (e.g., @creatortiktok)" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-teal-500/50 text-sm focus:outline-none">
-    <button onclick="login('Email')" class="w-full py-3 rounded-xl bg-slate-900 border border-teal-500/50 text-sm font-medium hover:bg-slate-800">Masuk dengan Email</button>
-    <button onclick="login('TikTok')" class="w-full py-3 rounded-xl bg-slate-900 border border-purple-500 text-sm font-medium hover:bg-slate-800">Masuk dengan TikTok</button>
-    <button onclick="login('OTP')" class="w-full py-3 rounded-xl bg-slate-900 border border-teal-500/50 text-sm font-medium hover:bg-slate-800">Masuk dengan Nomor HP (OTP)</button>
-  </div>
-
-
-  <div id="s2" class="slide card rounded-2xl p-6 text-center">
-    <h2 class="text-lg font-bold mb-4">2. Pilih Avatar & Deteksi Wajah Live</h2>
-    <div class="grid md:grid-cols-2 gap-4">
-      <div class="p-4 bg-slate-900/80 rounded-xl border border-teal-500/40 flex flex-col items-center">
-        <div class="relative w-40 h-40 rounded-xl overflow-hidden bg-slate-950 border-2 border-dashed border-teal-400 flex items-center justify-center mb-3">
-          <video id="camVid" autoplay playsinline muted class="hidden w-full h-full object-cover scale-x-[-1]"></video>
-          <span id="camPlaceholder" class="text-5xl">🧑‍💻</span>
-        </div>
-        <button onclick="startCam()" class="w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg text-sm">📸 Nyalakan Kamera Live</button>
-      </div>
-      <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 flex flex-col items-center">
-        <div class="w-40 h-40 rounded-xl overflow-hidden bg-slate-950 border border-slate-700 flex flex-col items-center justify-center mb-3">
-          <img id="avPreview" class="hidden w-full h-full object-cover">
-          <p id="fstat" class="text-emerald-400 text-xs px-2">✅ Siap Scan / Upload</p>
-        </div>
-        <label class="block w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer text-sm">📁 Upload Foto Avatar<input type="file" accept="image/*" class="hidden" onchange="loadAv(event)"></label>
-      </div>
-    </div>
-      <button onclick="go(3)" class="mt-5 px-6 py-2.5 bg-teal-400 text-slate-950 font-bold rounded-xl text-sm">Lanjut Pilih Niche →</button>
-
-  </div>
-  <div id="s3" class="slide card rounded-2xl p-6 text-center">
-    <h2 class="text-lg font-bold mb-4">3. Pilih Niche Live</h2>
-    <div class="grid md:grid-cols-3 gap-4">
-      <button onclick="niche('EDUKASI')" class="p-5 bg-slate-900 rounded-xl neon"><div class="text-3xl mb-2">🎓</div><b>EDUKASI</b></button>
-      <button onclick="niche('HIBURAN')" class="p-5 bg-slate-900 rounded-xl border border-purple-500"><div class="text-3xl mb-2">🎭</div><b>HIBURAN</b></button>
-      <button onclick="niche('JUALAN')" class="p-5 bg-slate-900 rounded-xl border border-blue-500"><div class="text-3xl mb-2">🛒</div><b>JUALAN</b></button>
-    </div>
-  </div>
-
-  <div id="s4" class="slide card rounded-2xl p-6">
-    <h2 class="text-lg font-bold mb-4">4. Host Style (<span id="nlbl" class="text-teal-400">EDUKASI</span>)</h2>
-    <div class="grid md:grid-cols-2 gap-4 items-center">
-      <div class="space-y-2">
-        <button onclick="host('Mentor Edukasi')" class="w-full text-left p-3 bg-slate-900 rounded-xl neon"><b>Mentor Edukasi</b><p class="text-xs text-slate-400">Serius & informatif</p></button>
-        <button onclick="host('Kakak Santai')" class="w-full text-left p-3 bg-slate-900 rounded-xl border border-slate-700"><b>Kakak Santai</b><p class="text-xs text-slate-400">Ramah & asik ngobrol</p></button>
-        <button onclick="host('Dosen / Ahli')" class="w-full text-left p-3 bg-slate-900 rounded-xl border border-slate-700"><b>Dosen / Ahli</b><p class="text-xs text-slate-400">Profesional & mendalam</p></button>
-      </div>
-      <div class="p-5 bg-slate-900 rounded-xl text-center">
-        <div class="text-4xl mb-2">🎙️</div><p class="text-xs text-slate-400">Host Terpilih:</p>
-        <b id="hlbl" class="text-teal-300">Mentor Edukasi</b>
-        <button onclick="go(5)" class="mt-4 w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-xl">Control Center →</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="s5" class="slide card rounded-2xl p-6">
-    <h2 class="text-lg font-bold mb-4">5. Control Center & Preview</h2>
-    <div class="grid md:grid-cols-2 gap-4 items-center">
-      <div class="space-y-2 text-sm">
-        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>📐 Studio & Ratio 9:16</span><input type="checkbox" checked></label>
-        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>📄 Materi Live & Script</span><input type="checkbox" checked></label>
-        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>🖼️ Pop-up Gambar</span><input type="checkbox" checked></label>
-        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>🔊 Auto-Monolog AI</span><input type="checkbox" checked></label>
-        <label class="flex justify-between p-2.5 bg-slate-900 rounded-lg"><span>🔗 Koneksi TikTok/YT/IG</span><input type="checkbox" checked></label>
-      </div>
-      <div class="p-4 bg-slate-900 rounded-xl text-center">
-        <div class="w-36 h-56 mx-auto border-2 border-teal-400 rounded-xl p-2 flex flex-col justify-between bg-slate-950">
-          <div class="flex justify-between text-[10px]"><span class="bg-red-600 px-1.5 rounded">LIVE</span><span>9:16</span></div>
-          <div class="text-4xl">🧑‍🏫</div><span class="text-[10px] text-teal-300">AI Virtual Host</span>
-        </div>
-        <button onclick="go(6)" class="mt-3 w-full py-2 bg-emerald-500 text-slate-950 font-bold rounded-xl text-sm">Lanjut Pembayaran →</button>
-      </div>
-    </div>
-  </div>
-  <div id="s6" class="slide card rounded-2xl p-6">
-    <h2 class="text-lg font-bold mb-4">6. Pembayaran & Live</h2>
-    <div class="grid md:grid-cols-2 gap-4 items-center">
-      <div class="space-y-2 text-sm">
-        <button onclick="pkt('Paket 2 Jam - Rp 5.500')" class="w-full flex justify-between p-3 bg-slate-900 rounded-xl neon"><span>Paket 2 Jam</span><b class="text-teal-400">5.500</b></button>
-        <button onclick="pkt('Paket 10 Jam - Rp 14.500')" class="w-full flex justify-between p-3 bg-slate-900 rounded-xl border border-slate-700"><span>Paket 10 Jam</span><b class="text-teal-400">14.500</b></button>
-        <button onclick="pkt('Paket 50 Jam - Rp 28.000')" class="w-full flex justify-between p-3 bg-slate-900 rounded-xl border border-slate-700"><span>Paket 50 Jam</span><b class="text-teal-400">28.000</b></button>
-      </div>
-      <div class="p-4 bg-slate-900 rounded-xl text-center">
-        <p class="text-xs text-teal-400 mb-2" id="plbl">Paket 2 Jam - Rp 5.500</p>
-        <div class="w-28 h-28 mx-auto bg-white text-slate-950 flex items-center justify-center font-bold rounded-lg text-xs">QRIS CODE</div>
-      </div>
-    </div>
-    <button onclick="alert('Stream AI Live siap! Masukkan Server URL & Stream Key RTMP TikTok.')" class="mt-4 w-full py-3 bg-emerald-500 text-slate-950 font-extrabold rounded-xl">🚀 MULAI LIVE (OBS / RTMP)</button>
-  </div>
-</main>
-
-<footer class="max-w-4xl w-full mx-auto flex justify-between items-center card rounded-xl p-3 mt-4 text-xs">
-  <button id="prev" onclick="go(cur-1)" class="px-3 py-2 bg-slate-800 rounded-lg disabled:opacity-40">← Prev</button>
-  <span>Geser / Klik Tombol</span>
-  <button id="next" onclick="go(cur+1)" class="px-3 py-2 bg-teal-400 text-slate-950 font-bold rounded-lg disabled:opacity-40">Next →</button>
-</footer>
-
-<script>
-let cur=1;
-function go(n){
-  if(n<1||n>6)return; cur=n;
-  document.querySelectorAll('.slide').forEach(e=>e.classList.remove('active'));
-  document.getElementById('s'+cur).classList.add('active');
-  document.getElementById('badge').textContent=`Slide ${cur} / 6`;
-  document.getElementById('prev').disabled=cur===1;
-  document.getElementById('next').disabled=cur===6;
-}
-const st=t=>document.getElementById('fstat').textContent='✅ '+t;
-const niche=n=>{document.getElementById('nlbl').textContent=n;go(4)};
-const host=h=>document.getElementById('hlbl').textContent=h;
-function loginUser(mode){
-  let val = document.getElementById('loginInput').value.trim();
-  let user = mode === 'Form' ? (val || '@host_live') : mode;
-  localStorage.setItem('ai_live_user', user);
-  cekUser();
-  go(2);
-}
-function logout(){
-  localStorage.removeItem('ai_live_user');
-  cekUser();
-  go(1);
-}
-function cekUser(){
-  let u = localStorage.getItem('ai_live_user');
-  document.getElementById('userDisplay').textContent = u ? '🟢 ' + u : 'Belum Login';
-  document.getElementById('logoutBtn').classList.toggle('hidden', !u);
-}
-cekUser();
-const pkt=p=>document.getElementById('plbl').textContent=p;
-async function startCam(){
-  try{
-    let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
-    let v=document.getElementById('camVid');
-    v.srcObject=s;v.classList.remove('hidden');
-    document.getElementById('camPlaceholder').classList.add('hidden');
-    document.getElementById('fstat').textContent='🟢 Kamera Live Aktif';
-  }catch(e){alert('Izin kamera ditolak / tidak tersedia')}
-}
-function loadAv(e){
-  let f=e.target.files[0];if(!f)return;
-  let img=document.getElementById('avPreview');
-  img.src=URL.createObjectURL(f);img.classList.remove('hidden');
-  document.getElementById('fstat').classList.add('hidden');
-}
-   const bgStyle = document.createElement('style');
-  bgStyle.textContent = `
-    .bg-s { position:fixed; inset:0; z-index:-3; opacity:0; transition:opacity .7s; pointer-events:none; overflow:hidden; }
-    .bg-s.on { opacity:1; }
-    #b1 { background:radial-gradient(circle,#0f172a 0%,#050714 55%,#010206 100%); }
-    .mw { position:absolute; top:-50%; left:-50%; width:200%; height:200%; filter:blur(28px); animation:sp 80s linear infinite;
-      background:radial-gradient(ellipse,rgba(168,85,247,.25) 0%,rgba(56,189,248,.16) 25%,rgba(236,72,153,.1) 45%,transparent 70%),
-      conic-gradient(from 0deg,transparent 0deg,rgba(45,212,191,.15) 60deg,transparent 140deg,rgba(139,92,246,.2) 220deg,transparent 300deg); }
-    @keyframes sp { 0%{transform:rotate(0deg) scale(1.1)} 50%{transform:rotate(180deg) scale(1.25)} 100%{transform:rotate(360deg) scale(1.1)} }
-    #b2 { background:linear-gradient(135deg,#04131c,#06282e,#020617); }
-    #b3 { background:linear-gradient(-45deg,#090d16,#1e1b4b,#311042,#0f2942); background-size:400% 400%; animation:au 12s ease infinite; }
-    @keyframes au { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-    #b4 { background:radial-gradient(circle at 20% 20%,rgba(236,72,153,.22),transparent 45%),radial-gradient(circle at 80% 80%,rgba(59,130,246,.25),transparent 45%),#050814; }
-    #b5 { background:radial-gradient(circle at 50% 0%,rgba(16,185,129,.2),transparent 60%),#030712; }
-    #b6 { background:radial-gradient(circle at 50% 30%,rgba(244,63,94,.22),transparent 55%),radial-gradient(circle at 80% 90%,rgba(245,158,11,.15),transparent 50%),#07040a; }
-    #cvG { position:fixed; inset:0; z-index:-2; pointer-events:none; transition:opacity .6s; }
-  `;
-  document.head.appendChild(bgStyle);
-
-  for(let i=1;i<=6;i++){
-    let d=document.createElement('div'); d.id='b'+i; d.className='bg-s'+(i===1?' on':'');
-    if(i===1) d.innerHTML='<div class="mw"></div>';
-    document.body.prepend(d);
-  }
-  const cv=document.createElement('canvas'); cv.id='cvG'; document.body.prepend(cv);
-
-  const oldGo = go;
-  go = function(n){
-    oldGo(n);
-    document.querySelectorAll('.bg-s').forEach(e=>e.classList.remove('on'));
-    const activeBg = document.getElementById('b'+cur);
-    if(activeBg) activeBg.classList.add('on');
-    cv.style.opacity = (cur === 1) ? '1' : '0';
-  };
-
-  (function(){
-    const cx=cv.getContext('2d'); let w,h,st=[];
-    function rs(){ w=cv.width=innerWidth; h=cv.height=innerHeight; st=[];
-      for(let i=0;i<180;i++){
-        let x=Math.random()*w, y=(Math.random()<.65)?(h-x*(h/w))+(Math.random()-.5)*h*.45:Math.random()*h;
-        st.push({x,y,r:Math.random()*1.6+.3,a:Math.random()*6,tw:Math.random()*.03+.01,vx:(Math.random()-.5)*.15+.08,vy:(Math.random()-.5)*.15-.05});
-      }
+    * { box-sizing: border-box; }
+    body {
+      background-color: #03040b;
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+      margin: 0;
     }
-    rs(); onresize=rs;
-    (function lp(){
-      cx.clearRect(0,0,w,h);
-      if(cur===1) st.forEach(s=>{
-        s.x+=s.vx; s.y+=s.vy; s.a+=s.tw;
-        if(s.x>w)s.x=0; if(s.x<0)s.x=w; if(s.y>h)s.y=0; if(s.y<0)s.y=h;
-        cx.globalAlpha=.35+Math.abs(Math.sin(s.a))*.65; cx.fillStyle='#e0f2fe';
-        cx.beginPath(); cx.arc(s.x,s.y,s.r,0,Math.PI*2); cx.fill();
-      });
-      requestAnimationFrame(lp);
-    })();
-  })();
+    #galaxy-bg {
+      position: fixed; inset: 0; z-index: -3;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(139, 92, 246, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 25%, rgba(56, 189, 248, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 55% 55%, rgba(251, 191, 36, 0.22) 0%, transparent 45%),
+        radial-gradient(ellipse at 30% 80%, rgba(236, 72, 153, 0.28) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, #0b0f29 0%, #03040b 100%);
+      transition: opacity 0.6s ease;
+    }
+    #galaxy-swirl {
+      position: fixed; top: -25%; left: -25%; width: 150%; height: 150%; z-index: -2;
+      pointer-events: none; filter: blur(40px); animation: spinGalaxy 60s linear infinite;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(168, 85, 247, 0.14) 70deg, transparent 140deg, rgba(56, 189, 248, 0.14) 220deg, rgba(250, 204, 21, 0.1) 290deg, transparent 360deg);
+      transition: opacity 0.6s ease;
+    }
+    @keyframes spinGalaxy {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.08); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+    #spaceCanvas { position: fixed; inset: 0; z-index: -1; pointer-events: none; transition: opacity 0.6s ease; }
+    .glass-card { background: rgba(15, 23, 42, 0.58); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(94, 234, 212, 0.35); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); }
+    .btn-glow-teal { background: rgba(15, 23, 42, 0.78); border: 1.5px solid #2dd4bf; box-shadow: 0 0 12px rgba(45, 212, 191, 0.3); transition: 0.25s; }
+    .btn-glow-teal:hover { background: rgba(45, 212, 191, 0.2); box-shadow: 0 0 20px rgba(45, 212, 191, 0.6); }
+    .btn-glow-purple { background: rgba(15, 23, 42, 0.78); border: 1.5px solid #a855f7; box-shadow: 0 0 12px rgba(168, 85, 247, 0.3); transition: 0.25s; }
+    .btn-glow-purple:hover { background: rgba(168, 85, 247, 0.2); box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+    .slide { display: none; }
+    .slide.active { display: block; animation: fadeSlide 0.35s ease forwards; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .option-selected { border-color: #2dd4bf !important; background: rgba(45, 212, 191, 0.18) !important; box-shadow: 0 0 15px rgba(45, 212, 191, 0.35); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-5">
+  <div id="galaxy-bg"></div>
+  <div id="galaxy-swirl"></div>
+  <canvas id="spaceCanvas"></canvas>
+  <header class="w-full max-w-4xl mx-auto glass-card rounded-xl px-4 py-3 flex items-center justify-between gap-2">
+    <div class="font-semibold text-sm sm:text-base text-slate-100">AI Live Streamer</div>
+    <div id="userDisplay" class="text-xs sm:text-sm text-teal-300 font-medium truncate">@creatortiktok.id</div>
+    <div class="flex items-center gap-2">
+      <button id="logoutBtn" onclick="logout()" class="hidden text-xs px-2.5 py-1 rounded-lg bg-rose-600 text-white">Keluar</button>
+      <span id="badge" class="text-xs px-3 py-1 rounded-lg bg-slate-900/90 border border-slate-700 text-slate-200">Slide 1 / 6</span>
+    </div>
+  </header>
+  <main class="w-full max-w-4xl mx-auto my-auto py-4">
+    <div id="s1" class="slide active glass-card rounded-2xl p-6 sm:p-8 max-w-md mx-auto text-center space-y-4">
+      <h2 class="text-lg sm:text-xl font-bold text-white">1. Masuk ke Studio AI Live</h2>
+      <input id="loginInput" type="text" value="@creatortiktok.id" placeholder="Enter Username (e.g., @creatortiktok.id)" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-teal-400/70 text-slate-100 text-sm focus:outline-none" />
+      <div class="space-y-3 pt-1">
+        <button onclick="loginUser('Email')" class="w-full py-3 rounded-xl btn-glow-teal text-sm font-medium text-white">Masuk dengan Email</button>
+        <button onclick="loginUser('TikTok')" class="w-full py-3 rounded-xl btn-glow-purple text-sm font-medium text-white">Masuk dengan TikTok</button>
+        <button onclick="loginUser('OTP')" class="w-full py-3 rounded-xl btn-glow-teal text-sm font-medium text-white">Masuk dengan Nomor HP (OTP)</button>
+      </div>
+    </div>
 
-  go(1);
-</script>
+    <div id="s2" class="slide glass-card rounded-2xl p-5 sm:p-6 text-center">
+      <h2 class="text-lg font-bold mb-4">2. Pilih Avatar & Deteksi Wajah Live</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="p-4 bg-slate-900/80 rounded-xl border border-teal-500/40 flex flex-col items-center justify-between">
+          <div class="relative w-36 h-36 rounded-xl overflow-hidden bg-slate-950 border-2 border-dashed border-teal-400 flex items-center justify-center">
+            <video id="camVid" autoplay playsinline muted class="hidden w-full h-full object-cover"></video>
+            <span id="camPlaceholder" class="text-5xl">🧑🏻</span>
+          </div>
+          <button onclick="startCam()" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">Gunakan Deteksi Live</button>
+        </div>
+        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 flex flex-col items-center justify-between">
+          <div class="w-36 h-36 rounded-xl overflow-hidden bg-slate-950 border border-slate-700 flex items-center justify-center">
+            <img id="avPreview" alt="Avatar" class="hidden w-full h-full object-cover" />
+            <span id="avIcon" class="text-5xl text-slate-600">👤</span>
+          </div>
+          <p id="fstat" class="text-emerald-400 text-xs mt-2">✅ Siap Scan / Upload</p>
+          <label class="mt-2 block w-full py-2.5 bg-slate-800 rounded-lg cursor-pointer text-sm font-medium">
+            Upload Gambar Avatar <input type="file" accept="image/*" onchange="loadAv(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+    </div>
+    <div id="s3" class="slide glass-card rounded-2xl p-5 sm:p-6 text-center">
+      <h2 class="text-lg font-bold mb-4">3. Pilih Niche Live</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <button id="niche-EDUKASI" onclick="setNiche('EDUKASI')" class="niche-btn option-selected p-5 bg-slate-900/80 rounded-xl border border-teal-400">
+          <div class="text-4xl mb-2">🎓</div><div class="font-bold text-teal-300">EDUKASI</div><p class="text-xs text-slate-400 mt-1">Kelas online & tutorial</p>
+        </button>
+        <button id="niche-MUSIK" onclick="setNiche('MUSIK')" class="niche-btn p-5 bg-slate-900/80 rounded-xl border border-purple-500/50">
+          <div class="text-4xl mb-2">🎵</div><div class="font-bold text-purple-300">MUSIK & HIBURAN</div><p class="text-xs text-slate-400 mt-1">Live DJ & request lagu</p>
+        </button>
+        <button id="niche-JUALAN" onclick="setNiche('JUALAN')" class="niche-btn p-5 bg-slate-900/80 rounded-xl border border-blue-500/50">
+          <div class="text-4xl mb-2">🛒</div><div class="font-bold text-blue-300">JUALAN</div><p class="text-xs text-slate-400 mt-1">Spill produk & keranjang</p>
+        </button>
+      </div>
+    </div>
+
+    <div id="s4" class="slide glass-card rounded-2xl p-5 sm:p-6">
+      <h2 class="text-lg font-bold mb-4">4. Host Style (<span id="nlbl" class="text-teal-400">EDUKASI</span>)</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+        <div class="space-y-2.5">
+          <button onclick="setHost('Mentor Edukasi','👨🏻‍🏫',this)" class="host-btn option-selected w-full text-left p-3.5 bg-slate-900/80 rounded-xl border border-teal-400">
+            <div class="font-bold text-sm">👨🏻‍🏫 Mentor Edukasi</div><div class="text-xs text-slate-400">Jelas, informatif & terstruktur</div>
+          </button>
+          <button onclick="setHost('Host Musik & Santai','🎧',this)" class="host-btn w-full text-left p-3.5 bg-slate-900/80 rounded-xl border border-slate-700">
+            <div class="font-bold text-sm">🎧 Host Musik & Santai</div><div class="text-xs text-slate-400">Asyik, interaktif & ramah</div>
+          </button>
+          <button onclick="setHost('Host Jualan Enerjik','🛍️',this)" class="host-btn w-full text-left p-3.5 bg-slate-900/80 rounded-xl border border-slate-700">
+            <div class="font-bold text-sm">🛍️ Host Jualan Enerjik</div><div class="text-xs text-slate-400">Persuasif & cepat respon komentar</div>
+          </button>
+        </div>
+        <div class="p-5 bg-slate-900/80 rounded-xl border border-slate-700 text-center">
+          <div id="hostIcon" class="text-6xl mb-3">👨🏻‍🏫</div><p class="text-xs text-slate-400">Host Terpilih:</p>
+          <p id="hlbl" class="text-base font-bold text-teal-300 mt-1">Mentor Edukasi</p>
+          <button onclick="go(5)" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">Lanjut ke Control Center</button>
+        </div>
+      </div>
+    </div>
+    <div id="s5" class="slide glass-card rounded-2xl p-5 sm:p-6">
+      <h2 class="text-lg font-bold mb-4">5. Control Center & Preview</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+        <div class="space-y-2 text-sm">
+          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>📱 Studio & Ratio (9:16)</span><input type="checkbox" checked class="accent-teal-400" /></label>
+          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>📚 Materi & Script Otomatis</span><input type="checkbox" checked class="accent-teal-400" /></label>
+          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>🖼️ Pop-up Produk / Lirik</span><input type="checkbox" checked class="accent-teal-400" /></label>
+          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>🎙️ Auto-Monolog AI</span><input type="checkbox" checked class="accent-teal-400" /></label>
+          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>🔗 Koneksi TikTok / RTMP</span><input type="checkbox" checked class="accent-teal-400" /></label>
+        </div>
+        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-center">
+          <div class="w-40 h-56 mx-auto rounded-xl border-2 border-teal-400 bg-slate-950 p-2.5 flex flex-col justify-between">
+            <div class="flex justify-between text-[10px]"><span class="bg-red-600 px-2 py-0.5 rounded font-bold">LIVE</span><span id="prevNiche" class="bg-slate-800 text-teal-300 px-2 py-0.5 rounded">EDUKASI</span></div>
+            <div class="my-auto"><div id="prevHostIcon" class="text-5xl mb-1">👨🏻‍🏫</div><div class="text-[11px] font-semibold text-teal-300">AI Virtual Host</div><div id="prevHostName" class="text-[10px] text-slate-400">Mentor Edukasi</div></div>
+            <div class="text-[10px] bg-slate-900 text-slate-300 py-1 rounded truncate">@creatortiktok.id</div>
+          </div>
+          <button onclick="go(6)" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">Lanjut ke Pembayaran</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="s6" class="slide glass-card rounded-2xl p-5 sm:p-6">
+      <h2 class="text-lg font-bold mb-4">6. Pembayaran & Mulai Live</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+        <div class="space-y-2.5 text-sm">
+          <button onclick="setPkt('Paket 2 Jam - Rp 5.500',this)" class="pkt-btn option-selected w-full flex justify-between p-3.5 bg-slate-900/80 rounded-xl border border-teal-400"><span>Paket 2 Jam</span><span class="font-bold text-teal-300">Rp 5.500</span></button>
+          <button onclick="setPkt('Paket 10 Jam - Rp 14.500',this)" class="pkt-btn w-full flex justify-between p-3.5 bg-slate-900/80 rounded-xl border border-slate-700"><span>Paket 10 Jam</span><span class="font-bold text-teal-300">Rp 14.500</span></button>
+          <button onclick="setPkt('Paket 50 Jam - Rp 28.000',this)" class="pkt-btn w-full flex justify-between p-3.5 bg-slate-900/80 rounded-xl border border-slate-700"><span>Paket 50 Jam</span><span class="font-bold text-teal-300">Rp 28.000</span></button>
+        </div>
+        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-center">
+          <p class="text-xs text-slate-400">Pembayaran via QRIS</p><p id="plbl" class="text-xs font-bold text-teal-400 my-2">Paket 2 Jam - Rp 5.500</p>
+          <div class="w-24 h-24 mx-auto bg-white p-2 rounded-xl"><svg viewBox="0 0 100 100" class="w-full h-full fill-slate-950"><rect x="5" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/><rect x="12" y="12" width="11" height="11"/><rect x="70" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/><rect x="77" y="12" width="11" height="11"/><rect x="5" y="70" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/><rect x="12" y="77" width="11" height="11"/><rect x="40" y="40" width="22" height="22"/><rect x="70" y="70" width="22" height="22"/></svg></div>
+          <button onclick="startLiveStream()" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">MULAI LIVE (OBS / RTMP)</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="w-full max-w-4xl mx-auto glass-card rounded-xl px-4 py-3 flex items-center justify-between">
+    <button id="prev" onclick="go(cur - 1)" class="px-4 py-2 bg-slate-800 text-slate-200 text-xs sm:text-sm rounded-lg disabled:opacity-40">← Back</button>
+    <span class="text-xs text-slate-400 hidden sm:inline">Geser / Klik Tombol Navigasi</span>
+    <button id="next" onclick="go(cur + 1)" class="px-4 py-2 bg-teal-400 text-slate-950 text-xs sm:text-sm font-bold rounded-lg disabled:opacity-40">Next →</button>
+  </footer>
+
+  <script>
+    let cur = 1;
+    function go(n) {
+      if (n < 1 || n > 6) return;
+      cur = n;
+      document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
+      document.getElementById('s' + cur).classList.add('active');
+      document.getElementById('badge').textContent = `Slide ${cur} / 6`;
+      document.getElementById('prev').disabled = (cur === 1);
+      document.getElementById('next').disabled = (cur === 6);
+      const op = (cur === 1) ? '1' : '0.25';
+      document.getElementById('galaxy-bg').style.opacity = op;
+      document.getElementById('galaxy-swirl').style.opacity = op;
+      document.getElementById('spaceCanvas').style.opacity = (cur === 1) ? '1' : '0.2';
+    }
+    function loginUser(m) {
+      const v = document.getElementById('loginInput').value.trim();
+      localStorage.setItem('ai_live_user', v || '@creatortiktok.id');
+      cekUser(); go(2);
+    }
+    function logout() { localStorage.removeItem('ai_live_user'); cekUser(); go(1); }
+    function cekUser() {
+      const u = localStorage.getItem('ai_live_user');
+      document.getElementById('userDisplay').textContent = u || '@creatortiktok.id';
+      document.getElementById('logoutBtn').classList.toggle('hidden', !u);
+    }
+    async function startCam() {
+      try {
+        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        const v = document.getElementById('camVid');
+        v.srcObject = s; v.classList.remove('hidden');
+        document.getElementById('camPlaceholder').classList.add('hidden');
+        document.getElementById('fstat').textContent = '🟢 Kamera Live Aktif';
+      } catch (e) { alert('Izin kamera ditolak / tidak tersedia'); }
+    }
+    function loadAv(e) {
+      const f = e.target.files; if (!f) return;
+      const img = document.getElementById('avPreview');
+      img.src = URL.createObjectURL(f); img.classList.remove('hidden');
+      document.getElementById('avIcon').classList.add('hidden');
+      document.getElementById('fstat').textContent = '✅ Avatar Berhasil Diunggah';
+    }
+    function setNiche(n) {
+      document.getElementById('nlbl').textContent = n;
+      document.getElementById('prevNiche').textContent = n;
+      document.querySelectorAll('.niche-btn').forEach(b => b.classList.remove('option-selected'));
+      document.getElementById('niche-' + n).classList.add('option-selected');
+      go(4);
+    }
+    function setHost(h, icon, el) {
+      document.getElementById('hlbl').textContent = h;
+      document.getElementById('hostIcon').textContent = icon;
+      document.getElementById('prevHostName').textContent = h;
+      document.getElementById('prevHostIcon').textContent = icon;
+      document.querySelectorAll('.host-btn').forEach(b => b.classList.remove('option-selected'));
+      el.classList.add('option-selected');
+    }
+    function setPkt(p, el) {
+      document.getElementById('plbl').textContent = p;
+      document.querySelectorAll('.pkt-btn').forEach(b => b.classList.remove('option-selected'));
+      el.classList.add('option-selected');
+    }
+    function startLiveStream() {
+      alert('Stream AI Live siap untuk ' + document.getElementById('userDisplay').textContent + '! Masukkan Server URL & Stream Key RTMP TikTok.');
+    }
+    (function() {
+      const cv = document.getElementById('spaceCanvas'), cx = cv.getContext('2d');
+      let w, h, st = [], mt = [];
+      function rs() {
+        w = cv.width = window.innerWidth; h = cv.height = window.innerHeight; st = [];
+        for (let i = 0; i < 180; i++) st.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.7+0.3, a: Math.random(), s: Math.random()*0.02+0.005, c: ['#fff','#bae6fd','#fde68a','#e9d5ff'][i%4] });
+      }
+      function lp() {
+        cx.clearRect(0, 0, w, h);
+        st.forEach(s => { s.a += s.s; cx.globalAlpha = 0.3 + Math.abs(Math.sin(s.a))*0.7; cx.fillStyle = s.c; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, Math.PI*2); cx.fill(); });
+        if (mt.length < 5 && Math.random() < 0.04) mt.push({ x: Math.random()*w*1.2, y: -20, l: 75, sp: Math.random()*7+6, ang: Math.PI*0.72, c: Math.random()>0.4?'#7dd3fc':'#d8b4fe' });
+        for (let i = mt.length - 1; i >= 0; i--) {
+          const m = mt[i], ex = m.x + Math.cos(m.ang)*m.l, ey = m.y + Math.sin(m.ang)*m.l;
+          const g = cx.createLinearGradient(m.x, m.y, ex, ey); g.addColorStop(0, '#fff'); g.addColorStop(0.3, m.c); g.addColorStop(1, 'transparent');
+          cx.globalAlpha = 0.9; cx.strokeStyle = g; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke();
+          m.x += Math.cos(m.ang)*m.sp; m.y += Math.sin(m.ang)*m.sp;
+          if (m.y > h + 80 || m.x < -80) mt.splice(i, 1);
+        }
+        cx.globalAlpha = 1; requestAnimationFrame(lp);
+      }
+      window.addEventListener('resize', rs); rs(); lp();
+    })();
+    cekUser(); go(1);
+  </script>
 </body>
 </html>
-   
