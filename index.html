@@ -98,7 +98,9 @@
   <main>
     <div id="s1" class="slide active login-card">
       <h2>1. Masuk ke Studio AI Live</h2>
-      <input id="loginInput" class="inp" type="text" placeholder="Enter Username (e.g., @creatortiktok.id)" />
+      <input id="loginInput" class="inp" type="text" oninput="cekFormatNama()" onchange="verifikasiOtomatis()" placeholder="Enter Username (e.g., @creatortiktok.id)" style="margin-bottom:6px;" />
+<p id="verifMsg" style="font-size:12px; min-height:18px; margin-bottom:10px; color:#94a3b8;">Ketik username TikTok Anda (min. 3 karakter)</p>
+
       <button onclick="loginUser()" class="neon-btn teal">Masuk dengan Email</button>
       <button onclick="loginUser()" class="neon-btn purple">Masuk dengan TikTok</button>
       <button onclick="loginUser()" class="neon-btn teal" style="margin-bottom:0;">Masuk dengan Nomor HP (OTP)</button>
@@ -216,13 +218,30 @@
       document.getElementById('prev').disabled = (cur === 1);
       document.getElementById('next').disabled = (cur === 6) || (cur === 1 && !u);
       document.getElementById('milkyWayCanvas').style.opacity = (cur === 1) ? '1' : '0.35';
+        function cekFormatNama() {
+      const raw = document.getElementById('loginInput').value.trim().replace(/^@+/, '');
+      const msg = document.getElementById('verifMsg');
+      const valid = /^[a-zA-Z0-9._]{3,24}$/.test(raw);
+      if (!raw) { msg.textContent = 'Ketik username TikTok Anda (min. 3 karakter)'; msg.style.color = '#94a3b8'; return false; }
+      if (!valid) { msg.textContent = '❌ Format salah (hanya huruf, angka, titik, underscore, min. 3 karakter)'; msg.style.color = '#f87171'; return false; }
+      msg.textContent = '✅ Username @' + raw + ' valid & terverifikasi!'; msg.style.color = '#34d399';
+      return '@' + raw;
+    }
+    function verifikasiOtomatis() {
+      const hasil = cekFormatNama();
+      if (hasil) {
+        localStorage.setItem('ai_live_user', hasil);
+        cekUser();
+        setTimeout(() => go(2), 650);
+      }
     }
     function loginUser() {
-      let v = document.getElementById('loginInput').value.trim();
-      if (!v) { alert('Harap isi Username Anda terlebih dahulu (contoh: @creatortiktok.id)'); document.getElementById('loginInput').focus(); return; }
-      if (!v.startsWith('@')) v = '@' + v;
-      localStorage.setItem('ai_live_user', v);
+      const hasil = cekFormatNama();
+      if (!hasil) { alert('Username belum valid! Gunakan 3-24 karakter (huruf, angka, titik, atau underscore).'); document.getElementById('loginInput').focus(); return; }
+      localStorage.setItem('ai_live_user', hasil);
       cekUser(); go(2);
+    }
+
     }
     function logout() { localStorage.removeItem('ai_live_user'); document.getElementById('loginInput').value = ''; cekUser(); go(1); }
     function cekUser() {
