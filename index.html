@@ -2,175 +2,200 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Live Streamer - @creatortiktok.id</title>
-  <script src="https://tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI Live Streamer — @creatortiktok.id</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      background-color: #03040b;
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, sans-serif;
-      overflow-x: hidden;
-      margin: 0;
+    :root {
+      --teal: #2dd4bf;
+      --purple: #c084fc;
+      --bg-glass: rgba(10, 15, 32, 0.62);
+      --border-glass: rgba(94, 234, 212, 0.42);
     }
-    #galaxy-bg {
-      position: fixed; inset: 0; z-index: -3;
-      background:
-        radial-gradient(ellipse at 20% 30%, rgba(139, 92, 246, 0.35) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 25%, rgba(56, 189, 248, 0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 55% 55%, rgba(251, 191, 36, 0.22) 0%, transparent 45%),
-        radial-gradient(ellipse at 30% 80%, rgba(236, 72, 153, 0.28) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, #0b0f29 0%, #03040b 100%);
-      transition: opacity 0.6s ease;
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    html, body {
+      width: 100%; height: 100dvh; overflow: hidden;
+      background: #02010a; color: #f8fafc;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 12px 16px;
     }
-    #galaxy-swirl {
-      position: fixed; top: -25%; left: -25%; width: 150%; height: 150%; z-index: -2;
-      pointer-events: none; filter: blur(40px); animation: spinGalaxy 60s linear infinite;
-      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(168, 85, 247, 0.14) 70deg, transparent 140deg, rgba(56, 189, 248, 0.14) 220deg, rgba(250, 204, 21, 0.1) 290deg, transparent 360deg);
-      transition: opacity 0.6s ease;
+    #milkyWayCanvas {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: -1; pointer-events: none; transition: opacity 0.6s ease;
     }
-    @keyframes spinGalaxy {
-      0% { transform: rotate(0deg) scale(1); }
-      50% { transform: rotate(180deg) scale(1.08); }
-      100% { transform: rotate(360deg) scale(1); }
+    .glass-bar {
+      width: 100%; max-width: 960px; margin: 0 auto; flex-shrink: 0;
+      background: rgba(8, 12, 26, 0.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 14px;
+      padding: 10px 18px; display: flex; align-items: center; justify-content: space-between;
     }
-    #spaceCanvas { position: fixed; inset: 0; z-index: -1; pointer-events: none; transition: opacity 0.6s ease; }
-    .glass-card { background: rgba(15, 23, 42, 0.58); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(94, 234, 212, 0.35); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); }
-    .btn-glow-teal { background: rgba(15, 23, 42, 0.78); border: 1.5px solid #2dd4bf; box-shadow: 0 0 12px rgba(45, 212, 191, 0.3); transition: 0.25s; }
-    .btn-glow-teal:hover { background: rgba(45, 212, 191, 0.2); box-shadow: 0 0 20px rgba(45, 212, 191, 0.6); }
-    .btn-glow-purple { background: rgba(15, 23, 42, 0.78); border: 1.5px solid #a855f7; box-shadow: 0 0 12px rgba(168, 85, 247, 0.3); transition: 0.25s; }
-    .btn-glow-purple:hover { background: rgba(168, 85, 247, 0.2); box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
-    .slide { display: none; }
-    .slide.active { display: block; animation: fadeSlide 0.35s ease forwards; }
-    @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .option-selected { border-color: #2dd4bf !important; background: rgba(45, 212, 191, 0.18) !important; box-shadow: 0 0 15px rgba(45, 212, 191, 0.35); }
+    .pill { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(45, 212, 191, 0.35); padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; color: #5eead4; }
+    .btn-exit { background: rgba(225, 29, 72, 0.85); color: #fff; border: none; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    main {
+      width: 100%; max-width: 960px; margin: 0 auto; flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; padding: 10px 0;
+    }
+    .slide {
+      display: none; width: 100%; max-height: 100%; overflow-y: auto;
+      background: var(--bg-glass); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border: 1.5px solid var(--border-glass); border-radius: 24px;
+      padding: 24px 22px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(45, 212, 191, 0.12);
+    }
+    .slide.active { display: block; animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    .slide.login-card { max-width: 410px; padding: 30px 26px; text-align: center; }
+    @keyframes slideIn { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    h2 { font-size: 19px; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 18px; text-align: center; color: #ffffff; }
+    .inp {
+      width: 100%; padding: 13px 16px; border-radius: 12px; margin-bottom: 14px;
+      background: rgba(6, 10, 24, 0.85); border: 1.5px solid var(--teal);
+      color: #fff; font-size: 14px; outline: none; transition: 0.2s;
+    }
+    .inp:focus { box-shadow: 0 0 18px rgba(45, 212, 191, 0.45); }
+    .neon-btn {
+      width: 100%; padding: 13px; border-radius: 12px; margin-bottom: 12px;
+      background: rgba(12, 18, 38, 0.85); color: #f8fafc; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: 0.25s; display: block; text-align: center;
+    }
+    .neon-btn.teal { border: 1.5px solid var(--teal); box-shadow: 0 0 15px rgba(45, 212, 191, 0.28); }
+    .neon-btn.teal:hover { background: rgba(45, 212, 191, 0.2); box-shadow: 0 0 24px rgba(45, 212, 191, 0.6); }
+    .neon-btn.purple { border: 1.5px solid var(--purple); box-shadow: 0 0 15px rgba(192, 132, 252, 0.28); }
+    .neon-btn.purple:hover { background: rgba(192, 132, 252, 0.2); box-shadow: 0 0 24px rgba(192, 132, 252, 0.6); }
+    .cta-btn { width: 100%; padding: 12px; border-radius: 12px; background: linear-gradient(135deg, #2dd4bf, #10b981); color: #022c22; font-weight: 800; font-size: 13px; border: none; cursor: pointer; margin-top: 12px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 680px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .panel { background: rgba(6, 10, 24, 0.78); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 16px; padding: 16px; text-align: center; }
+    .choice { cursor: pointer; color: #fff; text-align: left; width: 100%; transition: 0.2s; }
+    .choice.selected { border: 1.5px solid var(--teal); background: rgba(45, 212, 191, 0.16); box-shadow: 0 0 18px rgba(45, 212, 191, 0.25); }
+    .nav-btn { padding: 8px 16px; border-radius: 10px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .hidden { display: none !important; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-3 sm:p-5">
-  <div id="galaxy-bg"></div>
-  <div id="galaxy-swirl"></div>
-  <canvas id="spaceCanvas"></canvas>
-  <header class="w-full max-w-4xl mx-auto glass-card rounded-xl px-4 py-3 flex items-center justify-between gap-2">
-    <div class="font-semibold text-sm sm:text-base text-slate-100">AI Live Streamer</div>
-    <div id="userDisplay" class="text-xs sm:text-sm text-teal-300 font-medium truncate">@creatortiktok.id</div>
-    <div class="flex items-center gap-2">
-      <button id="logoutBtn" onclick="logout()" class="hidden text-xs px-2.5 py-1 rounded-lg bg-rose-600 text-white">Keluar</button>
-      <span id="badge" class="text-xs px-3 py-1 rounded-lg bg-slate-900/90 border border-slate-700 text-slate-200">Slide 1 / 6</span>
+<body>
+  <canvas id="milkyWayCanvas"></canvas>
+
+  <header class="glass-bar">
+    <span style="font-weight:700; font-size:15px; letter-spacing:0.3px;">AI Live Streamer</span>
+    <span id="userDisplay" style="color:#cbd5e1; font-size:13px; font-weight:500;">@creatortiktok.id</span>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button id="logoutBtn" onclick="logout()" class="btn-exit hidden">Keluar</button>
+      <span id="badge" class="pill">Slide 1 / 6</span>
     </div>
   </header>
-  <main class="w-full max-w-4xl mx-auto my-auto py-4">
-    <div id="s1" class="slide active glass-card rounded-2xl p-6 sm:p-8 max-w-md mx-auto text-center space-y-4">
-      <h2 class="text-lg sm:text-xl font-bold text-white">1. Masuk ke Studio AI Live</h2>
-      <input id="loginInput" type="text" value="@creatortiktok.id" placeholder="Enter Username (e.g., @creatortiktok.id)" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-teal-400/70 text-slate-100 text-sm focus:outline-none" />
-      <div class="space-y-3 pt-1">
-        <button onclick="loginUser('Email')" class="w-full py-3 rounded-xl btn-glow-teal text-sm font-medium text-white">Masuk dengan Email</button>
-        <button onclick="loginUser('TikTok')" class="w-full py-3 rounded-xl btn-glow-purple text-sm font-medium text-white">Masuk dengan TikTok</button>
-        <button onclick="loginUser('OTP')" class="w-full py-3 rounded-xl btn-glow-teal text-sm font-medium text-white">Masuk dengan Nomor HP (OTP)</button>
-      </div>
+
+  <main>
+    <div id="s1" class="slide active login-card">
+      <h2>1. Masuk ke Studio AI Live</h2>
+      <input id="loginInput" class="inp" type="text" placeholder="Enter Username (e.g., @creatortiktok.id)" />
+      <button onclick="loginUser()" class="neon-btn teal">Masuk dengan Email</button>
+      <button onclick="loginUser()" class="neon-btn purple">Masuk dengan TikTok</button>
+      <button onclick="loginUser()" class="neon-btn teal" style="margin-bottom:0;">Masuk dengan Nomor HP (OTP)</button>
     </div>
 
-    <div id="s2" class="slide glass-card rounded-2xl p-5 sm:p-6 text-center">
-      <h2 class="text-lg font-bold mb-4">2. Pilih Avatar & Deteksi Wajah Live</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="p-4 bg-slate-900/80 rounded-xl border border-teal-500/40 flex flex-col items-center justify-between">
-          <div class="relative w-36 h-36 rounded-xl overflow-hidden bg-slate-950 border-2 border-dashed border-teal-400 flex items-center justify-center">
-            <video id="camVid" autoplay playsinline muted class="hidden w-full h-full object-cover"></video>
-            <span id="camPlaceholder" class="text-5xl">🧑🏻</span>
+    <div id="s2" class="slide">
+      <h2>2. Pilih Avatar & Deteksi Wajah Live</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <div style="width:128px; height:128px; margin:0 auto; border-radius:16px; border:2px dashed var(--teal); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#020617;">
+            <video id="camVid" autoplay playsinline muted class="hidden" style="width:100%; height:100%; object-fit:cover;"></video>
+            <span id="camPlaceholder" style="font-size:46px;">🧑🏻</span>
           </div>
-          <button onclick="startCam()" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">Gunakan Deteksi Live</button>
+          <button onclick="startCam()" class="cta-btn">Gunakan Deteksi Live</button>
         </div>
-        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 flex flex-col items-center justify-between">
-          <div class="w-36 h-36 rounded-xl overflow-hidden bg-slate-950 border border-slate-700 flex items-center justify-center">
-            <img id="avPreview" alt="Avatar" class="hidden w-full h-full object-cover" />
-            <span id="avIcon" class="text-5xl text-slate-600">👤</span>
+        <div class="panel">
+          <div style="width:128px; height:128px; margin:0 auto; border-radius:16px; border:1px solid #475569; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#020617;">
+            <img id="avPreview" alt="Avatar" class="hidden" style="width:100%; height:100%; object-fit:cover;" />
+            <span id="avIcon" style="font-size:46px;">👤</span>
           </div>
-          <p id="fstat" class="text-emerald-400 text-xs mt-2">✅ Siap Scan / Upload</p>
-          <label class="mt-2 block w-full py-2.5 bg-slate-800 rounded-lg cursor-pointer text-sm font-medium">
+          <p id="fstat" style="color:#34d399; font-size:12px; margin-top:8px;">✅ Siap Scan / Upload</p>
+          <label class="neon-btn teal" style="margin-top:8px; margin-bottom:0; padding:10px; font-size:13px;">
             Upload Gambar Avatar <input type="file" accept="image/*" onchange="loadAv(event)" class="hidden" />
           </label>
         </div>
       </div>
     </div>
-    <div id="s3" class="slide glass-card rounded-2xl p-5 sm:p-6 text-center">
-      <h2 class="text-lg font-bold mb-4">3. Pilih Niche Live</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <button id="niche-EDUKASI" onclick="setNiche('EDUKASI')" class="niche-btn option-selected p-5 bg-slate-900/80 rounded-xl border border-teal-400">
-          <div class="text-4xl mb-2">🎓</div><div class="font-bold text-teal-300">EDUKASI</div><p class="text-xs text-slate-400 mt-1">Kelas online & tutorial</p>
+
+    <div id="s3" class="slide">
+      <h2>3. Pilih Niche Live</h2>
+      <div class="grid-3">
+        <button id="niche-EDUKASI" onclick="setNiche('EDUKASI')" class="panel choice selected" style="text-align:center;">
+          <div style="font-size:36px; margin-bottom:6px;">🎓</div><strong style="color:#5eead4;">EDUKASI</strong><p style="font-size:12px; color:#94a3b8; margin-top:4px;">Kelas & tutorial interaktif</p>
         </button>
-        <button id="niche-MUSIK" onclick="setNiche('MUSIK')" class="niche-btn p-5 bg-slate-900/80 rounded-xl border border-purple-500/50">
-          <div class="text-4xl mb-2">🎵</div><div class="font-bold text-purple-300">MUSIK & HIBURAN</div><p class="text-xs text-slate-400 mt-1">Live DJ & request lagu</p>
+        <button id="niche-MUSIK" onclick="setNiche('MUSIK')" class="panel choice" style="text-align:center;">
+          <div style="font-size:36px; margin-bottom:6px;">🎵</div><strong style="color:#d8b4fe;">MUSIK</strong><p style="font-size:12px; color:#94a3b8; margin-top:4px;">Live DJ, karaoke & request</p>
         </button>
-        <button id="niche-JUALAN" onclick="setNiche('JUALAN')" class="niche-btn p-5 bg-slate-900/80 rounded-xl border border-blue-500/50">
-          <div class="text-4xl mb-2">🛒</div><div class="font-bold text-blue-300">JUALAN</div><p class="text-xs text-slate-400 mt-1">Spill produk & keranjang</p>
+        <button id="niche-JUALAN" onclick="setNiche('JUALAN')" class="panel choice" style="text-align:center;">
+          <div style="font-size:36px; margin-bottom:6px;">🛒</div><strong style="color:#93c5fd;">JUALAN</strong><p style="font-size:12px; color:#94a3b8; margin-top:4px;">Spill produk & keranjang</p>
         </button>
+      </div>
+    </div>
+    <div id="s4" class="slide">
+      <h2>4. Host Style (<span id="nlbl" style="color:#5eead4;">EDUKASI</span>)</h2>
+      <div class="grid-2" style="align-items:center;">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button onclick="setHost('Mentor Edukasi','👨🏻‍🏫',this)" class="panel choice selected"><strong>👨🏻‍🏫 Mentor Edukasi</strong><br><small style="color:#94a3b8;">Jelas, ramah & terstruktur</small></button>
+          <button onclick="setHost('Host Musik & Santai','🎧',this)" class="panel choice"><strong>🎧 Host Musik & Santai</strong><br><small style="color:#94a3b8;">Asyik, santai & interaktif</small></button>
+          <button onclick="setHost('Host Jualan Enerjik','🛍️',this)" class="panel choice"><strong>🛍️ Host Jualan Enerjik</strong><br><small style="color:#94a3b8;">Persuasif & cepat respon komentar</small></button>
+        </div>
+        <div class="panel">
+          <div id="hostIcon" style="font-size:52px;">👨🏻‍🏫</div>
+          <p style="font-size:12px; color:#94a3b8; margin-top:6px;">Host Terpilih:</p>
+          <strong id="hlbl" style="color:#5eead4; display:block; margin-top:4px;">Mentor Edukasi</strong>
+          <button onclick="go(5)" class="cta-btn">Lanjut ke Control Center</button>
+        </div>
       </div>
     </div>
 
-    <div id="s4" class="slide glass-card rounded-2xl p-5 sm:p-6">
-      <h2 class="text-lg font-bold mb-4">4. Host Style (<span id="nlbl" class="text-teal-400">EDUKASI</span>)</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-        <div class="space-y-2.5">
-          <button onclick="setHost('Mentor Edukasi','👨🏻‍🏫',this)" class="host-btn option-selected w-full text-left p-3.5 bg-slate-900/80 rounded-xl border border-teal-400">
-            <div class="font-bold text-sm">👨🏻‍🏫 Mentor Edukasi</div><div class="text-xs text-slate-400">Jelas, informatif & terstruktur</div>
-          </button>
-          <button onclick="setHost('Host Musik & Santai','🎧',this)" class="host-btn w-full text-left p-3.5 bg-slate-900/80 rounded-xl border border-slate-700">
-            <div class="font-bold text-sm">🎧 Host Musik & Santai</div><div class="text-xs text-slate-400">Asyik, interaktif & ramah</div>
-          </button>
-          <button onclick="setHost('Host Jualan Enerjik','🛍️',this)" class="host-btn w-full text-left p-3.5 bg-slate-900/80 rounded-xl border border-slate-700">
-            <div class="font-bold text-sm">🛍️ Host Jualan Enerjik</div><div class="text-xs text-slate-400">Persuasif & cepat respon komentar</div>
-          </button>
+    <div id="s5" class="slide">
+      <h2>5. Control Center & Preview</h2>
+      <div class="grid-2" style="align-items:center;">
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>📱 Studio & Ratio (9:16)</span><input type="checkbox" checked /></label>
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>📚 Materi & Script Otomatis</span><input type="checkbox" checked /></label>
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>🖼️ Pop-up Produk / Lirik</span><input type="checkbox" checked /></label>
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>🎙️ Auto-Monolog & Balas Chat</span><input type="checkbox" checked /></label>
         </div>
-        <div class="p-5 bg-slate-900/80 rounded-xl border border-slate-700 text-center">
-          <div id="hostIcon" class="text-6xl mb-3">👨🏻‍🏫</div><p class="text-xs text-slate-400">Host Terpilih:</p>
-          <p id="hlbl" class="text-base font-bold text-teal-300 mt-1">Mentor Edukasi</p>
-          <button onclick="go(5)" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">Lanjut ke Control Center</button>
-        </div>
-      </div>
-    </div>
-    <div id="s5" class="slide glass-card rounded-2xl p-5 sm:p-6">
-      <h2 class="text-lg font-bold mb-4">5. Control Center & Preview</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-        <div class="space-y-2 text-sm">
-          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>📱 Studio & Ratio (9:16)</span><input type="checkbox" checked class="accent-teal-400" /></label>
-          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>📚 Materi & Script Otomatis</span><input type="checkbox" checked class="accent-teal-400" /></label>
-          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>🖼️ Pop-up Produk / Lirik</span><input type="checkbox" checked class="accent-teal-400" /></label>
-          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>🎙️ Auto-Monolog AI</span><input type="checkbox" checked class="accent-teal-400" /></label>
-          <label class="flex justify-between p-2.5 bg-slate-900/80 rounded-lg border border-slate-800"><span>🔗 Koneksi TikTok / RTMP</span><input type="checkbox" checked class="accent-teal-400" /></label>
-        </div>
-        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-center">
-          <div class="w-40 h-56 mx-auto rounded-xl border-2 border-teal-400 bg-slate-950 p-2.5 flex flex-col justify-between">
-            <div class="flex justify-between text-[10px]"><span class="bg-red-600 px-2 py-0.5 rounded font-bold">LIVE</span><span id="prevNiche" class="bg-slate-800 text-teal-300 px-2 py-0.5 rounded">EDUKASI</span></div>
-            <div class="my-auto"><div id="prevHostIcon" class="text-5xl mb-1">👨🏻‍🏫</div><div class="text-[11px] font-semibold text-teal-300">AI Virtual Host</div><div id="prevHostName" class="text-[10px] text-slate-400">Mentor Edukasi</div></div>
-            <div class="text-[10px] bg-slate-900 text-slate-300 py-1 rounded truncate">@creatortiktok.id</div>
+        <div class="panel">
+          <div style="width:148px; height:205px; margin:0 auto; border:2px solid var(--teal); border-radius:16px; background:#020617; padding:10px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; justify-content:space-between; font-size:10px;"><span style="background:#dc2626; padding:2px 6px; border-radius:4px; font-weight:700;">LIVE</span><span id="prevNiche" style="background:#1e293b; color:#5eead4; padding:2px 6px; border-radius:4px;">EDUKASI</span></div>
+            <div><div id="prevHostIcon" style="font-size:44px;">👨🏻‍🏫</div><strong style="font-size:11px; color:#5eead4;">AI Virtual Host</strong><div id="prevHostName" style="font-size:10px; color:#94a3b8;">Mentor Edukasi</div></div>
+            <div style="font-size:10px; background:#0f172a; padding:4px; border-radius:6px;">@creatortiktok.id</div>
           </div>
-          <button onclick="go(6)" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">Lanjut ke Pembayaran</button>
+          <button onclick="go(6)" class="cta-btn">Lanjut ke Pembayaran</button>
         </div>
       </div>
     </div>
 
-    <div id="s6" class="slide glass-card rounded-2xl p-5 sm:p-6">
-      <h2 class="text-lg font-bold mb-4">6. Pembayaran & Mulai Live</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-        <div class="space-y-2.5 text-sm">
-          <button onclick="setPkt('Paket 2 Jam - Rp 5.500',this)" class="pkt-btn option-selected w-full flex justify-between p-3.5 bg-slate-900/80 rounded-xl border border-teal-400"><span>Paket 2 Jam</span><span class="font-bold text-teal-300">Rp 5.500</span></button>
-          <button onclick="setPkt('Paket 10 Jam - Rp 14.500',this)" class="pkt-btn w-full flex justify-between p-3.5 bg-slate-900/80 rounded-xl border border-slate-700"><span>Paket 10 Jam</span><span class="font-bold text-teal-300">Rp 14.500</span></button>
-          <button onclick="setPkt('Paket 50 Jam - Rp 28.000',this)" class="pkt-btn w-full flex justify-between p-3.5 bg-slate-900/80 rounded-xl border border-slate-700"><span>Paket 50 Jam</span><span class="font-bold text-teal-300">Rp 28.000</span></button>
+    <div id="s6" class="slide">
+      <h2>6. Pembayaran & Mulai Live</h2>
+      <div class="grid-2" style="align-items:center;">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button onclick="setPkt('Paket 2 Jam - Rp 5.500',this)" class="panel choice selected" style="display:flex; justify-content:space-between;"><span>Paket 2 Jam</span><strong style="color:#5eead4;">Rp 5.500</strong></button>
+          <button onclick="setPkt('Paket 10 Jam - Rp 14.500',this)" class="panel choice" style="display:flex; justify-content:space-between;"><span>Paket 10 Jam</span><strong style="color:#5eead4;">Rp 14.500</strong></button>
+          <button onclick="setPkt('Paket 50 Jam - Rp 28.000',this)" class="panel choice" style="display:flex; justify-content:space-between;"><span>Paket 50 Jam</span><strong style="color:#5eead4;">Rp 28.000</strong></button>
         </div>
-        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-center">
-          <p class="text-xs text-slate-400">Pembayaran via QRIS</p><p id="plbl" class="text-xs font-bold text-teal-400 my-2">Paket 2 Jam - Rp 5.500</p>
-          <div class="w-24 h-24 mx-auto bg-white p-2 rounded-xl"><svg viewBox="0 0 100 100" class="w-full h-full fill-slate-950"><rect x="5" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/><rect x="12" y="12" width="11" height="11"/><rect x="70" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/><rect x="77" y="12" width="11" height="11"/><rect x="5" y="70" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="5"/><rect x="12" y="77" width="11" height="11"/><rect x="40" y="40" width="22" height="22"/><rect x="70" y="70" width="22" height="22"/></svg></div>
-          <button onclick="startLiveStream()" class="mt-4 w-full py-2.5 bg-emerald-500 text-slate-950 font-bold text-sm rounded-lg">MULAI LIVE (OBS / RTMP)</button>
+        <div class="panel">
+          <p style="font-size:12px; color:#94a3b8;">Pembayaran via QRIS</p>
+          <strong id="plbl" style="font-size:13px; color:#5eead4; display:block; margin:6px 0;">Paket 2 Jam - Rp 5.500</strong>
+          <div style="width:94px; height:94px; margin:0 auto; background:#fff; padding:8px; border-radius:10px;">
+            <svg viewBox="0 0 100 100" style="width:100%; height:100%; fill:#0f172a;"><rect x="5" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="6"/><rect x="12" y="12" width="11" height="11"/><rect x="70" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="6"/><rect x="77" y="12" width="11" height="11"/><rect x="5" y="70" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="6"/><rect x="12" y="77" width="11" height="11"/><rect x="40" y="40" width="22" height="22"/><rect x="70" y="70" width="22" height="22"/></svg>
+          </div>
+          <button onclick="startLive()" class="cta-btn">MULAI LIVE (OBS / RTMP)</button>
         </div>
       </div>
     </div>
   </main>
-  <footer class="w-full max-w-4xl mx-auto glass-card rounded-xl px-4 py-3 flex items-center justify-between">
-    <button id="prev" onclick="go(cur - 1)" class="px-4 py-2 bg-slate-800 text-slate-200 text-xs sm:text-sm rounded-lg disabled:opacity-40">← Back</button>
-    <span class="text-xs text-slate-400 hidden sm:inline">Geser / Klik Tombol Navigasi</span>
-    <button id="next" onclick="go(cur + 1)" class="px-4 py-2 bg-teal-400 text-slate-950 text-xs sm:text-sm font-bold rounded-lg disabled:opacity-40">Next →</button>
-  </footer>
 
+  <footer class="glass-bar">
+    <button id="prev" onclick="go(cur - 1)" class="nav-btn" style="background:#1e293b; color:#e2e8f0;">← Back</button>
+    <span style="font-size:12px; color:#94a3b8;">Studio AI Live</span>
+    <button id="next" onclick="go(cur + 1)" class="nav-btn" style="background:#2dd4bf; color:#042f2e;">Next →</button>
+  </footer>
   <script>
     let cur = 1;
     function go(n) {
@@ -178,15 +203,12 @@
       cur = n;
       document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
       document.getElementById('s' + cur).classList.add('active');
-      document.getElementById('badge').textContent = `Slide ${cur} / 6`;
+      document.getElementById('badge').textContent = 'Slide ' + cur + ' / 6';
       document.getElementById('prev').disabled = (cur === 1);
       document.getElementById('next').disabled = (cur === 6);
-      const op = (cur === 1) ? '1' : '0.25';
-      document.getElementById('galaxy-bg').style.opacity = op;
-      document.getElementById('galaxy-swirl').style.opacity = op;
-      document.getElementById('spaceCanvas').style.opacity = (cur === 1) ? '1' : '0.2';
+      document.getElementById('milkyWayCanvas').style.opacity = (cur === 1) ? '1' : '0.35';
     }
-    function loginUser(m) {
+    function loginUser() {
       const v = document.getElementById('loginInput').value.trim();
       localStorage.setItem('ai_live_user', v || '@creatortiktok.id');
       cekUser(); go(2);
@@ -200,63 +222,71 @@
     async function startCam() {
       try {
         const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-        const v = document.getElementById('camVid');
-        v.srcObject = s; v.classList.remove('hidden');
+        const v = document.getElementById('camVid'); v.srcObject = s; v.classList.remove('hidden');
         document.getElementById('camPlaceholder').classList.add('hidden');
         document.getElementById('fstat').textContent = '🟢 Kamera Live Aktif';
       } catch (e) { alert('Izin kamera ditolak / tidak tersedia'); }
     }
     function loadAv(e) {
       const f = e.target.files; if (!f) return;
-      const img = document.getElementById('avPreview');
-      img.src = URL.createObjectURL(f); img.classList.remove('hidden');
+      const img = document.getElementById('avPreview'); img.src = URL.createObjectURL(f); img.classList.remove('hidden');
       document.getElementById('avIcon').classList.add('hidden');
       document.getElementById('fstat').textContent = '✅ Avatar Berhasil Diunggah';
     }
     function setNiche(n) {
-      document.getElementById('nlbl').textContent = n;
-      document.getElementById('prevNiche').textContent = n;
-      document.querySelectorAll('.niche-btn').forEach(b => b.classList.remove('option-selected'));
-      document.getElementById('niche-' + n).classList.add('option-selected');
-      go(4);
+      document.getElementById('nlbl').textContent = n; document.getElementById('prevNiche').textContent = n;
+      document.querySelectorAll('#s3 .choice').forEach(b => b.classList.remove('selected'));
+      document.getElementById('niche-' + n).classList.add('selected'); go(4);
     }
     function setHost(h, icon, el) {
-      document.getElementById('hlbl').textContent = h;
-      document.getElementById('hostIcon').textContent = icon;
-      document.getElementById('prevHostName').textContent = h;
-      document.getElementById('prevHostIcon').textContent = icon;
-      document.querySelectorAll('.host-btn').forEach(b => b.classList.remove('option-selected'));
-      el.classList.add('option-selected');
+      document.getElementById('hlbl').textContent = h; document.getElementById('hostIcon').textContent = icon;
+      document.getElementById('prevHostName').textContent = h; document.getElementById('prevHostIcon').textContent = icon;
+      document.querySelectorAll('#s4 .choice').forEach(b => b.classList.remove('selected')); el.classList.add('selected');
     }
     function setPkt(p, el) {
       document.getElementById('plbl').textContent = p;
-      document.querySelectorAll('.pkt-btn').forEach(b => b.classList.remove('option-selected'));
-      el.classList.add('option-selected');
+      document.querySelectorAll('#s6 .choice').forEach(b => b.classList.remove('selected')); el.classList.add('selected');
     }
-    function startLiveStream() {
-      alert('Stream AI Live siap untuk ' + document.getElementById('userDisplay').textContent + '! Masukkan Server URL & Stream Key RTMP TikTok.');
-    }
+    function startLive() { alert('Stream AI Live siap untuk ' + document.getElementById('userDisplay').textContent + '! Masukkan Server URL & Stream Key RTMP TikTok.'); }
     (function() {
-      const cv = document.getElementById('spaceCanvas'), cx = cv.getContext('2d');
-      let w, h, st = [], mt = [];
-      function rs() {
-        w = cv.width = window.innerWidth; h = cv.height = window.innerHeight; st = [];
-        for (let i = 0; i < 180; i++) st.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.7+0.3, a: Math.random(), s: Math.random()*0.02+0.005, c: ['#fff','#bae6fd','#fde68a','#e9d5ff'][i%4] });
-      }
-      function lp() {
-        cx.clearRect(0, 0, w, h);
-        st.forEach(s => { s.a += s.s; cx.globalAlpha = 0.3 + Math.abs(Math.sin(s.a))*0.7; cx.fillStyle = s.c; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, Math.PI*2); cx.fill(); });
-        if (mt.length < 5 && Math.random() < 0.04) mt.push({ x: Math.random()*w*1.2, y: -20, l: 75, sp: Math.random()*7+6, ang: Math.PI*0.72, c: Math.random()>0.4?'#7dd3fc':'#d8b4fe' });
-        for (let i = mt.length - 1; i >= 0; i--) {
-          const m = mt[i], ex = m.x + Math.cos(m.ang)*m.l, ey = m.y + Math.sin(m.ang)*m.l;
-          const g = cx.createLinearGradient(m.x, m.y, ex, ey); g.addColorStop(0, '#fff'); g.addColorStop(0.3, m.c); g.addColorStop(1, 'transparent');
-          cx.globalAlpha = 0.9; cx.strokeStyle = g; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke();
-          m.x += Math.cos(m.ang)*m.sp; m.y += Math.sin(m.ang)*m.sp;
-          if (m.y > h + 80 || m.x < -80) mt.splice(i, 1);
+      const cv = document.getElementById('milkyWayCanvas'), cx = cv.getContext('2d');
+      let w, h, galaxyStars = [], bgStars = [], meteors = [], rot = 0;
+      function init() {
+        w = cv.width = window.innerWidth; h = cv.height = window.innerHeight;
+        galaxyStars = []; bgStars = [];
+        const maxR = Math.min(w, h) * 0.48;
+        for (let i = 0; i < 1600; i++) {
+          const arm = i % 4, dist = Math.pow(Math.random(), 0.75) * maxR;
+          const angle = (arm * Math.PI / 2) + (dist / maxR) * 3.8 + (Math.random() - 0.5) * 0.85;
+          const cols = ['#fde68a', '#bae6fd', '#e879f9', '#c084fc', '#ffffff'];
+          galaxyStars.push({ d: dist, a: angle, r: Math.random() * 1.9 + 0.4, c: dist < maxR * 0.2 ? '#fef08a' : cols[i % 5], al: 0.4 + Math.random() * 0.6 });
         }
-        cx.globalAlpha = 1; requestAnimationFrame(lp);
+        for (let i = 0; i < 220; i++) bgStars.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.6 + 0.3, p: Math.random() * 6 });
       }
-      window.addEventListener('resize', rs); rs(); lp();
+      function draw() {
+        cx.fillStyle = '#03020c'; cx.fillRect(0, 0, w, h);
+        const cx0 = w / 2, cy0 = h / 2, maxR = Math.min(w, h) * 0.48;
+        const neb = cx.createRadialGradient(cx0, cy0, 5, cx0, cy0, maxR * 1.15);
+        neb.addColorStop(0, 'rgba(254, 240, 138, 0.45)'); neb.addColorStop(0.25, 'rgba(192, 132, 252, 0.32)');
+        neb.addColorStop(0.55, 'rgba(56, 189, 248, 0.22)'); neb.addColorStop(1, 'transparent');
+        cx.fillStyle = neb; cx.fillRect(0, 0, w, h);
+        bgStars.forEach(s => { s.p += 0.03; cx.globalAlpha = 0.3 + Math.abs(Math.sin(s.p)) * 0.7; cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, Math.PI * 2); cx.fill(); });
+        rot += 0.0008;
+        galaxyStars.forEach(g => {
+          const ang = g.a + rot, sx = cx0 + Math.cos(ang) * g.d * (w > h ? 1.25 : 1), sy = cy0 + Math.sin(ang) * g.d * (w > h ? 0.85 : 1.15);
+          cx.globalAlpha = g.al; cx.fillStyle = g.c; cx.beginPath(); cx.arc(sx, sy, g.r, 0, Math.PI * 2); cx.fill();
+        });
+        if (meteors.length < 6 && Math.random() < 0.05) meteors.push({ x: Math.random() * w * 1.3, y: -20, l: 90, sp: Math.random() * 7 + 6, ang: Math.PI * 0.72, c: Math.random() > 0.4 ? '#7dd3fc' : '#e879f9' });
+        for (let i = meteors.length - 1; i >= 0; i--) {
+          const m = meteors[i], ex = m.x + Math.cos(m.ang) * m.l, ey = m.y + Math.sin(m.ang) * m.l;
+          const gr = cx.createLinearGradient(m.x, m.y, ex, ey); gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, m.c); gr.addColorStop(1, 'transparent');
+          cx.globalAlpha = 0.95; cx.strokeStyle = gr; cx.lineWidth = 2.4; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke();
+          m.x += Math.cos(m.ang) * m.sp; m.y += Math.sin(m.ang) * m.sp;
+          if (m.y > h + 90 || m.x < -90) meteors.splice(i, 1);
+        }
+        cx.globalAlpha = 1; requestAnimationFrame(draw);
+      }
+      window.addEventListener('resize', init); init(); draw();
     })();
     cekUser(); go(1);
   </script>
