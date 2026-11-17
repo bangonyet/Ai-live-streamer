@@ -3,158 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AI Live Streamer — @creatortiktok.id</title>
+  <title>AI Live Streamer</title>
   <style>
-    :root {
-      --teal: #2dd4bf;
-      --purple: #c084fc;
-      --bg-glass: rgba(10, 15, 32, 0.62);
-      --border-glass: rgba(94, 234, 212, 0.42);
-    }
-        html, body {
-      width: 100%; height: 100dvh; overflow: hidden; color: #f8fafc;
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: 12px 16px;
-      background:
-        radial-gradient(ellipse at 25% 25%, rgba(168, 85, 247, 0.65) 0%, transparent 50%),
-        radial-gradient(ellipse at 75% 30%, rgba(56, 189, 248, 0.55) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.45) 0%, transparent 42%),
-        radial-gradient(ellipse at 30% 75%, rgba(236, 72, 153, 0.6) 0%, transparent 50%),
-        radial-gradient(ellipse at 75% 75%, rgba(99, 102, 241, 0.55) 0%, transparent 48%),
-        radial-gradient(circle at 50% 50%, #1e1042 0%, #060417 75%, #020108 100%);
-    }
-    #milkyWayCanvas {
-      position: fixed; inset: 0; width: 100vw; height: 100vh;
-      z-index: 0; pointer-events: none; transition: opacity 0.6s ease;
-    }
-    header, main, footer { position: relative; z-index: 2; }
-
-    .glass-bar {
-      width: 100%; max-width: 960px; margin: 0 auto; flex-shrink: 0;
-      background: rgba(8, 12, 26, 0.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 14px;
-      padding: 10px 18px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .pill { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(45, 212, 191, 0.35); padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; color: #5eead4; }
-    .btn-exit { background: rgba(225, 29, 72, 0.85); color: #fff; border: none; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; cursor: pointer; }
-    main {
-      width: 100%; max-width: 960px; margin: 0 auto; flex: 1;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; padding: 10px 0;
-    }
-    .slide {
-      display: none; width: 100%; max-height: 100%; overflow-y: auto;
-      background: var(--bg-glass); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-      border: 1.5px solid var(--border-glass); border-radius: 24px;
-      padding: 24px 22px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(45, 212, 191, 0.12);
-    }
+    :root { --teal: #2dd4bf; --purple: #c084fc; --bg-glass: rgba(10, 15, 32, 0.62); --border-glass: rgba(94, 234, 212, 0.42); }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #050414; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    #milkyWayCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; transition: opacity 0.8s ease; }
+    header, main, footer { position: relative; z-index: 10; }
+    .glass-bar { background: rgba(6, 10, 24, 0.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-color: rgba(94, 234, 212, 0.25); }
+    header { height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-bottom: 1px solid rgba(94, 234, 212, 0.25); }
+    .pill { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(94, 234, 212, 0.35); padding: 4px 12px; border-radius: 99px; font-size: 12px; color: #5eead4; }
+    .btn-exit { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(248, 113, 113, 0.5); color: #fca5a5; padding: 4px 10px; border-radius: 99px; font-size: 11px; cursor: pointer; }
+    main { height: calc(100vh - 110px); display: flex; align-items: center; justify-content: center; padding: 14px; overflow-y: auto; }
+    .slide { display: none; width: 100%; max-width: 780px; background: var(--bg-glass); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1.5px solid var(--border-glass); border-radius: 24px; padding: 24px 22px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(45, 212, 191, 0.12); }
     .slide.active { display: block; animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
-    .slide.login-card { max-width: 410px; padding: 30px 26px; text-align: center; }
+    .slide.login-card { max-width: 410px; padding: 30px 24px; text-align: center; }
     @keyframes slideIn { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     h2 { font-size: 19px; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 18px; text-align: center; color: #ffffff; }
-    .inp {
-      width: 100%; padding: 13px 16px; border-radius: 12px; margin-bottom: 14px;
-      background: rgba(6, 10, 24, 0.85); border: 1.5px solid var(--teal);
-      color: #fff; font-size: 14px; outline: none; transition: 0.2s;
-    }
-    .inp:focus { box-shadow: 0 0 18px rgba(45, 212, 191, 0.45); }
-    .neon-btn {
-      width: 100%; padding: 13px; border-radius: 12px; margin-bottom: 12px;
-      background: rgba(12, 18, 38, 0.85); color: #f8fafc; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: 0.25s; display: block; text-align: center;
-    }
+    .neon-btn { width: 100%; padding: 13px; border-radius: 12px; margin-bottom: 12px; background: rgba(12, 18, 38, 0.85); color: #f8fafc; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.25s; display: block; text-align: center; }
     .neon-btn.teal { border: 1.5px solid var(--teal); box-shadow: 0 0 15px rgba(45, 212, 191, 0.28); }
-    .neon-btn.teal:hover { background: rgba(45, 212, 191, 0.2); box-shadow: 0 0 24px rgba(45, 212, 191, 0.6); }
-    .neon-btn.purple { border: 1.5px solid var(--purple); box-shadow: 0 0 15px rgba(192, 132, 252, 0.28); }
-    .neon-btn.purple:hover { background: rgba(192, 132, 252, 0.2); box-shadow: 0 0 24px rgba(192, 132, 252, 0.6); }
-    .cta-btn { width: 100%; padding: 12px; border-radius: 12px; background: linear-gradient(135deg, #2dd4bf, #10b981); color: #022c22; font-weight: 800; font-size: 13px; border: none; cursor: pointer; margin-top: 12px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 14px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 680px) {
-      .grid-2 { grid-template-columns: 1fr 1fr; }
-      .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-    }
-    .panel { background: rgba(6, 10, 24, 0.78); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 16px; padding: 16px; text-align: center; }
-    .choice { cursor: pointer; color: #fff; text-align: left; width: 100%; transition: 0.2s; }
-    .choice.selected { border: 1.5px solid var(--teal); background: rgba(45, 212, 191, 0.16); box-shadow: 0 0 18px rgba(45, 212, 191, 0.25); }
-    .nav-btn { padding: 8px 16px; border-radius: 10px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; }
-    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .cta-btn { width: 100%; padding: 13px; border-radius: 12px; background: linear-gradient(135deg, #2dd4bf, #10b981); color: #042f2e; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: 0.25s; box-shadow: 0 0 24px rgba(45, 212, 191, 0.45); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+    .panel { background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 16px; padding: 16px; text-align: center; }
+    .choice { cursor: pointer; transition: 0.2s; color: #f8fafc; }
+    .choice.selected { border-color: #2dd4bf; background: rgba(45, 212, 191, 0.16); box-shadow: 0 0 18px rgba(45, 212, 191, 0.25); }
+    footer { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-top: 1px solid rgba(94, 234, 212, 0.25); }
+    .nav-btn { padding: 8px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; border: none; }
+    .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
   <canvas id="milkyWayCanvas"></canvas>
-
   <header class="glass-bar">
-    <span style="font-weight:700; font-size:15px; letter-spacing:0.3px;">AI Live Streamer</span>
-    <span id="userDisplay" style="color:#cbd5e1; font-size:13px; font-weight:500;">@creatortiktok.id</span>
-    <div style="display:flex; gap:8px; align-items:center;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-weight:700; font-size:14px; color:#5eead4;">AI Live Streamer</span>
+      <span id="userDisplay" class="pill">@creator</span>
       <button id="logoutBtn" onclick="logout()" class="btn-exit hidden">Keluar</button>
-      <span id="badge" class="pill">Slide 1 / 6</span>
     </div>
+    <span id="badge" class="pill">Slide 1 / 6</span>
   </header>
 
   <main>
     <div id="s1" class="slide active login-card">
-      <h2>1. Masuk ke Studio AI Live</h2>
-      <input id="loginInput" class="inp" type="text" placeholder="Masukkan Username Terdaftar (cth: @creatortiktok.id)" />
-
-      <button onclick="loginUser()" class="neon-btn teal">Masuk dengan Email</button>
-      <button onclick="loginUser()" class="neon-btn purple">Masuk dengan TikTok</button>
-      <button onclick="loginUser()" class="neon-btn teal" style="margin-bottom:0;">Masuk dengan Nomor HP (OTP)</button>
+      <h2>Studio AI Live</h2>
+      <p style="font-size:13px; color:#94a3b8; margin-bottom:20px;">Masuk dengan akun Google untuk memulai siaran & menyimpan profil kreator.</p>
+      <button onclick="loginUser()" class="cta-btn" style="font-size:15px;">Masuk dengan Google</button>
     </div>
 
     <div id="s2" class="slide">
       <h2>2. Pilih Avatar & Deteksi Wajah Live</h2>
       <div class="grid-2">
         <div class="panel">
-          <div style="width:128px; height:128px; margin:0 auto; border-radius:16px; border:2px dashed var(--teal); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#020617;">
+          <div style="width:120px; height:120px; margin:0 auto; border-radius:16px; border:2px dashed var(--teal); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#090d16;">
             <video id="camVid" autoplay playsinline muted class="hidden" style="width:100%; height:100%; object-fit:cover;"></video>
-            <span id="camPlaceholder" style="font-size:46px;">🧑🏻</span>
+            <span id="camPlaceholder" style="font-size:40px;">📷</span>
           </div>
-          <button onclick="startCam()" class="cta-btn">Gunakan Deteksi Live</button>
+          <button onclick="startCam()" class="cta-btn" style="margin-top:12px; padding:10px; font-size:13px;">Gunakan Deteksi Live</button>
         </div>
         <div class="panel">
-          <div style="width:128px; height:128px; margin:0 auto; border-radius:16px; border:1px solid #475569; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#020617;">
+          <div style="width:120px; height:120px; margin:0 auto; border-radius:16px; border:1px solid #475569; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#090d16;">
             <img id="avPreview" alt="Avatar" class="hidden" style="width:100%; height:100%; object-fit:cover;" />
-            <span id="avIcon" style="font-size:46px;">👤</span>
+            <span id="avIcon" style="font-size:40px;">🤖</span>
           </div>
-          <p id="fstat" style="color:#34d399; font-size:12px; margin-top:8px;">✅ Siap Scan / Upload</p>
+          <p id="fstat" style="color:#94a3b8; font-size:12px; margin-top:8px;">● Siap Scan / Upload</p>
           <label class="neon-btn teal" style="margin-top:8px; margin-bottom:0; padding:10px; font-size:13px;">
             Upload Gambar Avatar <input type="file" accept="image/*" onchange="loadAv(event)" class="hidden" />
           </label>
         </div>
       </div>
     </div>
-
     <div id="s3" class="slide">
       <h2>3. Pilih Niche Live</h2>
       <div class="grid-3">
-        <button id="niche-EDUKASI" onclick="setNiche('EDUKASI')" class="panel choice selected" style="text-align:center;">
-          <div style="font-size:36px; margin-bottom:6px;">🎓</div><strong style="color:#5eead4;">EDUKASI</strong><p style="font-size:12px; color:#94a3b8; margin-top:4px;">Kelas & tutorial interaktif</p>
-        </button>
-        <button id="niche-MUSIK" onclick="setNiche('MUSIK')" class="panel choice" style="text-align:center;">
-          <div style="font-size:36px; margin-bottom:6px;">🎵</div><strong style="color:#d8b4fe;">MUSIK</strong><p style="font-size:12px; color:#94a3b8; margin-top:4px;">Live DJ, karaoke & request</p>
-        </button>
-        <button id="niche-JUALAN" onclick="setNiche('JUALAN')" class="panel choice" style="text-align:center;">
-          <div style="font-size:36px; margin-bottom:6px;">🛒</div><strong style="color:#93c5fd;">JUALAN</strong><p style="font-size:12px; color:#94a3b8; margin-top:4px;">Spill produk & keranjang</p>
-        </button>
+        <button id="niche-EDUKASI" onclick="setNiche('EDUKASI')" class="panel choice selected"><div style="font-size:36px; margin-bottom:6px;">🎓</div><strong>Edukasi</strong></button>
+        <button id="niche-MUSIK" onclick="setNiche('MUSIK')" class="panel choice"><div style="font-size:36px; margin-bottom:6px;">🎸</div><strong>Musik & Santai</strong></button>
+        <button id="niche-JUALAN" onclick="setNiche('JUALAN')" class="panel choice"><div style="font-size:36px; margin-bottom:6px;">🛍️</div><strong>Jualan / Produk</strong></button>
       </div>
     </div>
+
     <div id="s4" class="slide">
       <h2>4. Host Style (<span id="nlbl" style="color:#5eead4;">EDUKASI</span>)</h2>
       <div class="grid-2" style="align-items:center;">
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <button onclick="setHost('Mentor Edukasi','👨🏻‍🏫',this)" class="panel choice selected"><strong>👨🏻‍🏫 Mentor Edukasi</strong><br><small style="color:#94a3b8;">Jelas, ramah & terstruktur</small></button>
-          <button onclick="setHost('Host Musik & Santai','🎧',this)" class="panel choice"><strong>🎧 Host Musik & Santai</strong><br><small style="color:#94a3b8;">Asyik, santai & interaktif</small></button>
-          <button onclick="setHost('Host Jualan Enerjik','🛍️',this)" class="panel choice"><strong>🛍️ Host Jualan Enerjik</strong><br><small style="color:#94a3b8;">Persuasif & cepat respon komentar</small></button>
+          <button onclick="setHost('Mentor Edukasi','👩‍🏫',this)" class="panel choice selected"><strong>Mentor Edukasi</strong></button>
+          <button onclick="setHost('Host Musik & Santai','🎧',this)" class="panel choice"><strong>Host Musik & Santai</strong></button>
+          <button onclick="setHost('Host Jualan Enerjik','🎤',this)" class="panel choice"><strong>Host Jualan Enerjik</strong></button>
         </div>
         <div class="panel">
-          <div id="hostIcon" style="font-size:52px;">👨🏻‍🏫</div>
-          <p style="font-size:12px; color:#94a3b8; margin-top:6px;">Host Terpilih:</p>
-          <strong id="hlbl" style="color:#5eead4; display:block; margin-top:4px;">Mentor Edukasi</strong>
-          <button onclick="go(5)" class="cta-btn">Lanjut ke Control Center</button>
+          <div id="hostIcon" style="font-size:52px;">👩‍🏫</div>
+          <p style="font-size:12px; color:#94a3b8; margin:6px 0;">Terpilih: <strong id="hlbl" style="color:#5eead4;">Mentor Edukasi</strong></p>
+          <button onclick="go(5)" class="cta-btn" style="padding:10px; font-size:13px;">Lanjut Control Center</button>
         </div>
       </div>
     </div>
@@ -163,18 +104,18 @@
       <h2>5. Control Center & Preview</h2>
       <div class="grid-2" style="align-items:center;">
         <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
-          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>📱 Studio & Ratio (9:16)</span><input type="checkbox" checked /></label>
-          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>📚 Materi & Script Otomatis</span><input type="checkbox" checked /></label>
-          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>🖼️ Pop-up Produk / Lirik</span><input type="checkbox" checked /></label>
-          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>🎙️ Auto-Monolog & Balas Chat</span><input type="checkbox" checked /></label>
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>Studio & Kamera</span><input type="checkbox" checked /></label>
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>Materi & Teks</span><input type="checkbox" checked /></label>
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>Pop-up Produk</span><input type="checkbox" checked /></label>
+          <label class="panel" style="display:flex; justify-content:space-between; padding:11px 14px;"><span>Auto-Balas Komentar</span><input type="checkbox" checked /></label>
         </div>
         <div class="panel">
-          <div style="width:148px; height:205px; margin:0 auto; border:2px solid var(--teal); border-radius:16px; background:#020617; padding:10px; display:flex; flex-direction:column; justify-content:space-between;">
-            <div style="display:flex; justify-content:space-between; font-size:10px;"><span style="background:#dc2626; padding:2px 6px; border-radius:4px; font-weight:700;">LIVE</span><span id="prevNiche" style="background:#1e293b; color:#5eead4; padding:2px 6px; border-radius:4px;">EDUKASI</span></div>
-            <div><div id="prevHostIcon" style="font-size:44px;">👨🏻‍🏫</div><strong style="font-size:11px; color:#5eead4;">AI Virtual Host</strong><div id="prevHostName" style="font-size:10px; color:#94a3b8;">Mentor Edukasi</div></div>
-            <div id="prevUser" style="font-size:10px; background:#0f172a; padding:4px; border-radius:6px;">@creatortiktok.id</div>
-
-          <button onclick="go(6)" class="cta-btn">Lanjut ke Pembayaran</button>
+          <div style="width:140px; height:200px; margin:0 auto 12px; border-radius:16px; background:#090d16; border:1.5px solid var(--teal); display:flex; flex-direction:column; justify-content:space-between; padding:12px;">
+            <span id="prevNiche" style="font-size:10px; background:#dc2626; padding:2px 6px; border-radius:4px; align-self:flex-start;">EDUKASI</span>
+            <div><div id="prevHostIcon" style="font-size:38px;">👩‍🏫</div><strong id="prevHostName" style="font-size:11px; color:#5eead4;">Mentor Edukasi</strong></div>
+            <span id="prevUser" style="font-size:10px; background:rgba(0,0,0,0.6); padding:4px; border-radius:4px;">@creator</span>
+          </div>
+          <button onclick="go(6)" class="cta-btn" style="padding:10px; font-size:13px;">Lanjut ke Pembayaran</button>
         </div>
       </div>
     </div>
@@ -183,172 +124,139 @@
       <h2>6. Pembayaran & Mulai Live</h2>
       <div class="grid-2" style="align-items:center;">
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <button onclick="setPkt('Paket 2 Jam - Rp 5.500',this)" class="panel choice selected" style="display:flex; justify-content:space-between;"><span>Paket 2 Jam</span><strong style="color:#5eead4;">Rp 5.500</strong></button>
-          <button onclick="setPkt('Paket 10 Jam - Rp 14.500',this)" class="panel choice" style="display:flex; justify-content:space-between;"><span>Paket 10 Jam</span><strong style="color:#5eead4;">Rp 14.500</strong></button>
-          <button onclick="setPkt('Paket 50 Jam - Rp 28.000',this)" class="panel choice" style="display:flex; justify-content:space-between;"><span>Paket 50 Jam</span><strong style="color:#5eead4;">Rp 28.000</strong></button>
+          <button onclick="setPkt('Paket 2 Jam - Rp 5.500',this)" class="panel choice selected" style="display:flex; justify-content:space-between;"><span>Paket 2 Jam</span><strong>Rp 5.500</strong></button>
+          <button onclick="setPkt('Paket 10 Jam - Rp 14.000',this)" class="panel choice" style="display:flex; justify-content:space-between;"><span>Paket 10 Jam</span><strong>Rp 14.000</strong></button>
+          <button onclick="setPkt('Paket 30 Jam - Rp 28.000',this)" class="panel choice" style="display:flex; justify-content:space-between;"><span>Paket 30 Jam</span><strong>Rp 28.000</strong></button>
         </div>
         <div class="panel">
           <p style="font-size:12px; color:#94a3b8;">Pembayaran via QRIS</p>
-          <strong id="plbl" style="font-size:13px; color:#5eead4; display:block; margin:6px 0;">Paket 2 Jam - Rp 5.500</strong>
-          <div style="width:94px; height:94px; margin:0 auto; background:#fff; padding:8px; border-radius:10px;">
-            <svg viewBox="0 0 100 100" style="width:100%; height:100%; fill:#0f172a;"><rect x="5" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="6"/><rect x="12" y="12" width="11" height="11"/><rect x="70" y="5" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="6"/><rect x="77" y="12" width="11" height="11"/><rect x="5" y="70" width="25" height="25" fill="none" stroke="#0f172a" stroke-width="6"/><rect x="12" y="77" width="11" height="11"/><rect x="40" y="40" width="22" height="22"/><rect x="70" y="70" width="22" height="22"/></svg>
-          </div>
-          <button onclick="startLive()" class="cta-btn">MULAI LIVE (OBS / RTMP)</button>
+          <strong id="plbl" style="font-size:13px; color:#5eead4; display:block; margin:4px 0;">Paket 2 Jam - Rp 5.500</strong>
+          <div style="width:94px; height:94px; margin:8px auto; background:#fff; padding:8px; border-radius:10px; color:#000; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px;">QRIS READY</div>
+          <button onclick="startLive()" class="cta-btn" style="padding:10px; font-size:13px;">MULAI LIVE (OBS / RTMP)</button>
         </div>
       </div>
     </div>
   </main>
 
   <footer class="glass-bar">
-    <button id="prev" onclick="go(cur - 1)" class="nav-btn" style="background:#1e293b; color:#e2e8f0;">← Back</button>
+    <button id="prev" onclick="go(cur - 1)" class="nav-btn" style="background:#1e293b; color:#e2e8f0;"><- Back</button>
     <span style="font-size:12px; color:#94a3b8;">Studio AI Live</span>
-    <button id="next" onclick="go(cur + 1)" class="nav-btn" style="background:#2dd4bf; color:#042f2e;">Next →</button>
+    <button id="next" onclick="go(cur + 1)" class="nav-btn" style="background:#2dd4bf; color:#042f2e;">Next -></button>
   </footer>
-    <script>
-        const DB_AKUN = ['@creatortiktok.id', '@kucluk', '@admin', '@creator1'];
-      let cur = 1;
+  <script type="module">
+    const base = "https://www.gstatic." + "com/firebasejs/10.8.0/";
+    const { initializeApp } = await import(base + "firebase-app.js");
+    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut } = await import(base + "firebase-auth.js");
+    const { getFirestore, doc, setDoc } = await import(base + "firebase-firestore.js");
 
-    function go(n) {
+    const firebaseConfig = {
+      apiKey: "AIzaSyDzDzyylDX2fPNsIpkvXpyIwWUpRKasBKg",
+      authDomain: "ai-live-streamer-73674" + ".firebaseapp.com",
+      projectId: "ai-live-streamer-73674",
+      storageBucket: "ai-live-streamer-73674.firebasestorage.app",
+      messagingSenderId: "449611002764",
+      appId: "1:449611002764:web:69af03041370b3c53cdca9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    window.cur = 1;
+
+    window.go = function(n) {
       const u = localStorage.getItem('ai_live_user');
-      if (n > 1 && !DB_AKUN.includes(u)) {
-        alert('Akses terkunci! Masukkan username terdaftar terlebih dahulu.');
-        return;
-      }
+      if (n > 1 && !u) return alert('Akses terkunci! Silakan Masuk dengan Google terlebih dahulu.');
       if (n < 1 || n > 6) return;
-      cur = n;
+      window.cur = n;
       document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
-      document.getElementById('s' + cur).classList.add('active');
-      document.getElementById('badge').textContent = 'Slide ' + cur + ' / 6';
-      document.getElementById('prev').disabled = (cur === 1);
-      document.getElementById('next').disabled = (cur === 6) || !DB_AKUN.includes(u);
-      document.getElementById('milkyWayCanvas').style.opacity = (cur === 1) ? '1' : '0.35';
-    }
-    function loginUser() {
-      let v = document.getElementById('loginInput').value.trim().toLowerCase();
-      if (v && !v.startsWith('@')) v = '@' + v;
-      if (!DB_AKUN.includes(v)) {
-        alert('❌ Username "' + (v || 'kosong') + '" tidak terdaftar di database!');
-        return;
-      }
-      localStorage.setItem('ai_live_user', v);
-      cekUser();
-      go(2);
-    }
-    function logout() {
+      document.getElementById('s' + window.cur).classList.add('active');
+      document.getElementById('badge').textContent = 'Slide ' + window.cur + ' / 6';
+      document.getElementById('prev').disabled = (window.cur === 1);
+      document.getElementById('next').disabled = (window.cur === 6);
+      document.getElementById('milkyWayCanvas').style.opacity = (window.cur === 1) ? '1' : '0.35';
+    };
+
+    window.loginUser = async function() {
+      try {
+        const res = await signInWithPopup(auth, provider);
+        const user = res.user;
+        await setDoc(doc(db, "users", user.uid), { nama: user.displayName, email: user.email, lastLogin: new Date().toISOString() }, { merge: true });
+        localStorage.setItem('ai_live_user', user.displayName || user.email);
+        cekUser(); go(2);
+      } catch (e) { alert('Gagal login: ' + e.message); }
+    };
+
+    window.logout = async function() {
+      await signOut(auth);
       localStorage.removeItem('ai_live_user');
-      document.getElementById('loginInput').value = '';
-      cekUser();
-      go(1);
-    }
+      cekUser(); go(1);
+    };
     function cekUser() {
       const u = localStorage.getItem('ai_live_user');
-      const valid = DB_AKUN.includes(u);
-      document.getElementById('userDisplay').textContent = valid ? u : 'Belum Masuk';
+      document.getElementById('userDisplay').textContent = u || '@creator';
       const pu = document.getElementById('prevUser');
-      if (pu) pu.textContent = valid ? u : '@creatortiktok.id';
-      document.getElementById('logoutBtn').classList.toggle('hidden', !valid);
+      if (pu) pu.textContent = u || '@creator';
+      document.getElementById('logoutBtn').classList.toggle('hidden', !u);
     }
 
-
-    async function startCam() {
+    window.startCam = async function() {
       try {
         const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
         const v = document.getElementById('camVid'); v.srcObject = s; v.classList.remove('hidden');
         document.getElementById('camPlaceholder').classList.add('hidden');
-        document.getElementById('fstat').textContent = '🟢 Kamera Live Aktif';
-      } catch (e) { alert('Izin kamera ditolak / tidak tersedia'); }
-    }
-    function loadAv(e) {
-      const f = e.target.files[0]; if (!f) return;
+        document.getElementById('fstat').textContent = '● Wajah terdeteksi otomatis';
+      } catch (e) { alert('Izin kamera ditolak / tidak tersedia.'); }
+    };
+
+    window.loadAv = function(e) {
+      const f = e.target.files; if (!f) return;
       const img = document.getElementById('avPreview'); img.src = URL.createObjectURL(f); img.classList.remove('hidden');
       document.getElementById('avIcon').classList.add('hidden');
-      document.getElementById('fstat').textContent = '✅ Avatar Berhasil Diunggah';
-    }
-    function setNiche(n) {
+      document.getElementById('fstat').textContent = '● Avatar foto berhasil dimuat';
+    };
+
+    window.setNiche = function(n) {
       document.getElementById('nlbl').textContent = n;
       document.getElementById('prevNiche').textContent = n;
-      document.querySelectorAll('#s3 .choice').forEach(b => b.classList.remove('selected'));
-      document.getElementById('niche-' + n).classList.add('selected');
-      go(4);
-    }
-    function setHost(h, icon, el) {
+      document.querySelectorAll('#s3 .choice').forEach(el => el.classList.remove('selected'));
+      document.getElementById('niche-' + n).classList.add('selected'); go(4);
+    };
+
+    window.setHost = function(h, icon, el) {
       document.getElementById('hlbl').textContent = h;
       document.getElementById('hostIcon').textContent = icon;
       document.getElementById('prevHostName').textContent = h;
       document.getElementById('prevHostIcon').textContent = icon;
       document.querySelectorAll('#s4 .choice').forEach(b => b.classList.remove('selected'));
       el.classList.add('selected');
-    }
-    function setPkt(p, el) {
+    };
+
+    window.setPkt = function(p, el) {
       document.getElementById('plbl').textContent = p;
       document.querySelectorAll('#s6 .choice').forEach(b => b.classList.remove('selected'));
       el.classList.add('selected');
-    }
-    function startLive() {
-      alert('Stream AI Live siap untuk ' + document.getElementById('userDisplay').textContent + '!');
-    }
-        const cv = document.getElementById('milkyWayCanvas'), cx = cv.getContext('2d');
-    let w, h, nebPuffs = [], gs = [], flares = [], mt = [], rot = 0;
+    };
+
+    window.startLive = function() { alert('Stream AI Live siap untuk ' + document.getElementById('userDisplay').textContent + '!'); };
+
+    const cv = document.getElementById('milkyWayCanvas'), cx = cv.getContext('2d');
+    let w, h, gs = [], rot = 0;
     function init() {
-      w = cv.width = window.innerWidth;
-      h = cv.height = window.innerHeight;
-      nebPuffs = []; gs = []; flares = [];
+      w = cv.width = window.innerWidth; h = cv.height = window.innerHeight; gs = [];
       const mr = Math.max(w, h) * 0.65;
-      const nebCols = ['rgba(236,72,153,0.16)', 'rgba(168,85,247,0.18)', 'rgba(56,189,248,0.16)', 'rgba(251,191,36,0.14)'];
-      for (let i = 0; i < 95; i++) {
-        const d = (i / 95) * mr;
-        const a = (i % 3) * 2.09 + (d / mr) * 4.2 + (Math.random() - 0.5) * 0.5;
-        nebPuffs.push({ d, a, r: Math.min(w, h) * (0.14 + Math.random() * 0.16), c: nebCols[i % 4] });
-      }
-      const starCols = ['#fef08a', '#bae6fd', '#f5d0fe', '#fbcfe8', '#ffffff'];
-      for (let i = 0; i < 1600; i++) {
+      for (let i = 0; i < 600; i++) {
         const d = Math.pow(Math.random(), 0.72) * mr;
         const a = (i % 3) * 2.09 + (d / mr) * 4.2 + (Math.random() - 0.5) * 0.75;
-        gs.push({ d, a, r: Math.random() * 2.2 + 0.4, c: starCols[i % 5] });
-      }
-      for (let i = 0; i < 45; i++) {
-        flares.push({ x: Math.random() * w, y: Math.random() * h, s: Math.random() * 7 + 4, c: starCols[i % 5], p: Math.random() * 6 });
+        gs.push({ d, a, r: Math.random() * 2 + 0.5 });
       }
     }
     function draw() {
-      cx.fillStyle = '#050414';
-      cx.fillRect(0, 0, w, h);
-      const x0 = w * 0.5, y0 = h * 0.48;
-      rot += 0.0006;
-      cx.globalCompositeOperation = 'lighter';
-      nebPuffs.forEach(n => {
-        const a = n.a + rot, nx = x0 + Math.cos(a) * n.d, ny = y0 + Math.sin(a) * n.d;
-        const g = cx.createRadialGradient(nx, ny, 2, nx, ny, n.r);
-        g.addColorStop(0, n.c); g.addColorStop(1, 'transparent');
-        cx.fillStyle = g; cx.beginPath(); cx.arc(nx, ny, n.r, 0, 6.28); cx.fill();
-      });
-      gs.forEach(g => {
-        const a = g.a + rot;
-        cx.globalAlpha = 0.85; cx.fillStyle = g.c;
-        cx.beginPath(); cx.arc(x0 + Math.cos(a) * g.d, y0 + Math.sin(a) * g.d, g.r, 0, 6.28); cx.fill();
-      });
-      flares.forEach(f => {
-        f.p += 0.04; const al = 0.45 + Math.abs(Math.sin(f.p)) * 0.55;
-        cx.globalAlpha = al; cx.fillStyle = f.c;
-        cx.fillRect(f.x - f.s, f.y - 0.7, f.s * 2, 1.4);
-        cx.fillRect(f.x - 0.7, f.y - f.s, 1.4, f.s * 2);
-        cx.beginPath(); cx.arc(f.x, f.y, f.s * 0.25, 0, 6.28); cx.fill();
-      });
-      if (mt.length < 14 && Math.random() < 0.14) {
-        mt.push({ x: Math.random() * w * 1.4, y: -30, l: 110 + Math.random() * 80, sp: 7 + Math.random() * 6, c: Math.random() > 0.45 ? '#60a5fa' : '#e879f9' });
-      }
-      for (let i = mt.length - 1; i >= 0; i--) {
-        const m = mt[i], ex = m.x + m.l * 0.65, ey = m.y - m.l * 0.75;
-        const gr = cx.createLinearGradient(m.x, m.y, ex, ey);
-        gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.25, m.c); gr.addColorStop(1, 'transparent');
-        cx.globalAlpha = 1; cx.strokeStyle = gr; cx.lineWidth = 3;
-        cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke();
-        cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(m.x, m.y, 2.8, 0, 6.28); cx.fill();
-        m.x -= m.sp * 0.65; m.y += m.sp * 0.75;
-        if (m.y > h + 120) mt.splice(i, 1);
-      }
-      cx.globalCompositeOperation = 'source-over'; cx.globalAlpha = 1;
-      requestAnimationFrame(draw);
+      cx.fillStyle = '#050414'; cx.fillRect(0, 0, w, h);
+      const x0 = w * 0.5, y0 = h * 0.48; rot += 0.0006;
+      cx.fillStyle = '#5eead4'; cx.globalAlpha = 0.7;
+      gs.forEach(g => { const a = g.a + rot; cx.beginPath(); cx.arc(x0 + Math.cos(a) * g.d, y0 + Math.sin(a) * g.d * 0.42, g.r, 0, 6.28); cx.fill(); });
+      cx.globalAlpha = 1; requestAnimationFrame(draw);
     }
     window.addEventListener('resize', init);
     init(); draw(); cekUser(); go(1);
