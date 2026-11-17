@@ -218,28 +218,42 @@
       document.getElementById('prev').disabled = (cur === 1);
       document.getElementById('next').disabled = (cur === 6) || (cur === 1 && !u);
       document.getElementById('milkyWayCanvas').style.opacity = (cur === 1) ? '1' : '0.35';
-        function cekFormatNama() {
-      const raw = document.getElementById('loginInput').value.trim().replace(/^@+/, '');
+          function cekFormatNama() {
+      const el = document.getElementById('loginInput');
       const msg = document.getElementById('verifMsg');
-      const valid = /^[a-zA-Z0-9._]{3,24}$/.test(raw);
-      if (!raw) { msg.textContent = 'Ketik username TikTok Anda (min. 3 karakter)'; msg.style.color = '#94a3b8'; return false; }
-      if (!valid) { msg.textContent = '❌ Format salah (hanya huruf, angka, titik, underscore, min. 3 karakter)'; msg.style.color = '#f87171'; return false; }
-      msg.textContent = '✅ Username @' + raw + ' valid & terverifikasi!'; msg.style.color = '#34d399';
+      const raw = el.value.trim().split('@').join('');
+      if (raw.length === 0) {
+        msg.textContent = 'Ketik username TikTok Anda (min. 3 karakter)';
+        msg.style.color = '#94a3b8';
+        return '';
+      }
+      if (raw.length < 3 || raw.indexOf(' ') !== -1) {
+        msg.textContent = '❌ Minimal 3 karakter & tanpa spasi';
+        msg.style.color = '#f87171';
+        return '';
+      }
+      msg.textContent = '✅ Username @' + raw + ' terverifikasi!';
+      msg.style.color = '#34d399';
       return '@' + raw;
     }
     function verifikasiOtomatis() {
       const hasil = cekFormatNama();
-      if (hasil) {
+      if (hasil !== '') {
         localStorage.setItem('ai_live_user', hasil);
         cekUser();
-        setTimeout(() => go(2), 650);
+        setTimeout(() => go(2), 600);
       }
     }
     function loginUser() {
       const hasil = cekFormatNama();
-      if (!hasil) { alert('Username belum valid! Gunakan 3-24 karakter (huruf, angka, titik, atau underscore).'); document.getElementById('loginInput').focus(); return; }
+      if (hasil === '') {
+        alert('Isi username minimal 3 karakter tanpa spasi!');
+        return;
+      }
       localStorage.setItem('ai_live_user', hasil);
-      cekUser(); go(2);
+      cekUser();
+      go(2);
+    }
     }
 
     }
