@@ -196,7 +196,7 @@
     <span style="font-size:12px; color:#94a3b8;">Studio AI Live</span>
     <button id="next" onclick="go(cur + 1)" class="nav-btn" style="background:#2dd4bf; color:#042f2e;">Next →</button>
   </footer>
-  <script>
+    <script>
     let cur = 1;
     function go(n) {
       if (n < 1 || n > 6) return;
@@ -228,7 +228,7 @@
       } catch (e) { alert('Izin kamera ditolak / tidak tersedia'); }
     }
     function loadAv(e) {
-      const f = e.target.files; if (!f) return;
+      const f = e.target.files[0]; if (!f) return;
       const img = document.getElementById('avPreview'); img.src = URL.createObjectURL(f); img.classList.remove('hidden');
       document.getElementById('avIcon').classList.add('hidden');
       document.getElementById('fstat').textContent = '✅ Avatar Berhasil Diunggah';
@@ -248,47 +248,28 @@
       document.querySelectorAll('#s6 .choice').forEach(b => b.classList.remove('selected')); el.classList.add('selected');
     }
     function startLive() { alert('Stream AI Live siap untuk ' + document.getElementById('userDisplay').textContent + '! Masukkan Server URL & Stream Key RTMP TikTok.'); }
-    (function() {
-      const cv = document.getElementById('milkyWayCanvas'), cx = cv.getContext('2d');
-      let w, h, galaxyStars = [], bgStars = [], meteors = [], rot = 0;
-      function init() {
-        w = cv.width = window.innerWidth; h = cv.height = window.innerHeight;
-        galaxyStars = []; bgStars = [];
-        const maxR = Math.min(w, h) * 0.48;
-        for (let i = 0; i < 1600; i++) {
-          const arm = i % 4, dist = Math.pow(Math.random(), 0.75) * maxR;
-          const angle = (arm * Math.PI / 2) + (dist / maxR) * 3.8 + (Math.random() - 0.5) * 0.85;
-          const cols = ['#fde68a', '#bae6fd', '#e879f9', '#c084fc', '#ffffff'];
-          galaxyStars.push({ d: dist, a: angle, r: Math.random() * 1.9 + 0.4, c: dist < maxR * 0.2 ? '#fef08a' : cols[i % 5], al: 0.4 + Math.random() * 0.6 });
-        }
-        for (let i = 0; i < 220; i++) bgStars.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.6 + 0.3, p: Math.random() * 6 });
-      }
-      function draw() {
-        cx.fillStyle = '#03020c'; cx.fillRect(0, 0, w, h);
-        const cx0 = w / 2, cy0 = h / 2, maxR = Math.min(w, h) * 0.48;
-        const neb = cx.createRadialGradient(cx0, cy0, 5, cx0, cy0, maxR * 1.15);
-        neb.addColorStop(0, 'rgba(254, 240, 138, 0.45)'); neb.addColorStop(0.25, 'rgba(192, 132, 252, 0.32)');
-        neb.addColorStop(0.55, 'rgba(56, 189, 248, 0.22)'); neb.addColorStop(1, 'transparent');
-        cx.fillStyle = neb; cx.fillRect(0, 0, w, h);
-        bgStars.forEach(s => { s.p += 0.03; cx.globalAlpha = 0.3 + Math.abs(Math.sin(s.p)) * 0.7; cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, Math.PI * 2); cx.fill(); });
-        rot += 0.0008;
-        galaxyStars.forEach(g => {
-          const ang = g.a + rot, sx = cx0 + Math.cos(ang) * g.d * (w > h ? 1.25 : 1), sy = cy0 + Math.sin(ang) * g.d * (w > h ? 0.85 : 1.15);
-          cx.globalAlpha = g.al; cx.fillStyle = g.c; cx.beginPath(); cx.arc(sx, sy, g.r, 0, Math.PI * 2); cx.fill();
-        });
-        if (meteors.length < 6 && Math.random() < 0.05) meteors.push({ x: Math.random() * w * 1.3, y: -20, l: 90, sp: Math.random() * 7 + 6, ang: Math.PI * 0.72, c: Math.random() > 0.4 ? '#7dd3fc' : '#e879f9' });
-        for (let i = meteors.length - 1; i >= 0; i--) {
-          const m = meteors[i], ex = m.x + Math.cos(m.ang) * m.l, ey = m.y + Math.sin(m.ang) * m.l;
-          const gr = cx.createLinearGradient(m.x, m.y, ex, ey); gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, m.c); gr.addColorStop(1, 'transparent');
-          cx.globalAlpha = 0.95; cx.strokeStyle = gr; cx.lineWidth = 2.4; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke();
-          m.x += Math.cos(m.ang) * m.sp; m.y += Math.sin(m.ang) * m.sp;
-          if (m.y > h + 90 || m.x < -90) meteors.splice(i, 1);
-        }
-        cx.globalAlpha = 1; requestAnimationFrame(draw);
-      }
-      window.addEventListener('resize', init); init(); draw();
-    })();
-    cekUser(); go(1);
+    const cv = document.getElementById('milkyWayCanvas'), cx = cv.getContext('2d');
+    let w, h, gs = [], bs = [], mt = [], rot = 0;
+    function init() {
+      w = cv.width = window.innerWidth; h = cv.height = window.innerHeight; gs = []; bs = [];
+      const mr = Math.min(w, h) * 0.48, cols = ['#fde68a', '#bae6fd', '#e879f9', '#c084fc', '#fff'];
+      for (let i = 0; i < 1500; i++) { const d = Math.pow(Math.random(), 0.75) * mr; gs.push({ d, a: (i % 4) * 1.57 + (d / mr) * 3.8 + (Math.random() - 0.5) * 0.85, r: Math.random() * 1.8 + 0.4, c: d < mr * 0.2 ? '#fef08a' : cols[i % 5] }); }
+      for (let i = 0; i < 200; i++) bs.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.5 + 0.3, p: Math.random() * 6 });
+    }
+    function draw() {
+      cx.fillStyle = '#03020c'; cx.fillRect(0, 0, w, h);
+      const x0 = w / 2, y0 = h / 2, mr = Math.min(w, h) * 0.48;
+      const nb = cx.createRadialGradient(x0, y0, 4, x0, y0, mr * 1.15);
+      nb.addColorStop(0, 'rgba(254,240,138,0.5)'); nb.addColorStop(0.3, 'rgba(192,132,252,0.35)'); nb.addColorStop(0.6, 'rgba(56,189,248,0.22)'); nb.addColorStop(1, 'transparent');
+      cx.fillStyle = nb; cx.fillRect(0, 0, w, h);
+      bs.forEach(s => { s.p += 0.03; cx.globalAlpha = 0.3 + Math.abs(Math.sin(s.p)) * 0.7; cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.28); cx.fill(); });
+      rot += 0.0008;
+      gs.forEach(g => { const a = g.a + rot; cx.globalAlpha = 0.85; cx.fillStyle = g.c; cx.beginPath(); cx.arc(x0 + Math.cos(a) * g.d * (w > h ? 1.25 : 1), y0 + Math.sin(a) * g.d * (w > h ? 0.85 : 1.15), g.r, 0, 6.28); cx.fill(); });
+      if (mt.length < 6 && Math.random() < 0.05) mt.push({ x: Math.random() * w * 1.3, y: -20, l: 85, sp: 8, c: Math.random() > 0.4 ? '#7dd3fc' : '#e879f9' });
+      for (let i = mt.length - 1; i >= 0; i--) { const m = mt[i], ex = m.x - m.l * 0.6, ey = m.y + m.l * 0.8; cx.globalAlpha = 0.95; cx.strokeStyle = m.c; cx.lineWidth = 2.2; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke(); m.x -= m.sp * 0.6; m.y += m.sp * 0.8; if (m.y > h + 90) mt.splice(i, 1); }
+      cx.globalAlpha = 1; requestAnimationFrame(draw);
+    }
+    window.addEventListener('resize', init); init(); draw(); cekUser(); go(1);
   </script>
 </body>
 </html>
