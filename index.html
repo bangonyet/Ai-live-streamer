@@ -171,8 +171,8 @@
           <div style="width:148px; height:205px; margin:0 auto; border:2px solid var(--teal); border-radius:16px; background:#020617; padding:10px; display:flex; flex-direction:column; justify-content:space-between;">
             <div style="display:flex; justify-content:space-between; font-size:10px;"><span style="background:#dc2626; padding:2px 6px; border-radius:4px; font-weight:700;">LIVE</span><span id="prevNiche" style="background:#1e293b; color:#5eead4; padding:2px 6px; border-radius:4px;">EDUKASI</span></div>
             <div><div id="prevHostIcon" style="font-size:44px;">👨🏻‍🏫</div><strong style="font-size:11px; color:#5eead4;">AI Virtual Host</strong><div id="prevHostName" style="font-size:10px; color:#94a3b8;">Mentor Edukasi</div></div>
-            <div style="font-size:10px; background:#0f172a; padding:4px; border-radius:6px;">@creatortiktok.id</div>
-          </div>
+            <div id="prevUser" style="font-size:10px; background:#0f172a; padding:4px; border-radius:6px;">@creatortiktok.id</div>
+
           <button onclick="go(6)" class="cta-btn">Lanjut ke Pembayaran</button>
         </div>
       </div>
@@ -204,28 +204,34 @@
     <button id="next" onclick="go(cur + 1)" class="nav-btn" style="background:#2dd4bf; color:#042f2e;">Next →</button>
   </footer>
     <script>
-    let cur = 1;
+        let cur = 1;
     function go(n) {
+      const u = localStorage.getItem('ai_live_user');
+      if (n > 1 && !u) { alert('Silakan masukkan username dan klik Masuk terlebih dahulu!'); return; }
       if (n < 1 || n > 6) return;
       cur = n;
       document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
       document.getElementById('s' + cur).classList.add('active');
       document.getElementById('badge').textContent = 'Slide ' + cur + ' / 6';
       document.getElementById('prev').disabled = (cur === 1);
-      document.getElementById('next').disabled = (cur === 6);
+      document.getElementById('next').disabled = (cur === 6) || (cur === 1 && !u);
       document.getElementById('milkyWayCanvas').style.opacity = (cur === 1) ? '1' : '0.35';
     }
     function loginUser() {
-      const v = document.getElementById('loginInput').value.trim();
-      localStorage.setItem('ai_live_user', v || '@creatortiktok.id');
+      let v = document.getElementById('loginInput').value.trim();
+      if (!v) { alert('Harap isi Username Anda terlebih dahulu (contoh: @creatortiktok.id)'); document.getElementById('loginInput').focus(); return; }
+      if (!v.startsWith('@')) v = '@' + v;
+      localStorage.setItem('ai_live_user', v);
       cekUser(); go(2);
     }
-    function logout() { localStorage.removeItem('ai_live_user'); cekUser(); go(1); }
+    function logout() { localStorage.removeItem('ai_live_user'); document.getElementById('loginInput').value = ''; cekUser(); go(1); }
     function cekUser() {
       const u = localStorage.getItem('ai_live_user');
-      document.getElementById('userDisplay').textContent = u || '@creatortiktok.id';
+      document.getElementById('userDisplay').textContent = u || 'Belum Masuk';
+      const pu = document.getElementById('prevUser'); if (pu) pu.textContent = u || '@creatortiktok.id';
       document.getElementById('logoutBtn').classList.toggle('hidden', !u);
     }
+
     async function startCam() {
       try {
         const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
