@@ -228,11 +228,10 @@
     <span style="font-size:12px; color:#94a3b8;">Studio AI Live</span>
     <button id="next" onclick="go(cur + 1)" class="nav-btn" style="background:#0284c7; color:#fff;">Next →</button>
   </footer>
-  <script type="module">
+    <script type="module">
     import { initializeApp } from "https://gstatic.com";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://gstatic.com";
 
-    // GANTI apiKey DI BAWAH DENGAN apiKey LENGKAP DARI FIREBASE CONSOLE ANDA
     const firebaseConfig = {
       apiKey: "GANTI_DENGAN_API_KEY_LENGKAP_ANDA",
       authDomain: "://firebaseapp.com",
@@ -242,88 +241,95 @@
       appId: "1:449611002764:web:69af03041370b3c53cdca9"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    window.isLoggedIn = false;
+    let auth = null;
+    let provider = null;
+    try {
+      const app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      provider = new GoogleAuthProvider();
+    } catch (err) {
+      console.warn("Firebase belum siap:", err);
+    }
 
     window.loginDenganGoogle = async function() {
+      if (!auth) return alert("Konfigurasi Firebase belum lengkap.");
       try {
         const result = await signInWithPopup(auth, provider);
         window.isLoggedIn = true;
         alert("Berhasil masuk sebagai: " + result.user.displayName);
-        go(2);
+        window.go(2);
       } catch (error) {
         alert("Gagal login Google: " + error.message);
       }
     };
 
-    window.loginManual = function() {
-      const val = document.getElementById("loginInput").value.trim() || "@creatortiktok.id";
-      localStorage.setItem("ai_live_user", val);
-      window.isLoggedIn = true;
-      updateUserUI(val);
-      go(2);
-    };
-
     window.logoutUser = async function() {
-      try { await signOut(auth); } catch (e) {}
+      try { if (auth) await signOut(auth); } catch (e) {}
       localStorage.removeItem("ai_live_user");
       window.isLoggedIn = false;
-      updateUserUI(null);
-      go(1);
+      window.updateUserUI(null);
+      window.go(1, true);
     };
 
-    function updateUserUI(name) {
+    if (auth) {
+      onAuthStateChanged(auth, (user) => {
+        const savedLocal = localStorage.getItem("ai_live_user");
+        if (user) {
+          window.isLoggedIn = true;
+          window.updateUserUI(user.email);
+        } else if (savedLocal) {
+          window.isLoggedIn = true;
+          window.updateUserUI(savedLocal);
+        }
+      });
+    }
+  </script>
+
+  <script>
+    window.cur = 1;
+    window.isLoggedIn = Boolean(localStorage.getItem("ai_live_user"));
+
+    window.updateUserUI = function(name) {
       const display = document.getElementById("userDisplay");
       const prevUser = document.getElementById("prevUser");
       const logoutBtn = document.getElementById("logoutBtn");
       if (name) {
-        display.textContent = name;
+        if (display) display.textContent = name;
         if (prevUser) prevUser.textContent = name;
-        logoutBtn.classList.remove("hidden");
+        if (logoutBtn) logoutBtn.classList.remove("hidden");
       } else {
-        display.textContent = "Belum Masuk";
+        if (display) display.textContent = "Belum Masuk";
         if (prevUser) prevUser.textContent = "Studio AI Live";
-        logoutBtn.classList.add("hidden");
+        if (logoutBtn) logoutBtn.classList.add("hidden");
       }
-    }
+    };
 
-    onAuthStateChanged(auth, (user) => {
-      const savedLocal = localStorage.getItem("ai_live_user");
-      if (user) {
-        window.isLoggedIn = true;
-        updateUserUI(user.email);
-      } else if (savedLocal) {
-        window.isLoggedIn = true;
-        updateUserUI(savedLocal);
-      } else {
-        window.isLoggedIn = false;
-        updateUserUI(null);
-      }
-      go(window.cur || 1);
-    });
-  </script>
-  <script>
-    window.cur = 1;
+    window.loginManual = function() {
+      const inputEl = document.getElementById("loginInput");
+      const val = (inputEl && inputEl.value.trim()) ? inputEl.value.trim() : "@creatortiktok.id";
+      localStorage.setItem("ai_live_user", val);
+      window.isLoggedIn = true;
+      window.updateUserUI(val);
+      window.go(2);
+    };
 
-    function go(n) {
+    window.go = function(n, silent = false) {
       if (n > 1 && !window.isLoggedIn) {
-        alert("Akses terkunci! Silakan masuk terlebih dahulu di Slide 1.");
+        if (!silent) alert("Akses terkunci! Silakan masuk terlebih dahulu di Slide 1.");
         n = 1;
       }
       if (n < 1 || n > 6) return;
       window.cur = n;
       document.querySelectorAll(".slide").forEach(el => el.classList.remove("active"));
-      document.getElementById("s" + n).classList.add("active");
+      const target = document.getElementById("s" + n);
+      if (target) target.classList.add("active");
       document.getElementById("badge").textContent = "Slide " + n + " / 6";
       document.getElementById("prev").disabled = (n === 1);
       document.getElementById("next").disabled = (n === 6 || !window.isLoggedIn);
       document.getElementById("milkyWayCanvas").style.opacity = (n === 1) ? "1" : "0.35";
-    }
+    };
 
-    async function startCam() {
+    window.startCam = async function() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
         const v = document.getElementById("camVid");
@@ -334,45 +340,45 @@
       } catch (e) {
         alert("Izin kamera ditolak atau tidak tersedia.");
       }
-    }
+    };
 
-    function loadAv(e) {
-      const f = e.target.files[0];
+    window.loadAv = function(e) {
+      const f = e.target.files.item(0);
       if (!f) return;
       const img = document.getElementById("avPreview");
       img.src = URL.createObjectURL(f);
       img.classList.remove("hidden");
       document.getElementById("avIcon").classList.add("hidden");
       document.getElementById("avStat").textContent = "✅ Avatar Berhasil Diunggah";
-    }
+    };
 
-    function setNiche(n, el) {
+    window.setNiche = function(n, el) {
       document.getElementById("lbl1").textContent = n;
       document.querySelectorAll("#s3 .choice").forEach(b => b.classList.remove("selected"));
       el.classList.add("selected");
-    }
+    };
 
-    function setHost(n, icon, el) {
+    window.setHost = function(n, icon, el) {
       document.getElementById("hostName").textContent = n;
       document.getElementById("hostIcon").textContent = icon;
       document.getElementById("prevHostIcon").textContent = icon;
       document.querySelectorAll("#s4 .choice").forEach(b => b.classList.remove("selected"));
       el.classList.add("selected");
-    }
+    };
 
-    function setPkt(p, el) {
+    window.setPkt = function(p, el) {
       document.getElementById("pLbl").textContent = p;
       document.querySelectorAll("#s6 .choice").forEach(b => b.classList.remove("selected"));
       el.classList.add("selected");
-    }
+    };
 
-    function startLive() {
+    window.startLive = function() {
       alert("Stream AI Live siap dimulai untuk " + document.getElementById("userDisplay").textContent + "!");
-    }
+    };
 
     // Animasi Galaksi Milky Way
     const cv = document.getElementById("milkyWayCanvas"), cx = cv.getContext("2d");
-    let w, h, stars = [], nebulae = [];
+    let w = 0, h = 0, stars = new Array(), nebulae = new Array();
     function initBg() {
       w = cv.width = window.innerWidth;
       h = cv.height = window.innerHeight;
@@ -380,10 +386,10 @@
         x: Math.random() * w, y: Math.random() * h,
         r: Math.random() * 1.6 + 0.3, a: Math.random(), s: (Math.random() - 0.5) * 0.02
       }));
-      nebulae = [
+      nebulae = new Array(
         { x: w * 0.25, y: h * 0.3, r: w * 0.35, c: "rgba(168, 85, 247, 0.12)" },
         { x: w * 0.75, y: h * 0.7, r: w * 0.4, c: "rgba(20, 184, 166, 0.12)" }
-      ];
+      );
     }
     function drawBg() {
       cx.clearRect(0, 0, w, h);
@@ -401,6 +407,8 @@
       requestAnimationFrame(drawBg);
     }
     window.addEventListener("resize", initBg);
+    if (window.isLoggedIn) window.updateUserUI(localStorage.getItem("ai_live_user"));
+    window.go(1, true);
     initBg(); drawBg();
   </script>
 </body>
