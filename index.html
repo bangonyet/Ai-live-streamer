@@ -11,17 +11,24 @@
       --bg-glass: rgba(10, 15, 32, 0.62);
       --border-glass: rgba(94, 234, 212, 0.42);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-    html, body {
-      width: 100%; height: 100dvh; overflow: hidden;
-      background: #02010a; color: #f8fafc;
+        html, body {
+      width: 100%; height: 100dvh; overflow: hidden; color: #f8fafc;
       display: flex; flex-direction: column; justify-content: space-between;
       padding: 12px 16px;
+      background:
+        radial-gradient(ellipse at 25% 25%, rgba(168, 85, 247, 0.65) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 30%, rgba(56, 189, 248, 0.55) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.45) 0%, transparent 42%),
+        radial-gradient(ellipse at 30% 75%, rgba(236, 72, 153, 0.6) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 75%, rgba(99, 102, 241, 0.55) 0%, transparent 48%),
+        radial-gradient(circle at 50% 50%, #1e1042 0%, #060417 75%, #020108 100%);
     }
     #milkyWayCanvas {
-      position: fixed; inset: 0; width: 100%; height: 100%;
-      z-index: -1; pointer-events: none; transition: opacity 0.6s ease;
+      position: fixed; inset: 0; width: 100vw; height: 100vh;
+      z-index: 0; pointer-events: none; transition: opacity 0.6s ease;
     }
+    header, main, footer { position: relative; z-index: 2; }
+
     .glass-bar {
       width: 100%; max-width: 960px; margin: 0 auto; flex-shrink: 0;
       background: rgba(8, 12, 26, 0.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -241,35 +248,26 @@
     function setHost(h, icon, el) {
       document.getElementById('hlbl').textContent = h; document.getElementById('hostIcon').textContent = icon;
       document.getElementById('prevHostName').textContent = h; document.getElementById('prevHostIcon').textContent = icon;
-      document.querySelectorAll('#s4 .choice').forEach(b => b.classList.remove('selected')); el.classList.add('selected');
-    }
-    function setPkt(p, el) {
-      document.getElementById('plbl').textContent = p;
-      document.querySelectorAll('#s6 .choice').forEach(b => b.classList.remove('selected')); el.classList.add('selected');
-    }
-    function startLive() { alert('Stream AI Live siap untuk ' + document.getElementById('userDisplay').textContent + '! Masukkan Server URL & Stream Key RTMP TikTok.'); }
     const cv = document.getElementById('milkyWayCanvas'), cx = cv.getContext('2d');
     let w, h, gs = [], bs = [], mt = [], rot = 0;
     function init() {
       w = cv.width = window.innerWidth; h = cv.height = window.innerHeight; gs = []; bs = [];
-      const mr = Math.min(w, h) * 0.48, cols = ['#fde68a', '#bae6fd', '#e879f9', '#c084fc', '#fff'];
-      for (let i = 0; i < 1500; i++) { const d = Math.pow(Math.random(), 0.75) * mr; gs.push({ d, a: (i % 4) * 1.57 + (d / mr) * 3.8 + (Math.random() - 0.5) * 0.85, r: Math.random() * 1.8 + 0.4, c: d < mr * 0.2 ? '#fef08a' : cols[i % 5] }); }
-      for (let i = 0; i < 200; i++) bs.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.5 + 0.3, p: Math.random() * 6 });
+      const mr = Math.min(w, h) * 0.46, cols = ['#fef08a', '#bae6fd', '#f0abfc', '#c084fc', '#ffffff'];
+      for (let i = 0; i < 1200; i++) { const d = Math.pow(Math.random(), 0.7) * mr; gs.push({ d, a: (i % 4) * 1.57 + (d / mr) * 3.6 + (Math.random() - 0.5) * 0.8, r: Math.random() * 2 + 0.5, c: d < mr * 0.22 ? '#fef08a' : cols[i % 5] }); }
+      for (let i = 0; i < 180; i++) bs.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.8 + 0.4, p: Math.random() * 6 });
     }
     function draw() {
-      cx.fillStyle = '#03020c'; cx.fillRect(0, 0, w, h);
-      const x0 = w / 2, y0 = h / 2, mr = Math.min(w, h) * 0.48;
-      const nb = cx.createRadialGradient(x0, y0, 4, x0, y0, mr * 1.15);
-      nb.addColorStop(0, 'rgba(254,240,138,0.5)'); nb.addColorStop(0.3, 'rgba(192,132,252,0.35)'); nb.addColorStop(0.6, 'rgba(56,189,248,0.22)'); nb.addColorStop(1, 'transparent');
-      cx.fillStyle = nb; cx.fillRect(0, 0, w, h);
-      bs.forEach(s => { s.p += 0.03; cx.globalAlpha = 0.3 + Math.abs(Math.sin(s.p)) * 0.7; cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.28); cx.fill(); });
-      rot += 0.0008;
-      gs.forEach(g => { const a = g.a + rot; cx.globalAlpha = 0.85; cx.fillStyle = g.c; cx.beginPath(); cx.arc(x0 + Math.cos(a) * g.d * (w > h ? 1.25 : 1), y0 + Math.sin(a) * g.d * (w > h ? 0.85 : 1.15), g.r, 0, 6.28); cx.fill(); });
-      if (mt.length < 6 && Math.random() < 0.05) mt.push({ x: Math.random() * w * 1.3, y: -20, l: 85, sp: 8, c: Math.random() > 0.4 ? '#7dd3fc' : '#e879f9' });
-      for (let i = mt.length - 1; i >= 0; i--) { const m = mt[i], ex = m.x - m.l * 0.6, ey = m.y + m.l * 0.8; cx.globalAlpha = 0.95; cx.strokeStyle = m.c; cx.lineWidth = 2.2; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke(); m.x -= m.sp * 0.6; m.y += m.sp * 0.8; if (m.y > h + 90) mt.splice(i, 1); }
+      cx.clearRect(0, 0, w, h);
+      const x0 = w / 2, y0 = h / 2;
+      bs.forEach(s => { s.p += 0.03; cx.globalAlpha = 0.4 + Math.abs(Math.sin(s.p)) * 0.6; cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.28); cx.fill(); });
+      rot += 0.001;
+      gs.forEach(g => { const a = g.a + rot; cx.globalAlpha = 0.9; cx.fillStyle = g.c; cx.beginPath(); cx.arc(x0 + Math.cos(a) * g.d, y0 + Math.sin(a) * g.d, g.r, 0, 6.28); cx.fill(); });
+      if (mt.length < 7 && Math.random() < 0.06) mt.push({ x: Math.random() * w * 1.3, y: -20, l: 95, sp: 8, c: Math.random() > 0.4 ? '#7dd3fc' : '#f0abfc' });
+      for (let i = mt.length - 1; i >= 0; i--) { const m = mt[i], ex = m.x + m.l * 0.65, ey = m.y - m.l * 0.75; const gr = cx.createLinearGradient(m.x, m.y, ex, ey); gr.addColorStop(0, '#fff'); gr.addColorStop(0.3, m.c); gr.addColorStop(1, 'transparent'); cx.globalAlpha = 1; cx.strokeStyle = gr; cx.lineWidth = 2.5; cx.beginPath(); cx.moveTo(m.x, m.y); cx.lineTo(ex, ey); cx.stroke(); m.x -= m.sp * 0.65; m.y += m.sp * 0.75; if (m.y > h + 90) mt.splice(i, 1); }
       cx.globalAlpha = 1; requestAnimationFrame(draw);
     }
     window.addEventListener('resize', init); init(); draw(); cekUser(); go(1);
   </script>
 </body>
 </html>
+
