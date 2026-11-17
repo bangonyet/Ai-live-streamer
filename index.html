@@ -98,8 +98,7 @@
   <main>
     <div id="s1" class="slide active login-card">
       <h2>1. Masuk ke Studio AI Live</h2>
-      <input id="loginInput" class="inp" type="text" oninput="cekFormatNama()" onchange="verifikasiOtomatis()" placeholder="Enter Username (e.g., @creatortiktok.id)" style="margin-bottom:6px;" />
-<p id="verifMsg" style="font-size:12px; min-height:18px; margin-bottom:10px; color:#94a3b8;">Ketik username TikTok Anda (min. 3 karakter)</p>
+      <input id="loginInput" class="inp" type="text" placeholder="Masukkan Username Terdaftar (cth: @creatortiktok.id)" />
 
       <button onclick="loginUser()" class="neon-btn teal">Masuk dengan Email</button>
       <button onclick="loginUser()" class="neon-btn purple">Masuk dengan TikTok</button>
@@ -206,64 +205,50 @@
     <button id="next" onclick="go(cur + 1)" class="nav-btn" style="background:#2dd4bf; color:#042f2e;">Next →</button>
   </footer>
     <script>
-        let cur = 1;
+        const DB_AKUN = ['@creatortiktok.id', '@kucluk', '@admin', '@creator1'];
+      let cur = 1;
+
     function go(n) {
       const u = localStorage.getItem('ai_live_user');
-      if (n > 1 && !u) { alert('Silakan masukkan username dan klik Masuk terlebih dahulu!'); return; }
+      if (n > 1 && !DB_AKUN.includes(u)) {
+        alert('Akses terkunci! Masukkan username terdaftar terlebih dahulu.');
+        return;
+      }
       if (n < 1 || n > 6) return;
       cur = n;
       document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
       document.getElementById('s' + cur).classList.add('active');
       document.getElementById('badge').textContent = 'Slide ' + cur + ' / 6';
       document.getElementById('prev').disabled = (cur === 1);
-      document.getElementById('next').disabled = (cur === 6) || (cur === 1 && !u);
+      document.getElementById('next').disabled = (cur === 6) || !DB_AKUN.includes(u);
       document.getElementById('milkyWayCanvas').style.opacity = (cur === 1) ? '1' : '0.35';
-          function cekFormatNama() {
-      const el = document.getElementById('loginInput');
-      const msg = document.getElementById('verifMsg');
-      const raw = el.value.trim().split('@').join('');
-      if (raw.length === 0) {
-        msg.textContent = 'Ketik username TikTok Anda (min. 3 karakter)';
-        msg.style.color = '#94a3b8';
-        return '';
-      }
-      if (raw.length < 3 || raw.indexOf(' ') !== -1) {
-        msg.textContent = '❌ Minimal 3 karakter & tanpa spasi';
-        msg.style.color = '#f87171';
-        return '';
-      }
-      msg.textContent = '✅ Username @' + raw + ' terverifikasi!';
-      msg.style.color = '#34d399';
-      return '@' + raw;
-    }
-    function verifikasiOtomatis() {
-      const hasil = cekFormatNama();
-      if (hasil !== '') {
-        localStorage.setItem('ai_live_user', hasil);
-        cekUser();
-        setTimeout(() => go(2), 600);
-      }
     }
     function loginUser() {
-      const hasil = cekFormatNama();
-      if (hasil === '') {
-        alert('Isi username minimal 3 karakter tanpa spasi!');
+      let v = document.getElementById('loginInput').value.trim().toLowerCase();
+      if (v && !v.startsWith('@')) v = '@' + v;
+      if (!DB_AKUN.includes(v)) {
+        alert('❌ Username "' + (v || 'kosong') + '" tidak terdaftar di database!');
         return;
       }
-      localStorage.setItem('ai_live_user', hasil);
+      localStorage.setItem('ai_live_user', v);
       cekUser();
       go(2);
     }
+    function logout() {
+      localStorage.removeItem('ai_live_user');
+      document.getElementById('loginInput').value = '';
+      cekUser();
+      go(1);
     }
-
-    }
-    function logout() { localStorage.removeItem('ai_live_user'); document.getElementById('loginInput').value = ''; cekUser(); go(1); }
     function cekUser() {
       const u = localStorage.getItem('ai_live_user');
-      document.getElementById('userDisplay').textContent = u || 'Belum Masuk';
-      const pu = document.getElementById('prevUser'); if (pu) pu.textContent = u || '@creatortiktok.id';
-      document.getElementById('logoutBtn').classList.toggle('hidden', !u);
+      const valid = DB_AKUN.includes(u);
+      document.getElementById('userDisplay').textContent = valid ? u : 'Belum Masuk';
+      const pu = document.getElementById('prevUser');
+      if (pu) pu.textContent = valid ? u : '@creatortiktok.id';
+      document.getElementById('logoutBtn').classList.toggle('hidden', !valid);
     }
+
 
     async function startCam() {
       try {
