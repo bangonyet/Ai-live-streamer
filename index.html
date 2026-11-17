@@ -1,40 +1,75 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Live Streamer - @creatortiktok</title>
-  <script src="https://tailwindcss.com"></script>
-  <script type="module">
-    import { initializeApp } from "https://gstatic.com";
-    import { getAuth, signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, OAuthProvider, signInWithPopup } from "https://gstatic.com";
-    const app = initializeApp({ apiKey: "API_KEY", authDomain: "://firebaseapp.com" });
-    const auth = getAuth(app);
-    window.login = async (type) => {
-      const user = document.getElementById('user').value;
-      try {
-        if (type === 'email') await signInWithEmailAndPassword(auth, user, prompt("Password:"));
-        if (type === 'hp') { window.rv = new RecaptchaVerifier(auth, 'rc', {size:'invisible'}); const c = await signInWithPhoneNumber(auth, user, window.rv); await c.confirm(prompt("Kode OTP:")); }
-        if (type === 'tiktok') await signInWithPopup(auth, new OAuthProvider('oidc.tiktok'));
-        alert("Login Berhasil! Lanjut Slide 2");
-      } catch (e) { alert("Error: " + e.message); }
-    };
-  </script>
+  <title>AI Live Streamer</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-cover bg-center h-screen flex flex-col justify-between p-4 text-white" style="background-image: url('https://unsplash.com');">
-  <div class="flex justify-between items-center bg-slate-900/70 backdrop-blur-md p-3 rounded-xl border border-teal-500/30 text-sm">
-    <span>AI Live Streamer</span><span class="text-teal-300 font-bold">@creatortiktok</span><span class="bg-slate-800 px-2 py-1 rounded">Slide 1 / 6</span>
-  </div>
-  <div class="mx-auto w-full max-w-sm bg-slate-900/60 backdrop-blur-lg p-6 rounded-2xl border border-teal-400/50 shadow-[0_0_20px_rgba(45,212,191,0.3)] space-y-3 text-center">
-    <h2 class="text-lg font-semibold mb-3">1. Masuk ke Studio AI Live</h2>
-    <input id="user" placeholder="Email / No. HP (+62...) / Username" class="w-full p-2.5 rounded-lg bg-slate-950/80 border border-teal-400 text-sm text-center outline-none">
-    <button onclick="login('email')" class="w-full py-2.5 rounded-lg bg-slate-900 border border-teal-400 hover:bg-teal-500/20 text-sm">Masuk dengan Email</button>
-    <button onclick="login('tiktok')" class="w-full py-2.5 rounded-lg bg-slate-900 border border-purple-500 hover:bg-purple-500/20 text-sm">Masuk dengan TikTok</button>
-    <button onclick="login('hp')" class="w-full py-2.5 rounded-lg bg-slate-900 border border-emerald-400 hover:bg-emerald-500/20 text-sm">Masuk dengan Nomor HP (OTP)</button>
+<body>
+  <div class="bar"><span>AI Live Streamer</span><b>@creatortiktok</b><span id="no">Slide 1 / 6</span></div>
+  <div id="s1" class="box">
+    <h3>1. Masuk ke Studio AI Live</h3>
+    <input id="inp" placeholder="Email / No. HP (+62...) / Username">
+    <button onclick="login('email')">Masuk dengan Email</button>
+    <button onclick="login('tiktok')" class="tt">Masuk dengan TikTok</button>
+    <button onclick="login('hp')" class="hp">Masuk dengan Nomor HP (OTP)</button>
     <div id="rc"></div>
   </div>
-  <div class="flex justify-between bg-slate-900/70 backdrop-blur-md p-2 rounded-xl border border-slate-700">
-    <button class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs text-gray-400">← Back</button>
-    <button onclick="alert('Ke Slide 2: Pilih Avatar')" class="px-4 py-1.5 rounded-lg bg-emerald-400 text-slate-950 font-bold text-xs">Next →</button>
+  <div id="s2" class="box hide"><h3 id="judul">2. Pilih Avatar</h3><p>Siap diisi fitur slide ini.</p></div>
+  <div class="bar">
+    <button onclick="geser(-1)" class="nav">← Back</button>
+    <button onclick="geser(1)" class="nav go">Next →</button>
   </div>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
+* { box-sizing: border-box; margin: 0; font-family: sans-serif; color: #fff; }
+body {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 14px;
+  background: url('galaxy.jpg') center/cover no-repeat,
+    radial-gradient(circle at 75% 20%, #581c87, transparent 50%),
+    radial-gradient(circle at 20% 80%, #115e59, #050811 75%);
+}
+.bar, .box {
+  background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(10px);
+  border: 1px solid #2dd4bf; border-radius: 14px; padding: 14px;
+}
+.bar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.bar b { color: #5eead4; }
+.box { width: 100%; max-width: 360px; margin: auto; text-align: center; box-shadow: 0 0 20px rgba(45,212,191,0.3); }
+input, button { width: 100%; padding: 11px; margin-top: 10px; border-radius: 8px; border: 1px solid #2dd4bf; background: #020617; font-size: 13px; }
+input { text-align: center; }
+.tt { border-color: #a855f7; }
+.hp { border-color: #34d399; }
+.nav { width: auto; padding: 7px 15px; margin: 0; border: 0; background: #1e293b; }
+.go { background: #34d399; color: #000; font-weight: bold; }
+.hide { display: none; }
+import { initializeApp } from "https://gstatic.com";
+import { getAuth, signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, OAuthProvider, signInWithPopup } from "https://gstatic.com";
+
+const auth = getAuth(initializeApp({ apiKey: "GANTI_API_KEY", authDomain: "GANTI_://firebaseapp.com" }));
+let slide = 1;
+const nama = ["", "1. Login", "2. Pilih Avatar", "3. Pilih Niche", "4. Sub-Menu Niche", "5. Control Center & Preview", "6. Pembayaran & Live"];
+
+window.geser = (arah) => {
+  slide = Math.min(6, Math.max(1, slide + arah));
+  document.getElementById('no').innerText = `Slide ${slide} / 6`;
+  document.getElementById('s1').classList.toggle('hide', slide !== 1);
+  document.getElementById('s2').classList.toggle('hide', slide === 1);
+  document.getElementById('judul').innerText = nama[slide];
+};
+
+window.login = async (tipe) => {
+  const u = document.getElementById('inp').value.trim();
+  try {
+    if (tipe === 'email') await signInWithEmailAndPassword(auth, u, prompt("Password:"));
+    if (tipe === 'hp') {
+      window.rv = new RecaptchaVerifier(auth, 'rc', { size: 'invisible' });
+      const c = await signInWithPhoneNumber(auth, u, window.rv);
+      await c.confirm(prompt("Kode OTP:"));
+    }
+    if (tipe === 'tiktok') await signInWithPopup(auth, new OAuthProvider('oidc.tiktok'));
+    alert("Login Berhasil!"); geser(1);
+  } catch (e) { alert("Error: " + e.message); }
+};
