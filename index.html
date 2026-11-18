@@ -167,17 +167,19 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://gstatic.com";
   import { getFirestore, doc, setDoc } from "https://gstatic.com";
 
-  const pid = "ai-live-streamer-73674";
   const firebaseConfig = {
-    apiKey: "TEMPEL_API_KEY_ASLI_DARI_FIREBASE_KAMU",
-    authDomain: pid + ".firebaseapp.com",
-    projectId: pid,
-    storageBucket: pid + ".firebasestorage.app",
+    apiKey: "AIzaSyDzDzyylDX2fPNsIpkvXpyIwWUpRKasBKg",
+    authDomain: "ai-live-streamer-73674.firebaseapp.com",
+
+    projectId: "ai-live-streamer-73674",
+    storageBucket: "ai-live-streamer-73674.firebasestorage.app",
     messagingSenderId: "449611002764",
-    appId: "1:449611002764:web:69ef52041370b5c53cdca9"
+    appId: "1:449611002764:web:69af03041370b3c53cdca9",
+    measurementId: "G-F48NNBYE9F"
   };
 
   const app = initializeApp(firebaseConfig);
+
   const auth = getAuth(app);
   const db = getFirestore(app);
   let confRes = null;
