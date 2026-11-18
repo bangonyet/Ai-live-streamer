@@ -58,9 +58,7 @@
     <div class="card sel" onclick="pick(this)"><b>👨‍🏫 Mentor Edukasi</b><p style="font-size:12px;color:#94a3b8">Ramah & terstruktur</p></div>
     <div class="card" onclick="pick(this)"><b>☕ Kakak Santai</b><p style="font-size:12px;color:#94a3b8">Asik & interaktif</p></div>
     <div class="card" onclick="pick(this)"><b>🎓 Dosen / Ahli</b><p style="font-size:12px;color:#94a3b8">Formal & berbobot</p></div>
-  </div>
-</div>
-<div id="s5" class="slide">
+ <div id="s5" class="slide">
   <h2>5. Control Center & Preview</h2>
   <div class="grid">
     <div style="text-align:left;font-size:14px;line-height:2.2">
@@ -104,14 +102,74 @@
 let cur=1;
 function go(n){if(n<1||n>6)return;cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i+1===n));sNum.innerText=n;galaxy.style.opacity=n===1?'1':'0.15';}
 function pick(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');if(txt)nLbl.innerText=txt;}
+
 const c=galaxy,x=c.getContext('2d');let w,h,st=[],mt=[];
-function rs(){w=c.width=innerWidth;h=c.height=innerHeight;st=Array.from({length:180},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.8+.3,c:['#fff','#a5f3fc','#e9d5ff','#fde047'][Math.floor(Math.random()*4)]}))}
+function rs(){
+  w=c.width=innerWidth;h=c.height=innerHeight;
+  st=Array.from({length:450},()=>({
+    x:Math.random()*w,y:Math.random()*h,
+    r:Math.random()*2.3+0.4,
+    c:['#ffffff','#fde68a','#67e8f9','#f0abfc','#fdba74'][Math.floor(Math.random()*5)],
+    a:Math.random()*6.28
+  }));
+}
 addEventListener('resize',rs);rs();
+
+function drawGalaxySpiral(){
+  x.fillStyle='#050712';x.fillRect(0,0,w,h);
+  const cx=w*0.52,cy=h*0.48,maxR=Math.max(w,h)*0.75;
+  const arms=[
+    {ang:0.3,c1:'rgba(168,85,247,0.48)',c2:'rgba(236,72,153,0.18)'},
+    {ang:2.4,c1:'rgba(251,191,36,0.42)',c2:'rgba(249,115,22,0.16)'},
+    {ang:4.5,c1:'rgba(45,212,191,0.40)',c2:'rgba(59,130,246,0.18)'}
+  ];
+  arms.forEach(arm=>{
+    for(let i=0;i<18;i++){
+      let t=i/18,dist=t*maxR,a=arm.ang+t*2.9;
+      let px=cx+Math.cos(a)*dist*0.85,py=cy+Math.sin(a)*dist*0.95;
+      let rad=maxR*(0.16+t*0.22);
+      let g=x.createRadialGradient(px,py,0,px,py,rad);
+      g.addColorStop(0,arm.c1);g.addColorStop(0.5,arm.c2);g.addColorStop(1,'rgba(0,0,0,0)');
+      x.fillStyle=g;x.fillRect(0,0,w,h);
+    }
+  });
+  let core=x.createRadialGradient(cx,cy,5,cx,cy,maxR*0.35);
+  core.addColorStop(0,'rgba(254,240,138,0.45)');
+  core.addColorStop(0.4,'rgba(192,132,252,0.25)');
+  core.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=core;x.fillRect(0,0,w,h);
+}
+
+function addMeteor(){
+  const pal=[
+    {h:'#ffffff',m:'#a855f7',t:'rgba(168,85,247,0)'},
+    {h:'#ffffff',m:'#38bdf8',t:'rgba(56,189,248,0)'},
+    {h:'#fef08a',m:'#f97316',t:'rgba(249,115,22,0)'}
+  ];
+  mt.push({x:Math.random()*w*1.3,y:-40,l:Math.random()*130+90,v:Math.random()*5+4,p:pal[Math.floor(Math.random()*3)]});
+}
+for(let i=0;i<9;i++){addMeteor();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
+
 (function loop(){
-  let g=x.createRadialGradient(w/2,h/2,10,w/2,h/2,Math.max(w,h)*.8);g.addColorStop(0,'#2e1065');g.addColorStop(.5,'#0f172a');g.addColorStop(1,'#04060d');x.fillStyle=g;x.fillRect(0,0,w,h);
-  st.forEach(s=>{x.fillStyle=s.c;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});
-  if(Math.random()<.05)mt.push({x:Math.random()*w*1.2,y:-20,l:90,v:6});
-  mt.forEach((m,i)=>{x.strokeStyle='#a5f3fc';x.lineWidth=2;x.beginPath();x.moveTo(m.x,m.y);x.lineTo(m.x+m.l*.6,m.y-m.l*.8);x.stroke();m.x-=m.v*.6;m.y+=m.v*.8;if(m.y>h)mt.splice(i,1)});
+  drawGalaxySpiral();
+  st.forEach(s=>{
+    s.a+=0.03;x.globalAlpha=0.45+Math.abs(Math.sin(s.a))*0.55;
+    x.fillStyle=s.c;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill();
+  });
+  x.globalAlpha=1;
+  if(Math.random()<0.06&&mt.length<12)addMeteor();
+  mt.forEach((m,i)=>{
+    let ex=m.x+m.l*0.65,ey=m.y-m.l*0.75;
+    let g=x.createLinearGradient(m.x,m.y,ex,ey);
+    g.addColorStop(0,m.p.h);g.addColorStop(0.25,m.p.m);g.addColorStop(1,m.p.t);
+    x.strokeStyle=g;x.lineWidth=4;x.lineCap='round';
+    x.beginPath();x.moveTo(m.x,m.y);x.lineTo(ex,ey);x.stroke();
+    let glow=x.createRadialGradient(m.x,m.y,0,m.x,m.y,9);
+    glow.addColorStop(0,'#ffffff');glow.addColorStop(0.4,m.p.m);glow.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=glow;x.beginPath();x.arc(m.x,m.y,9,0,7);x.fill();
+    m.x-=m.v*0.65;m.y+=m.v*0.75;
+    if(m.y>h+120||m.x<-120)mt.splice(i,1);
+  });
   requestAnimationFrame(loop);
 })();
 </script>
