@@ -8,170 +8,126 @@
   *{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
   body{background:#060913;color:#fff;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;overflow-x:hidden}
   #galaxy{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-  .bar{position:relative;z-index:2;max-width:900px;width:94%;margin:12px auto;background:rgba(15,23,42,.85);border:1px solid rgba(45,212,191,.4);border-radius:12px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
-  .slide{display:none;position:relative;z-index:2;max-width:850px;width:92%;margin:auto;background:rgba(15,23,42,.88);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:24px;backdrop-filter:blur(8px)}
+  .bar{position:relative;z-index:2;max-width:900px;width:94%;margin:12px auto;background:rgba(15,23,42,.88);border:1px solid rgba(45,212,191,.4);border-radius:12px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+  .slide{display:none;position:relative;z-index:2;max-width:850px;width:92%;margin:auto;background:rgba(15,23,42,.9);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:24px;backdrop-filter:blur(8px)}
   .slide.active{display:block}
   #s1.active{max-width:420px;background:rgba(13,20,38,.42);border:1.5px solid rgba(45,212,191,.7);box-shadow:0 0 30px rgba(45,212,191,.25);text-align:center}
-  h2{font-size:20px;margin-bottom:18px;text-align:center}
-  input[type=text]{width:100%;padding:12px;border-radius:10px;border:1px solid #2dd4bf;background:rgba(15,23,42,.7);color:#fff;text-align:center;margin-bottom:12px;font-size:14px}
+  h2{font-size:20px;margin-bottom:8px;text-align:center}
+  .sub{font-size:12px;color:#94a3b8;text-align:center;margin-bottom:18px}
+  input[type=text]{width:100%;padding:12px;border-radius:10px;border:1px solid #2dd4bf;background:rgba(15,23,42,.75);color:#fff;text-align:center;margin-bottom:12px;font-size:14px}
   .btn{width:100%;padding:12px;border-radius:10px;border:1px solid #2dd4bf;background:rgba(15,23,42,.75);color:#fff;font-weight:600;cursor:pointer;margin-bottom:10px;font-size:14px}
   .btn-purple{border-color:#c084fc}
   .btn-green{background:#34d399;color:#064e3b;border:none;font-weight:700}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-  .card{background:rgba(30,41,59,.8);border:1px solid #475569;border-radius:12px;padding:16px;text-align:center;cursor:pointer}
-  .card.sel{border:2px solid #2dd4bf;background:rgba(20,184,166,.15)}
-  .nav-btn{padding:8px 18px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#fff;cursor:pointer;font-weight:600}
-  .nav-next{background:#34d399;color:#064e3b;border:none}
+  .card{background:rgba(30,41,59,.85);border:1px solid #475569;border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:.2s}
+  .card:hover{border-color:#2dd4bf}
+  .card.sel{border:2px solid #34d399;background:rgba(16,185,129,.18)}
 </style>
 </head>
 <body>
 <canvas id="galaxy"></canvas>
-<div class="bar"><b style="color:#2dd4bf">● AI Live Streamer</b><span id="uLabel">@creatortiktok</span><span>Slide <b id="sNum">1</b> / 6</span></div>
+<div class="bar"><b style="color:#2dd4bf">● AI Live Streamer</b><span id="uLabel">@creatortiktok</span><span>Tahap <b id="sNum">1</b> / 6</span></div>
+
 <div id="s1" class="slide active">
   <h2>1. Masuk ke Studio AI Live</h2>
-  <input type="text" id="uIn" placeholder="Enter Username (e.g., @creatortiktok)" oninput="uLabel.innerText=this.value||'@creatortiktok'">
-  <button class="btn" onclick="go(2)">✉️ Masuk dengan Email</button>
-  <button class="btn btn-purple" onclick="go(2)">🎵 Masuk dengan TikTok</button>
-  <button class="btn" onclick="go(2)">📱 Masuk dengan Nomor HP (OTP)</button>
+  <p class="sub">Isi username terlebih dahulu untuk melanjutkan</p>
+  <input type="text" id="uIn" placeholder="Masukkan Username (contoh: @creatortiktok)" oninput="uLabel.innerText=this.value||'@creatortiktok'">
+  <button class="btn" onclick="doLogin('Email')">✉️ Masuk dengan Email</button>
+  <button class="btn btn-purple" onclick="doLogin('TikTok')">🎵 Masuk dengan TikTok</button>
+  <button class="btn" onclick="doLogin('HP')">📱 Masuk dengan Nomor HP (OTP)</button>
 </div>
-
 <div id="s2" class="slide">
-  <h2>2. Pilih Avatar</h2>
+  <h2>2. Verifikasi & Scan Wajah Wajib</h2>
+  <p class="sub">Wajah wajib dipindai agar AI Avatar dapat aktif</p>
   <div class="grid">
-    <div class="card sel"><h3>📷 Deteksi Wajah Live</h3><p style="font-size:12px;color:#94a3b8;margin:10px 0">Kamera AI otomatis mendeteksi ekspresi wajah</p><button class="btn btn-green" onclick="alert('Wajah Terdeteksi!')">Gunakan Deteksi Live</button></div>
-    <div class="card"><h3>✅ Wajah Jelas</h3><p style="font-size:12px;color:#34d399;margin:10px 0">Siap digunakan untuk Avatar</p><input type="file" accept="image/*" style="font-size:12px"></div>
+    <div class="card sel">
+      <h3>📷 Kamera Deteksi Live</h3>
+      <div style="position:relative;width:160px;height:185px;margin:10px auto;border-radius:12px;overflow:hidden;border:2px solid #2dd4bf;background:#020617">
+        <video id="camVid" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1)"></video>
+        <div id="scanBar" style="display:none;position:absolute;left:0;right:0;height:3px;background:#34d399;box-shadow:0 0 12px #34d399;top:20%"></div>
+      </div>
+      <p id="scanStat" style="font-size:12px;color:#fbbf24;margin-bottom:8px">⚠️ Menunggu pemindaian wajah...</p>
+      <button id="btnScan" class="btn btn-green" onclick="startFaceScan()">🔍 Mulai Scan Wajah Sekarang</button>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center">
+      <h3>🖼️ Alternatif Upload Foto</h3>
+      <p style="font-size:12px;color:#94a3b8;margin:10px 0">Upload foto wajah jelas jika kamera bermasalah</p>
+      <input type="file" accept="image/*" style="font-size:12px;margin:0 auto" onchange="verifyUpload(this)">
+    </div>
   </div>
 </div>
-
 <div id="s3" class="slide">
-  <h2>3. Pilih Niche</h2>
+  <h2>3. Pilih Niche Live Streaming</h2>
+  <p class="sub">Klik salah satu kategori di bawah untuk lanjut</p>
   <div class="grid">
-    <div class="card sel" onclick="pick(this,'EDUKASI')"><h1>🎓</h1><h3>EDUKASI</h3></div>
-    <div class="card" onclick="pick(this,'HIBURAN')"><h1>🎭</h1><h3>HIBURAN</h3></div>
-    <div class="card" onclick="pick(this,'JUALAN')"><h1>🛒</h1><h3>JUALAN</h3></div>
+    <div class="card" onclick="chooseNiche(this,'EDUKASI')"><h1>🎓</h1><h3>EDUKASI</h3><p style="font-size:11px;color:#94a3b8;margin-top:4px">Tutorial & Kelas Online</p></div>
+    <div class="card" onclick="chooseNiche(this,'HIBURAN')"><h1>🎭</h1><h3>HIBURAN</h3><p style="font-size:11px;color:#94a3b8;margin-top:4px">Ngobrol & Gaming</p></div>
+    <div class="card" onclick="chooseNiche(this,'JUALAN')"><h1>🛒</h1><h3>JUALAN</h3><p style="font-size:11px;color:#94a3b8;margin-top:4px">Live Shopping & Promo</p></div>
   </div>
 </div>
-
 <div id="s4" class="slide">
-  <h2>4. Sub-Menu Niche (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
+  <h2>4. Pilih Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
+  <p class="sub">Klik karakter pembawa acara AI yang diinginkan</p>
   <div class="grid">
-    <div class="card sel" onclick="pick(this)"><b>👨‍🏫 Mentor Edukasi</b><p style="font-size:12px;color:#94a3b8">Ramah & terstruktur</p></div>
-    <div class="card" onclick="pick(this)"><b>☕ Kakak Santai</b><p style="font-size:12px;color:#94a3b8">Asik & interaktif</p></div>
-    <div class="card" onclick="pick(this)"><b>🎓 Dosen / Ahli</b><p style="font-size:12px;color:#94a3b8">Formal & berbobot</p></div>
- <div id="s5" class="slide">
+    <div class="card" onclick="chooseStyle(this,'Mentor Edukasi')"><h1>👨‍🏫</h1><h3>Mentor Edukasi</h3><p style="font-size:12px;color:#94a3b8">Ramah & terstruktur</p></div>
+    <div class="card" onclick="chooseStyle(this,'Kakak Santai')"><h1>☕</h1><h3>Kakak Santai</h3><p style="font-size:12px;color:#94a3b8">Asik & interaktif</p></div>
+    <div class="card" onclick="chooseStyle(this,'Dosen / Ahli')"><h1>🎓</h1><h3>Dosen / Ahli</h3><p style="font-size:12px;color:#94a3b8">Formal & berbobot</p></div>
+  </div>
+</div>
+<div id="s5" class="slide">
   <h2>5. Control Center & Preview</h2>
+  <p class="sub">Periksa pengaturan studio AI sebelum aktivasi</p>
   <div class="grid">
     <div style="text-align:left;font-size:14px;line-height:2.2">
-      <label><input type="checkbox" checked> Studio & Ratio (9:16)</label><br>
+      <label><input type="checkbox" checked> Studio & Ratio (9:16 Vertical)</label><br>
       <label><input type="checkbox" checked> Materi Live & Pop-up Gambar</label><br>
       <label><input type="checkbox" checked> Audio Suara AI & Auto-Monolog</label><br>
       <label><input type="checkbox" checked> Koneksi TikTok / YT / IG</label>
-      <button class="btn btn-green" style="margin-top:12px" onclick="go(6)">Lanjut ke Pembayaran →</button>
+      <button class="btn btn-green" style="margin-top:14px" onclick="go(6)">Konfirmasi & Lanjut Bayar →</button>
     </div>
-    <div class="card sel" style="display:flex;flex-direction:column;justify-content:center;min-height:200px">
-      <span style="background:#e11d48;padding:3px 8px;border-radius:6px;font-size:11px;width:fit-content;margin:0 auto 12px">● LIVE PREVIEW</span>
+    <div class="card sel" style="display:flex;flex-direction:column;justify-content:center;min-height:190px">
+      <span style="background:#e11d48;padding:3px 8px;border-radius:6px;font-size:11px;width:fit-content;margin:0 auto 12px">● LIVE READY</span>
       <h3>✨ AI Virtual Host</h3>
-      <p style="font-size:12px;color:#2dd4bf;margin-top:6px">Siap Siaran 24 Jam</p>
+      <p id="summaryTxt" style="font-size:12px;color:#2dd4bf;margin-top:6px">Siap Siaran</p>
     </div>
   </div>
 </div>
-
 <div id="s6" class="slide">
-  <h2>6. Pembayaran & Live</h2>
+  <h2>6. Pembayaran & Mulai Live</h2>
+  <p class="sub">Pilih paket durasi dan selesaikan pembayaran QRIS</p>
   <div class="grid">
     <div style="text-align:left">
-      <div class="card sel" style="margin-bottom:8px;display:flex;justify-content:space-between" onclick="pick(this)"><span>Paket 2 Jam</span><b>Rp 5.500</b></div>
-      <div class="card" style="margin-bottom:8px;display:flex;justify-content:space-between" onclick="pick(this)"><span>Paket 10 Jam</span><b>Rp 14.500</b></div>
-      <div class="card" style="display:flex;justify-content:space-between" onclick="pick(this)"><span>Paket 50 Jam</span><b>Rp 28.000</b></div>
+      <div class="card sel" style="margin-bottom:8px;display:flex;justify-content:space-between" onclick="pickPkg(this,'Paket 2 Jam - Rp 5.500')"><span>Paket 2 Jam</span><b>Rp 5.500</b></div>
+      <div class="card" style="margin-bottom:8px;display:flex;justify-content:space-between" onclick="pickPkg(this,'Paket 10 Jam - Rp 14.500')"><span>Paket 10 Jam</span><b>Rp 14.500</b></div>
+      <div class="card" style="display:flex;justify-content:space-between" onclick="pickPkg(this,'Paket 50 Jam - Rp 28.000')"><span>Paket 50 Jam</span><b>Rp 28.000</b></div>
     </div>
     <div class="card">
-      <p style="font-size:13px;margin-bottom:8px"><b>Pembayaran via QRIS</b></p>
+      <p style="font-size:13px;margin-bottom:6px"><b>Pembayaran via QRIS</b></p>
+      <p id="pkgLbl" style="font-size:11px;color:#2dd4bf;margin-bottom:8px">Paket 2 Jam - Rp 5.500</p>
       <img src="https://qrserver.com" style="background:#fff;padding:6px;border-radius:8px">
     </div>
   </div>
-  <button class="btn btn-green" style="margin-top:14px" onclick="alert('🚀 Live Streamer Dimulai!')">🚀 MULAI LIVE (OBS / RTMP)</button>
+  <button class="btn btn-green" style="margin-top:14px" onclick="startLive()">🚀 MULAI LIVE (OBS / RTMP)</button>
 </div>
-
-<div class="bar">
-  <button class="nav-btn" onclick="go(cur-1)">← Back</button>
-  <span style="font-size:12px;color:#94a3b8">AI Live Studio</span>
-  <button class="nav-btn nav-next" onclick="go(cur+1)">Next →</button>
-</div>
-
+<div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
 <script>
-let cur=1;
-function go(n){if(n<1||n>6)return;cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i+1===n));sNum.innerText=n;galaxy.style.opacity=n===1?'1':'0.15';}
-function pick(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');if(txt)nLbl.innerText=txt;}
+let cur=1,camStream=null,data={user:'@creatortiktok',niche:'',style:'',pkg:'Paket 2 Jam - Rp 5.500'};
+function go(n){if(n<=cur||n>6)return;cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i+1===n));sNum.innerText=n;galaxy.style.opacity=n===1?'1':'0.15';if(n!==2&&camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
+function doLogin(via){let v=uIn.value.trim();if(!v){v='@'+via.toLowerCase()+'_creator';uIn.value=v;}data.user=v;uLabel.innerText=v;go(2);}
+async function startFaceScan(){btnScan.disabled=true;btnScan.innerText='Memindai...';scanStat.style.color='#2dd4bf';scanStat.innerText='Membuka kamera & memindai wajah...';scanBar.style.display='block';try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});camVid.srcObject=camStream;}catch(e){scanStat.innerText='Memindai menggunakan sensor AI...';}let pos=15,dir=4,iv=setInterval(()=>{pos+=dir;if(pos>85||pos<15)dir*=-1;scanBar.style.top=pos+'%';},55);setTimeout(()=>{clearInterval(iv);scanStat.style.color='#34d399';scanStat.innerText='✅ Wajah Terverifikasi!';setTimeout(()=>go(3),700);},2800);}
+function verifyUpload(inp){if(!inp.files||!inp.files[0])return;scanStat.style.color='#34d399';scanStat.innerText='✅ Foto Wajah Terverifikasi!';setTimeout(()=>go(3),700);}
+function chooseNiche(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.niche=txt;nLbl.innerText=txt;setTimeout(()=>go(4),450);}
+function chooseStyle(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.style=txt;summaryTxt.innerText=data.niche+' • '+txt;setTimeout(()=>go(5),450);}
+function pickPkg(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.pkg=txt;pkgLbl.innerText=txt;}
+function startLive(){alert('🚀 LIVE DIMULAI!\nAkun: '+data.user+'\nNiche: '+data.niche+' ('+data.style+')\nPaket: '+data.pkg);}
 
 const c=galaxy,x=c.getContext('2d');let w,h,st=[],mt=[];
-function rs(){
-  w=c.width=innerWidth;h=c.height=innerHeight;
-  st=Array.from({length:450},()=>({
-    x:Math.random()*w,y:Math.random()*h,
-    r:Math.random()*2.3+0.4,
-    c:['#ffffff','#fde68a','#67e8f9','#f0abfc','#fdba74'][Math.floor(Math.random()*5)],
-    a:Math.random()*6.28
-  }));
-}
+function rs(){w=c.width=innerWidth;h=c.height=innerHeight;st=Array.from({length:450},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.3+.4,c:['#fff','#fde68a','#67e8f9','#f0abfc','#fdba74'][Math.floor(Math.random()*5)],a:Math.random()*6.28}))}
 addEventListener('resize',rs);rs();
-
-function drawGalaxySpiral(){
-  x.fillStyle='#050712';x.fillRect(0,0,w,h);
-  const cx=w*0.52,cy=h*0.48,maxR=Math.max(w,h)*0.75;
-  const arms=[
-    {ang:0.3,c1:'rgba(168,85,247,0.48)',c2:'rgba(236,72,153,0.18)'},
-    {ang:2.4,c1:'rgba(251,191,36,0.42)',c2:'rgba(249,115,22,0.16)'},
-    {ang:4.5,c1:'rgba(45,212,191,0.40)',c2:'rgba(59,130,246,0.18)'}
-  ];
-  arms.forEach(arm=>{
-    for(let i=0;i<18;i++){
-      let t=i/18,dist=t*maxR,a=arm.ang+t*2.9;
-      let px=cx+Math.cos(a)*dist*0.85,py=cy+Math.sin(a)*dist*0.95;
-      let rad=maxR*(0.16+t*0.22);
-      let g=x.createRadialGradient(px,py,0,px,py,rad);
-      g.addColorStop(0,arm.c1);g.addColorStop(0.5,arm.c2);g.addColorStop(1,'rgba(0,0,0,0)');
-      x.fillStyle=g;x.fillRect(0,0,w,h);
-    }
-  });
-  let core=x.createRadialGradient(cx,cy,5,cx,cy,maxR*0.35);
-  core.addColorStop(0,'rgba(254,240,138,0.45)');
-  core.addColorStop(0.4,'rgba(192,132,252,0.25)');
-  core.addColorStop(1,'rgba(0,0,0,0)');
-  x.fillStyle=core;x.fillRect(0,0,w,h);
-}
-
-function addMeteor(){
-  const pal=[
-    {h:'#ffffff',m:'#a855f7',t:'rgba(168,85,247,0)'},
-    {h:'#ffffff',m:'#38bdf8',t:'rgba(56,189,248,0)'},
-    {h:'#fef08a',m:'#f97316',t:'rgba(249,115,22,0)'}
-  ];
-  mt.push({x:Math.random()*w*1.3,y:-40,l:Math.random()*130+90,v:Math.random()*5+4,p:pal[Math.floor(Math.random()*3)]});
-}
-for(let i=0;i<9;i++){addMeteor();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
-
-(function loop(){
-  drawGalaxySpiral();
-  st.forEach(s=>{
-    s.a+=0.03;x.globalAlpha=0.45+Math.abs(Math.sin(s.a))*0.55;
-    x.fillStyle=s.c;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill();
-  });
-  x.globalAlpha=1;
-  if(Math.random()<0.06&&mt.length<12)addMeteor();
-  mt.forEach((m,i)=>{
-    let ex=m.x+m.l*0.65,ey=m.y-m.l*0.75;
-    let g=x.createLinearGradient(m.x,m.y,ex,ey);
-    g.addColorStop(0,m.p.h);g.addColorStop(0.25,m.p.m);g.addColorStop(1,m.p.t);
-    x.strokeStyle=g;x.lineWidth=4;x.lineCap='round';
-    x.beginPath();x.moveTo(m.x,m.y);x.lineTo(ex,ey);x.stroke();
-    let glow=x.createRadialGradient(m.x,m.y,0,m.x,m.y,9);
-    glow.addColorStop(0,'#ffffff');glow.addColorStop(0.4,m.p.m);glow.addColorStop(1,'rgba(0,0,0,0)');
-    x.fillStyle=glow;x.beginPath();x.arc(m.x,m.y,9,0,7);x.fill();
-    m.x-=m.v*0.65;m.y+=m.v*0.75;
-    if(m.y>h+120||m.x<-120)mt.splice(i,1);
-  });
-  requestAnimationFrame(loop);
-})();
+function drawGalaxy(){x.fillStyle='#050712';x.fillRect(0,0,w,h);const cx=w*.52,cy=h*.48,maxR=Math.max(w,h)*.75;[{ang:.3,c1:'rgba(168,85,247,.48)',c2:'rgba(236,72,153,.18)'},{ang:2.4,c1:'rgba(251,191,36,.42)',c2:'rgba(249,115,22,.16)'},{ang:4.5,c1:'rgba(45,212,191,.4)',c2:'rgba(59,130,246,.18)'}].forEach(arm=>{for(let i=0;i<18;i++){let t=i/18,d=t*maxR,a=arm.ang+t*2.9,px=cx+Math.cos(a)*d*.85,py=cy+Math.sin(a)*d*.95,r=maxR*(.16+t*.22),g=x.createRadialGradient(px,py,0,px,py,r);g.addColorStop(0,arm.c1);g.addColorStop(.5,arm.c2);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,w,h);}});let core=x.createRadialGradient(cx,cy,5,cx,cy,maxR*.35);core.addColorStop(0,'rgba(254,240,138,.45)');core.addColorStop(.4,'rgba(192,132,252,.25)');core.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=core;x.fillRect(0,0,w,h);}
+function addM(){const p=[{h:'#fff',m:'#a855f7',t:'rgba(168,85,247,0)'},{h:'#fff',m:'#38bdf8',t:'rgba(56,189,248,0)'},{h:'#fef08a',m:'#f97316',t:'rgba(249,115,22,0)'}][Math.floor(Math.random()*3)];mt.push({x:Math.random()*w*1.3,y:-40,l:Math.random()*130+90,v:Math.random()*5+4,p});}
+for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
+(function loop(){drawGalaxy();st.forEach(s=>{s.a+=.03;x.globalAlpha=.45+Math.abs(Math.sin(s.a))*.55;x.fillStyle=s.c;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});x.globalAlpha=1;if(Math.random()<.06&&mt.length<12)addM();mt.forEach((m,i)=>{let ex=m.x+m.l*.65,ey=m.y-m.l*.75,g=x.createLinearGradient(m.x,m.y,ex,ey);g.addColorStop(0,m.p.h);g.addColorStop(.25,m.p.m);g.addColorStop(1,m.p.t);x.strokeStyle=g;x.lineWidth=4;x.lineCap='round';x.beginPath();x.moveTo(m.x,m.y);x.lineTo(ex,ey);x.stroke();let gw=x.createRadialGradient(m.x,m.y,0,m.x,m.y,9);gw.addColorStop(0,'#fff');gw.addColorStop(.4,m.p.m);gw.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gw;x.beginPath();x.arc(m.x,m.y,9,0,7);x.fill();m.x-=m.v*.65;m.y+=m.v*.75;if(m.y>h+120||m.x<-120)mt.splice(i,1)});requestAnimationFrame(loop);})();
 </script>
 </body>
 </html>
