@@ -182,7 +182,7 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
   const db = getFirestore(app);
   let confRes = null;
 
-  async function saveUser(u, via, info) {
+  function saveUser(u, via, info) {
     let nama = uln.value.trim() || '@creator';
     if (!nama.startsWith('@')) nama = '@' + nama;
     uln.value = nama;
@@ -191,10 +191,8 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
     authMsg.style.color = '#34d399';
     authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
 
-    // Simpan ke Firestore di latar belakang tanpa menahan pindah slide
     setDoc(doc(db, 'creators', u.uid), { username: nama, via: via, contact: info, time: Date.now() }, { merge: true }).catch(() => {});
-
-    setTimeout(() => go(2), 800);
+    setTimeout(() => go(2), 600);
   }
 
   window.loginEmail = async function() {
@@ -275,5 +273,5 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
     }
   };
 </script>
-y>
+</body>
 </html>
