@@ -168,38 +168,44 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
   import { getFirestore, doc, setDoc } from "https://gstatic.com";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDzDzyylDX2fPNsIpkvXpyIwWUpRKasBKg",
-    authDomain: "ai-live-streamer-73674.firebaseapp.com",
-
+    apiKey: "AIzaSyDOzyy1D2fPNcIpkv4puiXmwUp4Rad8eg",
+    authDomain: "://firebaseapp.com",
     projectId: "ai-live-streamer-73674",
     storageBucket: "ai-live-streamer-73674.firebasestorage.app",
     messagingSenderId: "449611002764",
-    appId: "1:449611002764:web:69af03041370b3c53cdca9",
-    measurementId: "G-F48NNBYE9F"
+    appId: "1:449611002764:web:6faf0304f070b3c63cdca9",
+    measurementId: "G-F6B0H1E56F"
   };
 
   const app = initializeApp(firebaseConfig);
-
   const auth = getAuth(app);
   const db = getFirestore(app);
   let confRes = null;
 
   async function saveUser(u, via, info) {
-    let name = uIn.value.trim() || '@creator';
-    if (!name.startsWith('@')) name = '@' + name;
-    uIn.value = name; uLabel.innerText = name; data.user = name;
+    let nama = uln.value.trim() || '@creator';
+    if (!nama.startsWith('@')) nama = '@' + nama;
+    uln.value = nama;
+    ulabel.innerText = nama;
+    data.user = nama;
     authMsg.style.color = '#34d399';
     authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
-    try {
-      await setDoc(doc(db, "creators", u.uid), { username: name, via: via, contact: info, time: Date.now() }, { merge: true });
-    } catch (e) {}
+
+    // Simpan ke Firestore di latar belakang tanpa menahan pindah slide
+    setDoc(doc(db, 'creators', u.uid), { username: nama, via: via, contact: info, time: Date.now() }, { merge: true }).catch(() => {});
+
     setTimeout(() => go(2), 800);
   }
 
   window.loginEmail = async function() {
-    const em = emIn.value.trim(), pw = pwIn.value.trim();
-    if (!em || pw.length < 6) { authMsg.style.color='#fbbf24'; authMsg.innerText='Isi email & password min 6 huruf'; return; }
-    authMsg.style.color='#2dd4bf'; authMsg.innerText='Memproses Email...';
+    let em = emailIn.value.trim(), pw = passIn.value.trim();
+    if (!em || pw.length < 6) {
+      authMsg.style.color = '#fbbf24';
+      authMsg.innerText = 'Isi email & password min 6 huruf!';
+      return;
+    }
+    authMsg.style.color = '#60a5fa';
+    authMsg.innerText = 'Memproses Email...';
     try {
       const r = await signInWithEmailAndPassword(auth, em, pw);
       saveUser(r.user, 'Email', em);
@@ -207,41 +213,67 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
       try {
         const r2 = await createUserWithEmailAndPassword(auth, em, pw);
         saveUser(r2.user, 'Email Baru', em);
-      } catch (e2) { authMsg.style.color='#f87171'; authMsg.innerText='Gagal: ' + e2.message; }
+      } catch (e2) {
+        authMsg.style.color = '#f87171';
+        authMsg.innerText = 'Gagal: ' + e2.message;
+      }
     }
   };
 
   window.loginTikTokGoogle = async function() {
-    if (!uIn.value.trim()) { authMsg.style.color='#fbbf24'; authMsg.innerText='Ketik @username TikTok di atas dulu!'; return; }
-    authMsg.style.color='#c084fc'; authMsg.innerText='Membuka verifikasi akun...';
+    if (!uln.value.trim()) {
+      authMsg.style.color = '#fbbf24';
+      authMsg.innerText = 'Ketik Username TikTok di atas dulu!';
+      return;
+    }
+    authMsg.style.color = '#60a5fa';
+    authMsg.innerText = 'Membuka verifikasi akun...';
     try {
       const r = await signInWithPopup(auth, new GoogleAuthProvider());
       saveUser(r.user, 'TikTok-Google', r.user.email);
-    } catch (e) { authMsg.style.color='#f87171'; authMsg.innerText='Gagal: ' + e.message; }
+    } catch (e) {
+      authMsg.style.color = '#f87171';
+      authMsg.innerText = 'Gagal: ' + e.message;
+    }
   };
 
   window.sendOTP = async function() {
     let ph = phIn.value.trim();
     if (ph.startsWith('08')) ph = '+62' + ph.slice(1);
-    if (!ph.startsWith('+')) { authMsg.style.color='#fbbf24'; authMsg.innerText='Awali nomor dengan 08 atau +62'; return; }
-    authMsg.style.color='#2dd4bf'; authMsg.innerText='Mengirim OTP...';
+    if (!ph.startsWith('+')) {
+      authMsg.style.color = '#fbbf24';
+      authMsg.innerText = 'Awali nomor dengan 08 atau +62';
+      return;
+    }
+    authMsg.style.color = '#60a5fa';
+    authMsg.innerText = 'Mengirim OTP...';
     try {
-      if (!window.rcVer) window.rcVer = new RecaptchaVerifier(auth, 'recaptcha-box', { size: 'normal' });
-      confRes = await signInWithPhoneNumber(auth, ph, window.rcVer);
+      if (!window.rVer) window.rVer = new RecaptchaVerifier(auth, 'recaptcha-box', { size: 'normal' });
+      confRes = await signInWithPhoneNumber(auth, ph, window.rVer);
       otpStep.style.display = 'block';
-      authMsg.style.color='#34d399'; authMsg.innerText='Kode OTP terkirim ke SMS!';
-    } catch (e) { authMsg.style.color='#f87171'; authMsg.innerText='Gagal OTP: ' + e.message; }
+      authMsg.style.color = '#34d399';
+      authMsg.innerText = 'Kode OTP terkirim ke SMS!';
+    } catch (e) {
+      authMsg.style.color = '#f87171';
+      authMsg.innerText = 'Gagal OTP: ' + e.message;
+    }
   };
 
   window.verifyOTP = async function() {
-    const cd = otpIn.value.trim();
-    if (!confRes || cd.length < 6) { authMsg.style.color='#fbbf24'; authMsg.innerText='Masukkan 6 digit kode OTP'; return; }
+    let cd = otpIn.value.trim();
+    if (!confRes || cd.length < 6) {
+      authMsg.style.color = '#fbbf24';
+      authMsg.innerText = 'Masukkan 6 digit kode OTP!';
+      return;
+    }
     try {
       const r = await confRes.confirm(cd);
       saveUser(r.user, 'Nomor HP', r.user.phoneNumber);
-    } catch (e) { authMsg.style.color='#f87171'; authMsg.innerText='Kode OTP salah!'; }
+    } catch (e) {
+      authMsg.style.color = '#f87171';
+      authMsg.innerText = 'Kode OTP salah!';
+    }
   };
 </script>
-
-</body>
+y>
 </html>
