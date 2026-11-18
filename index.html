@@ -27,15 +27,39 @@
 <body>
 <canvas id="galaxy"></canvas>
 <div class="bar"><b style="color:#2dd4bf">● AI Live Streamer</b><span id="uLabel">@creatortiktok</span><span>Tahap <b id="sNum">1</b> / 6</span></div>
-
 <div id="s1" class="slide active">
   <h2>1. Masuk ke Studio AI Live</h2>
-  <p class="sub">Isi username terlebih dahulu untuk melanjutkan</p>
-  <input type="text" id="uIn" placeholder="Masukkan Username (contoh: @creatortiktok)" oninput="uLabel.innerText=this.value||'@creatortiktok'">
-  <button class="btn" onclick="doLogin('Email')">✉️ Masuk dengan Email</button>
-  <button class="btn btn-purple" onclick="doLogin('TikTok')">🎵 Masuk dengan TikTok</button>
-  <button class="btn" onclick="doLogin('HP')">📱 Masuk dengan Nomor HP (OTP)</button>
+  <p class="sub">Pilih metode login untuk sinkronisasi akun creator</p>
+  <input type="text" id="uIn" placeholder="Username TikTok (contoh: @creatortiktok)" oninput="uLabel.innerText=this.value||'@creatortiktok'">
+
+  <div id="authMenu">
+    <button class="btn" onclick="showBox('emailBox')">✉️ Masuk dengan Email</button>
+    <button class="btn btn-purple" onclick="loginTikTokGoogle()">🎵 Masuk dengan TikTok (Google Sync)</button>
+    <button class="btn" onclick="showBox('phoneBox')">📱 Masuk dengan Nomor HP (OTP)</button>
+  </div>
+
+  <div id="emailBox" style="display:none;margin-top:8px">
+    <input type="email" id="emIn" placeholder="Alamat Email (contoh: nama@gmail.com)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #2dd4bf;background:rgba(15,23,42,.85);color:#fff;margin-bottom:8px">
+    <input type="password" id="pwIn" placeholder="Password (min. 6 karakter)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #2dd4bf;background:rgba(15,23,42,.85);color:#fff;margin-bottom:10px">
+    <button class="btn btn-green" onclick="loginEmail()">Masuk / Daftar Email →</button>
+    <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
+  </div>
+
+  <div id="phoneBox" style="display:none;margin-top:8px">
+    <input type="tel" id="phIn" placeholder="Nomor HP (contoh: 08123456789)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #34d399;background:rgba(15,23,42,.85);color:#fff;margin-bottom:8px">
+    <div id="recaptcha-box" style="display:flex;justify-content:center;margin-bottom:8px"></div>
+    <button class="btn btn-green" onclick="sendOTP()">Kirim Kode OTP SMS</button>
+    <div id="otpStep" style="display:none;margin-top:8px">
+      <input type="number" id="otpIn" placeholder="Masukkan 6 Digit Kode OTP" style="width:100%;padding:11px;border-radius:10px;border:1px solid #fbbf24;background:rgba(15,23,42,.85);color:#fff;text-align:center;margin-bottom:8px">
+      <button class="btn btn-green" onclick="verifyOTP()">Verifikasi OTP & Masuk →</button>
+    </div>
+    <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
+  </div>
+
+  <p id="authMsg" style="font-size:12px;color:#34d399;margin-top:8px"></p>
 </div>
+
+
 <div id="s2" class="slide">
   <h2>2. Verifikasi & Scan Wajah Wajib</h2>
   <p class="sub">Wajah wajib dipindai agar AI Avatar dapat aktif</p>
@@ -128,6 +152,95 @@ function drawGalaxy(){x.fillStyle='#050712';x.fillRect(0,0,w,h);const cx=w*.52,c
 function addM(){const p=[{h:'#fff',m:'#a855f7',t:'rgba(168,85,247,0)'},{h:'#fff',m:'#38bdf8',t:'rgba(56,189,248,0)'},{h:'#fef08a',m:'#f97316',t:'rgba(249,115,22,0)'}][Math.floor(Math.random()*3)];mt.push({x:Math.random()*w*1.3,y:-40,l:Math.random()*130+90,v:Math.random()*5+4,p});}
 for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
 (function loop(){drawGalaxy();st.forEach(s=>{s.a+=.03;x.globalAlpha=.45+Math.abs(Math.sin(s.a))*.55;x.fillStyle=s.c;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});x.globalAlpha=1;if(Math.random()<.06&&mt.length<12)addM();mt.forEach((m,i)=>{let ex=m.x+m.l*.65,ey=m.y-m.l*.75,g=x.createLinearGradient(m.x,m.y,ex,ey);g.addColorStop(0,m.p.h);g.addColorStop(.25,m.p.m);g.addColorStop(1,m.p.t);x.strokeStyle=g;x.lineWidth=4;x.lineCap='round';x.beginPath();x.moveTo(m.x,m.y);x.lineTo(ex,ey);x.stroke();let gw=x.createRadialGradient(m.x,m.y,0,m.x,m.y,9);gw.addColorStop(0,'#fff');gw.addColorStop(.4,m.p.m);gw.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gw;x.beginPath();x.arc(m.x,m.y,9,0,7);x.fill();m.x-=m.v*.65;m.y+=m.v*.75;if(m.y>h+120||m.x<-120)mt.splice(i,1)});requestAnimationFrame(loop);})();
+</script><script type="module">
+  import { initializeApp } from "https://gstatic.com";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://gstatic.com";
+  import { getFirestore, doc, setDoc } from "https://gstatic.com";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDroy1UM2Y9Mc1pv4pxlxWcpM4a0kg",
+    authDomain: ai-live-streamer-73674.firebaseapp.com",
+    projectId: "ai-live-streamer-73674",
+    storageBucket: "ai-live-streamer-73674.firebasestorage.app",
+    messagingSenderId: "449611002764",
+    appId: "1:449611002764:web:69ef52041370b5c53cdca9",
+    measurementId: "G-90W889186E"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let confirmationResult = null;
+
+  window.showBox = (id) => {
+    ['authMenu','emailBox','phoneBox'].forEach(b => document.getElementById(b).style.display = (b === id ? 'block' : 'none'));
+    authMsg.innerText = '';
+  };
+
+  async function finishAuth(userObj, providerName, contactInfo) {
+    let uname = uIn.value.trim() || '@' + (userObj.displayName || providerName).toLowerCase().replace(/\s+/g,'');
+    if (!uname.startsWith('@')) uname = '@' + uname;
+    uIn.value = uname; uLabel.innerText = uname; data.user = uname;
+    authMsg.style.color = '#34d399';
+    authMsg.innerText = '✅ Terhubung (' + providerName + ')! Menyimpan profil...';
+    try {
+      await setDoc(doc(db, "creators", userObj.uid), {
+        username: uname, provider: providerName, contact: contactInfo, lastLogin: new Date().toISOString()
+      }, { merge: true });
+    } catch (e) {}
+    setTimeout(() => go(2), 900);
+  }
+
+  window.loginEmail = async () => {
+    const email = emIn.value.trim(), pass = pwIn.value.trim();
+    if (!email || pass.length < 6) { authMsg.style.color='#fbbf24'; authMsg.innerText='⚠️ Isi email & password min. 6 karakter'; return; }
+    authMsg.style.color='#2dd4bf'; authMsg.innerText='Menghubungkan Email...';
+    try {
+      const res = await signInWithEmailAndPassword(auth, email, pass);
+      finishAuth(res.user, 'Email', email);
+    } catch (err) {
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        try {
+          const reg = await createUserWithEmailAndPassword(auth, email, pass);
+          finishAuth(reg.user, 'Email Baru', email);
+        } catch (e2) { authMsg.style.color='#f87171'; authMsg.innerText='Gagal: ' + e2.message; }
+      } else { authMsg.style.color='#f87171'; authMsg.innerText='Error: ' + err.message; }
+    }
+  };
+
+  window.loginTikTokGoogle = async () => {
+    let ttUser = uIn.value.trim();
+    if (!ttUser) { authMsg.style.color='#fbbf24'; authMsg.innerText='⚠️ Ketik @username TikTok kamu di kolom atas dulu!'; uIn.focus(); return; }
+    authMsg.style.color='#c084fc'; authMsg.innerText='Menautkan akun TikTok ke profil resmi...';
+    try {
+      const provider = new GoogleAuthProvider();
+      const res = await signInWithPopup(auth, provider);
+      finishAuth(res.user, 'TikTok-Google', res.user.email);
+    } catch (err) { authMsg.style.color='#f87171'; authMsg.innerText='Gagal tautkan akun: ' + err.message; }
+  };
+
+  window.sendOTP = async () => {
+    let phone = phIn.value.trim();
+    if (phone.startsWith('08')) phone = '+62' + phone.slice(1);
+    if (!phone.startsWith('+')) { authMsg.style.color='#fbbf24'; authMsg.innerText='⚠️ Gunakan awalan 08... atau +628...'; return; }
+    authMsg.style.color='#2dd4bf'; authMsg.innerText='Mengirim SMS OTP ke ' + phone + '...';
+    try {
+      if (!window.recaptchaVerifier) window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-box', { size: 'normal' });
+      confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
+      otpStep.style.display = 'block';
+      authMsg.style.color='#34d399'; authMsg.innerText='📩 Kode OTP terkirim! Cek SMS HP kamu.';
+    } catch (err) { authMsg.style.color='#f87171'; authMsg.innerText='Gagal kirim OTP: ' + err.message; }
+  };
+
+  window.verifyOTP = async () => {
+    const code = otpIn.value.trim();
+    if (!confirmationResult || code.length < 6) { authMsg.style.color='#fbbf24'; authMsg.innerText='⚠️ Masukkan 6 digit kode OTP'; return; }
+    try {
+      const res = await confirmationResult.confirm(code);
+      finishAuth(res.user, 'Nomor HP', res.user.phoneNumber);
+    } catch (err) { authMsg.style.color='#f87171'; authMsg.innerText='Kode OTP salah!'; }
+  };
 </script>
+
 </body>
 </html>
