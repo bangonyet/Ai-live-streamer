@@ -136,7 +136,8 @@
 <div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
 <script>
 let cur=1,camStream=null,data={user:'@creatortiktok',niche:'',style:'',pkg:'Paket 2 Jam - Rp 5.500'};
-function go(n){if(n<=cur||n>6)return;cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i+1===n));sNum.innerText=n;galaxy.style.opacity=n===1?'1':'0.15';if(n!==2&&camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
+function go(n){cur=n;document.querySelectorAll('.slide').forEach(s=>s.classList.toggle('active',s.id==='s'+n));stepNum.innerText=n;}
+
 function doLogin(via){let v=uIn.value.trim();if(!v){v='@'+via.toLowerCase()+'_creator';uIn.value=v;}data.user=v;uLabel.innerText=v;go(2);}
 async function startFaceScan(){btnScan.disabled=true;btnScan.innerText='Memindai...';scanStat.style.color='#2dd4bf';scanStat.innerText='Membuka kamera & memindai wajah...';scanBar.style.display='block';try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});camVid.srcObject=camStream;}catch(e){scanStat.innerText='Memindai menggunakan sensor AI...';}let pos=15,dir=4,iv=setInterval(()=>{pos+=dir;if(pos>85||pos<15)dir*=-1;scanBar.style.top=pos+'%';},55);setTimeout(()=>{clearInterval(iv);scanStat.style.color='#34d399';scanStat.innerText='✅ Wajah Terverifikasi!';setTimeout(()=>go(3),700);},2800);}
 function verifyUpload(inp){if(!inp.files||!inp.files[0])return;scanStat.style.color='#34d399';scanStat.innerText='✅ Foto Wajah Terverifikasi!';setTimeout(()=>go(3),700);}
