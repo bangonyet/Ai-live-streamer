@@ -172,16 +172,15 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
     const { initializeApp } = await import(u + "firebase-app.js");
     const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(u + "firebase-auth.js");
     const { getFirestore, doc, setDoc } = await import(u + "firebase-firestore.js");
-  const firebaseConfig = {
-    apiKey: "AIzaSyDOzyy1D2fPNcIpkv4puiXmwUp4Rad8eg",
-   authDomain: "ai-live-streamer-73674" + d +"firebaseapp" + d + "com",
-    projectId: "ai-live-streamer-73674",
-    storageBucket: "ai-live-streamer-73674" + d + "firebasestorage" + d + "app",
-    messagingSenderId: "449611002764",
-    appId: "1:449611002764:web:6faf0304f070b3c63cdca9",
-    measurementId: "G-F6B0H1E56F"
-  };
-
+const firebaseConfig = {
+  apiKey: "AIzaSyDzDzyylDX2fPNsIpkvXpyIwWUpRKasBKg",
+  authDomain: "ai-live-streamer-73674.firebaseapp.com",
+  projectId: "ai-live-streamer-73674",
+  storageBucket: "ai-live-streamer-73674.firebasestorage.app",
+  messagingSenderId: "449611002764",
+  appId: "1:449611002764:web:69af03041370b3c53cdca9",
+  measurementId: "G-F48NNBYE9F"
+};
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
