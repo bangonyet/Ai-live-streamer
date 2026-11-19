@@ -193,10 +193,12 @@ const firebaseConfig = {
   let confRes = null;
 
   function saveUser(u, via, info) {
-    let nama = uln.value.trim() || '@creator';
+ const uInEl = document.getElementById('uIn');
+let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
+
     if (!nama.startsWith('@')) nama = '@' + nama;
-    uln.value = nama;
-    ulabel.innerText = nama;
+    if (uInEl) uInEl.value = nama;
+   ulabel.innerText = nama;
     data.user = nama;
     authMsg.style.color = '#34d399';
     authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
@@ -229,7 +231,7 @@ const firebaseConfig = {
   };
 
   window.loginTikTokGoogle = async function() {
-    if (!uln.value.trim()) {
+    if (!document.getElementById('uIn')?.value.trim()).{
       authMsg.style.color = '#fbbf24';
       authMsg.innerText = 'Ketik Username TikTok di atas dulu!';
       return;
