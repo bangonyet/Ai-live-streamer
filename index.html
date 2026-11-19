@@ -171,8 +171,9 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
    authMsg.innerText = "ERR Baris " + line + ": " + msg; 
   };
   (async function() {
-  const d = String.fromCharCode(46);
-        const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10.12.2/";
+try {
+const d = String.fromCharCode(46);
+ const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10.12.2/";
     const { initializeApp } = await import(u + "firebase-app.js");
     const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(u + "firebase-auth.js");
     const { getFirestore, doc, setDoc } = await import(u + "firebase-firestore.js");
@@ -281,7 +282,11 @@ const firebaseConfig = {
       authMsg.innerText = 'Kode OTP salah!';
     }
   };
-   })();
- </script>
+   } catch (err) {
+  authMsg.style.color = '#f87171';
+  authMsg.innerText = 'Error Script: ' + err.message;
+}
+})();
+</script>
 </body>
 </html>
