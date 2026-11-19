@@ -165,11 +165,12 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
     authMsg.innerText = '';
   }
 </script>
- <script type="module"> 
+ <script> 
   window.onerror = (msg, url, line) => { 
    authMsg.style.color = '#f87171';
    authMsg.innerText = "ERR Baris " + line + ": " + msg; 
   };
+  (async function() {
   const d = String.fromCharCode(46);
         const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10.12.2/";
     const { initializeApp } = await import(u + "firebase-app.js");
@@ -280,6 +281,7 @@ const firebaseConfig = {
       authMsg.innerText = 'Kode OTP salah!';
     }
   };
+   })();
  </script>
 </body>
 </html>
