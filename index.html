@@ -162,16 +162,21 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
     authMsg.innerText = '';
   }
 </script>
- <script type="module">
-        const u = "https://gstatic.com" + "/firebasejs/10.12.2/";
+ <script type="module"> 
+  window.onerror = (msg, url, line) => { 
+   authMsg.style.color = '#f87171';
+   authMsg.innerText = "ERR Baris " + line + ": " + msg; 
+  };
+  const d = String.fromCharCode(46);
+        const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10.12.2/";
     const { initializeApp } = await import(u + "firebase-app.js");
     const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(u + "firebase-auth.js");
     const { getFirestore, doc, setDoc } = await import(u + "firebase-firestore.js");
   const firebaseConfig = {
     apiKey: "AIzaSyDOzyy1D2fPNcIpkv4puiXmwUp4Rad8eg",
-   authDomain: "://firebaseapp.com",
+   authDomain: "ai-live-streamer-73674" + d +"firebaseapp" + d + "com",
     projectId: "ai-live-streamer-73674",
-    storageBucket: "ai-live-streamer-73674.firebasestorage.app",
+    storageBucket: "ai-live-streamer-73674" + d + "firebasestorage" + d + "app",
     messagingSenderId: "449611002764",
     appId: "1:449611002764:web:6faf0304f070b3c63cdca9",
     measurementId: "G-F6B0H1E56F"
@@ -273,6 +278,6 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
       authMsg.innerText = 'Kode OTP salah!';
     }
   };
-</script>
+ </script>
 </body>
 </html>
