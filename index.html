@@ -163,11 +163,9 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
   }
 </script>
  <script type="module">
- const cdn = "https://gstatic.com";
-
-  const { initializeApp } = await import(cdn + "firebase-app.js");
-  const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(cdn + "firebase-auth.js");
-  const { getFirestore, doc, setDoc } = await import(cdn + "firebase-firestore.js");
+    import { initializeApp } from "https://gstatic.com";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://gstatic.com";
+    import { getFirestore, doc, setDoc } from "https://gstatic.com";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDOzyy1D2fPNcIpkv4puiXmwUp4Rad8eg",
