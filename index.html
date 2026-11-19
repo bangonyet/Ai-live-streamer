@@ -231,8 +231,7 @@ let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
   };
 
   window.loginTikTokGoogle = async function() {
-    if (!document.getElementById('uIn')?.value.trim()).{
-      authMsg.style.color = '#fbbf24';
+      if (!document.getElementById('uIn')?.value.trim()) {    authMsg.style.color = '#fbbf24';
       authMsg.innerText = 'Ketik Username TikTok di atas dulu!';
       return;
     }
