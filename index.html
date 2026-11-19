@@ -198,7 +198,8 @@ let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
 
     if (!nama.startsWith('@')) nama = '@' + nama;
     if (uInEl) uInEl.value = nama;
-   document.getElementById('uLabel').innerText = nama;
+  document.getElementById('uLabel').innerText = nama;
+ document.getElementById('uLabel').innerText = nama;
     data.user = nama;
     authMsg.style.color = '#34d399';
     authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
