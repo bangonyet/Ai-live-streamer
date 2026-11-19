@@ -163,14 +163,16 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
   }
 </script>
  <script type="module">
-  const cdn = "https:" + "//://gstatic.com" + "/firebasejs/10.12.2/";
+ const cdn = "https://gstatic.com";
+
   const { initializeApp } = await import(cdn + "firebase-app.js");
   const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(cdn + "firebase-auth.js");
   const { getFirestore, doc, setDoc } = await import(cdn + "firebase-firestore.js");
 
   const firebaseConfig = {
     apiKey: "AIzaSyDOzyy1D2fPNcIpkv4puiXmwUp4Rad8eg",
-    authDomain: "ai-live-streamer-73674" + ".firebaseapp.com",
+   authDomain: "://firebaseapp.com",
+
 
     projectId: "ai-live-streamer-73674",
     storageBucket: "ai-live-streamer-73674.firebasestorage.app",
@@ -248,7 +250,8 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
     authMsg.style.color = '#60a5fa';
     authMsg.innerText = 'Mengirim OTP...';
     try {
-      if (!window.rVer) window.rVer = new RecaptchaVerifier(auth, 'recaptcha-box', { size: 'normal' });
+      if (!window.rVer) window.rVer = new RecaptchaVerifier(auth, 'recaptcha-box', { size: 'invisible' });
+
       confRes = await signInWithPhoneNumber(auth, ph, window.rVer);
       otpStep.style.display = 'block';
       authMsg.style.color = '#34d399';
