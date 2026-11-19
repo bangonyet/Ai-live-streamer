@@ -163,15 +163,13 @@ for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
   }
 </script>
  <script type="module">
-    import { initializeApp } from "https://gstatic.com";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://gstatic.com";
-    import { getFirestore, doc, setDoc } from "https://gstatic.com";
-
+        const u = "https://gstatic.com" + "/firebasejs/10.12.2/";
+    const { initializeApp } = await import(u + "firebase-app.js");
+    const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(u + "firebase-auth.js");
+    const { getFirestore, doc, setDoc } = await import(u + "firebase-firestore.js");
   const firebaseConfig = {
     apiKey: "AIzaSyDOzyy1D2fPNcIpkv4puiXmwUp4Rad8eg",
    authDomain: "://firebaseapp.com",
-
-
     projectId: "ai-live-streamer-73674",
     storageBucket: "ai-live-streamer-73674.firebasestorage.app",
     messagingSenderId: "449611002764",
