@@ -44,7 +44,8 @@
   <input type="password" id="passIn" placeholder="Password (min. 6 karakter)" style="padding-right:42px;margin-bottom:0">
   <span onclick="passIn.type = passIn.type === 'password' ? 'text' : 'password'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px">👁️</span>
  </div> 
-         <button class="btn btn-green" onclick="loginEmail()">Masuk / Daftar Email</button>
+         <button class="btn btn-green" onclick="if(window.loginEmail){loginEmail()}else{authMsg.style.color='#f87171';authMsg.innerText='Fungsi loginEmail belum aktif!'}">Masuk / Daftar Email</button>
+
     <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
   </div>
 
