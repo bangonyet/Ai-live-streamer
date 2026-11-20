@@ -140,15 +140,16 @@
 <div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
 <script>
 let cur=1,camStream=null,data={user:'@creatortiktok',niche:'',style:'',pkg:'Paket 2 Jam - Rp 5.500'};
-function go(n){cur=n;document.querySelectorAll('.slide').forEach(s=>s.classList.toggle('active',s.id==='s'+n));stepNum.innerText=n;}
-
-function doLogin(via){let v=uIn.value.trim();if(!v){v='@'+via.toLowerCase()+'_creator';uIn.value=v;}data.user=v;uLabel.innerText=v;go(2);}
-async function startFaceScan(){btnScan.disabled=true;btnScan.innerText='Memindai...';scanStat.style.color='#2dd4bf';scanStat.innerText='Membuka kamera & memindai wajah...';scanBar.style.display='block';try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});camVid.srcObject=camStream;}catch(e){scanStat.innerText='Memindai menggunakan sensor AI...';}let pos=15,dir=4,iv=setInterval(()=>{pos+=dir;if(pos>85||pos<15)dir*=-1;scanBar.style.top=pos+'%';},55);setTimeout(()=>{clearInterval(iv);scanStat.style.color='#34d399';scanStat.innerText='✅ Wajah Terverifikasi!';setTimeout(()=>go(3),700);},2800);}
-function verifyUpload(inp){if(!inp.files||!inp.files[0])return;scanStat.style.color='#34d399';scanStat.innerText='✅ Foto Wajah Terverifikasi!';setTimeout(()=>go(3),700);}
-function chooseNiche(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.niche=txt;nLbl.innerText=txt;setTimeout(()=>go(4),450);}
-function chooseStyle(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.style=txt;summaryTxt.innerText=data.niche+' • '+txt;setTimeout(()=>go(5),450);}
+function go(n){cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===n-1));document.getElementById('stepNum').innerText=`Tahap ${n}/6`;}
+function doLogin(via){let v=uIn.value.trim();if(v)data.user=v.startsWith('@')?v:'@'+v;uLabel.innerText=data.user;go(2);}
+async function startFaceScan(){btnScan.disabled=true;btnScan.innerText='Memindai...';scanStat.style.color='#38bdf8';scanStat.innerText='Membuka kamera & memindai wajah...';camBox.style.display='block';try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});camVid.srcObject=camStream;scanStat.style.color='#34d399';scanStat.innerText='✅ Wajah Terverifikasi!';setTimeout(()=>go(3),1200);}catch(e){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Kamera ditolak/error. Silakan pakai Upload Foto di kanan.';btnScan.disabled=false;btnScan.innerText='🔄 Coba Scan Lagi';}}
+function verifyUpload(inp){if(!inp.files||!inp.files)return;scanStat.style.color='#34d399';scanStat.innerText='✅ Foto Wajah Terverifikasi!';setTimeout(()=>go(3),1000);}
+function chooseNiche(el,t){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.niche=t;setTimeout(()=>go(4),400);}
+function chooseStyle(el,t){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.style=t;summaryTxt.innerText=`${data.niche} • ${t}`;setTimeout(()=>go(5),400);}
 function pickPkg(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.pkg=txt;pkgLbl.innerText=txt;}
-function startLive(){alert('🚀 LIVE DIMULAI!\nAkun: '+data.user+'\nNiche: '+data.niche+' ('+data.style+')\nPaket: '+data.pkg);}
+function startLive(){alert(`🔴 LIVE DIMULAI!\nAkun: ${data.user}\nNiche: ${data.niche} (${data.style})\nPaket: ${data.pkg}`);}
+</script>
+<script>
 
 const c=galaxy,x=c.getContext('2d');let w,h,st=[],mt=[];
 function rs(){w=c.width=innerWidth;h=c.height=innerHeight;st=Array.from({length:450},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.3+.4,c:['#fff','#fde68a','#67e8f9','#f0abfc','#fdba74'][Math.floor(Math.random()*5)],a:Math.random()*6.28}))}
