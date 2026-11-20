@@ -122,8 +122,7 @@
     <!-- Header Overlay Live -->
     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; z-index:2;">
       <span style="background:#ef4444; color:#fff; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:6px; letter-spacing:0.5px;">● PREVIEW 9:16</span>
-      <span id="studioNicheBadge" style="background:rgba(15,23,42,0.75); border:1px solid #38bdf8; color:#38bdf8; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:6px;">🎓 EDUKASI</span>
-    </div>
+      
 
     <!-- Canvas Avatar 2D (Siap untuk Tahap 2) -->
     <canvas id="avatarCanvas" width="270" height="480" style="position:absolute; inset:0; width:100%; height:100%; z-index:1;"></canvas>
@@ -251,39 +250,49 @@ async function loadFaceModels(){
   catch(err){scanStat.style.color='#f87171';scanStat.innerText='❌ Gagal memuat AI deteksi wajah. Cek internet.';return false;}
 }
 
-async function startFaceScan(){
-  if(!document.getElementById('agreeFace').checked){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Harap centang kotak persetujuan terlebih dahulu!';return;}
-  btnScan.disabled=true;btnScan.innerText='Memproses...';
-  if(!(await loadFaceModels())){btnScan.disabled=false;btnScan.innerText='🔄 Coba Scan Lagi';return;}
-  scanStat.style.color='#38bdf8';scanStat.innerText='📷 Membuka kamera... Arahkan wajah ke kotak.';
-  try{
-    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
-    camVid.srcObject=camStream;camVid.style.display='block';document.getElementById('camPlaceholder').style.display='none';
+async function startFaceScan() {
+  if (!document.getElementById('agreeFace').checked) { scanStat.style.color='#fbbf24'; scanStat.innerText='⚠️ Harap centang persetujuan!'; return; }
+  btnScan.disabled=true; btnScan.innerText='Memproses...';
+  if (!(await loadFaceModels())) { btnScan.disabled=false; btnScan.innerText='🔄 Coba Scan Lagi'; return; }
+  scanStat.style.color='#38bdf8'; scanStat.innerText='📷 Membuka kamera... Arahkan wajah ke kotak.';
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+    camVid.srcObject=camStream; camVid.style.display='block'; document.getElementById('camPlaceholder').style.display='none';
     camVid.onloadedmetadata=()=>{
       const scanLoop=setInterval(async()=>{
         const detections=await faceapi.detectAllFaces(camVid,new faceapi.TinyFaceDetectorOptions());
         if(detections.length===1){
-          clearInterval(scanLoop);if(camStream)camStream.getTracks().forEach(t=>t.stop());
-          scanStat.style.color='#34d399';scanStat.innerText='✅ 1 Wajah Asli Terverifikasi! Melanjutkan...';
+          clearInterval(scanLoop);
+          const snap=document.createElement('canvas');
+          snap.width=camVid.videoWidth||480; snap.height=camVid.videoHeight||640;
+          snap.getContext('2d').drawImage(camVid,0,0,snap.width,snap.height);
+          setAvatarPhoto(snap.toDataURL('image/jpeg',0.92), detections[0].box, snap.width, snap.height);
+
+          if(camStream)camStream.getTracks().forEach(t=>t.stop());
+          scanStat.style.color='#34d399'; scanStat.innerText='✅ Wajah Asli Terverifikasi! Melanjutkan...';
           setTimeout(()=>go(3),1200);
-        }else if(detections.length>1){scanStat.style.color='#fbbf24';scanStat.innerText='⚠️ Terdeteksi lebih dari 1 wajah. Pastikan hanya wajah Anda.';}
-        else{scanStat.style.color='#38bdf8';scanStat.innerText='🔍 Mencari wajah... Pastikan cahaya cukup & wajah jelas.';}
+        } else if(detections.length>1){ scanStat.style.color='#ef4444'; scanStat.innerText='⚠️ Terdeteksi lebih dari 1 wajah!'; }
+        else { scanStat.style.color='#38bdf8'; scanStat.innerText='🔍 Mencari wajah... Pastikan cahaya cukup & wajah jelas.'; }
       },700);
     };
-  }catch(e){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Kamera ditolak/error. Pakai Upload Foto di samping.';btnScan.disabled=false;btnScan.innerText='🔄 Coba Scan Lagi';}
+  } catch(e) { scanStat.style.color='#ef4444'; scanStat.innerText='⚠️ Kamera diblokir/error. Pakai Upload Foto di samping.'; }
 }
 
-async function verifyUpload(inp){
+async function verifyUpload(inp) {
   if(!inp.files||!inp.files[0])return;
-  if(!document.getElementById('agreeFace').checked){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Harap centang kotak persetujuan terlebih dahulu!';inp.value='';return;}
+  if(!document.getElementById('agreeFace').checked){ scanStat.style.color='#fbbf24'; scanStat.innerText='⚠️ Harap centang persetujuan!'; inp.value=''; return; }
   if(!(await loadFaceModels()))return;
-  scanStat.style.color='#38bdf8';scanStat.innerText='🔍 Menganalisis wajah pada foto...';
-  const imgEl=document.getElementById('previewImg');imgEl.src=URL.createObjectURL(inp.files[0]);imgEl.style.display='block';
+  scanStat.style.color='#38bdf8'; scanStat.innerText='⏳ Menganalisis wajah pada foto...';
+  const imgEl=document.getElementById('previewImg');
+  imgEl.src=URL.createObjectURL(inp.files[0]); imgEl.style.display='block';
   imgEl.onload=async()=>{
     const detections=await faceapi.detectAllFaces(imgEl,new faceapi.TinyFaceDetectorOptions());
-    if(detections.length===1){scanStat.style.color='#34d399';scanStat.innerText='✅ Foto Wajah Valid Terverifikasi! Melanjutkan...';setTimeout(()=>go(3),1200);}
-    else if(detections.length>1){scanStat.style.color='#f87171';scanStat.innerText='❌ Foto berisi lebih dari 1 wajah! Unggah foto solo.';inp.value='';}
-    else{scanStat.style.color='#f87171';scanStat.innerText='❌ Wajah tidak terdeteksi pada foto! Gunakan foto wajah jelas.';inp.value='';}
+    if(detections.length===1){
+      setAvatarPhoto(imgEl.src, detections[0].box, imgEl.naturalWidth, imgEl.naturalHeight);
+      scanStat.style.color='#34d399'; scanStat.innerText='✅ Foto Wajah Valid Terverifikasi! Melanjutkan...';
+      setTimeout(()=>go(3),1200);
+    } else if(detections.length>1){ scanStat.style.color='#ef4444'; scanStat.innerText='⚠️ Foto berisi lebih dari 1 wajah!'; }
+    else { scanStat.style.color='#ef4444'; scanStat.innerText='❌ Wajah tidak terdeteksi pada foto! Gunakan foto wajah jelas.'; }
   };
 }
 
@@ -292,34 +301,33 @@ function selectNiche(el, niche) {
   el.classList.add('sel');
   data.niche = niche;
 
-  const badge = document.getElementById('studioNicheBadge');
   const caption = document.getElementById('studioCaption');
   const frame = document.getElementById('studioFrame');
 
   if (niche === 'EDUKASI') {
-    badge.innerText = '🎓 EDUKASI';
-    badge.style.color = '#38bdf8';
-    badge.style.borderColor = '#38bdf8';
     frame.style.borderColor = '#38bdf8';
-    caption.innerText = 'Mode: Mentor Edukasi AI';
+    if (!data.script) caption.innerText = 'Mode: Mentor Edukasi AI';
   } else if (niche === 'HIBURAN') {
-    badge.innerText = '🎭 HIBURAN';
-    badge.style.color = '#c084fc';
-    badge.style.borderColor = '#c084fc';
     frame.style.borderColor = '#c084fc';
-    caption.innerText = 'Mode: Host Interaktif & Santai';
+    if (!data.script) caption.innerText = 'Mode: Host Interaktif & Santai';
   } else {
-    badge.innerText = '🛍️ JUALAN';
-    badge.style.color = '#34d399';
-    badge.style.borderColor = '#34d399';
     frame.style.borderColor = '#34d399';
-    caption.innerText = 'Mode: Host Live Shopping & Promo';
+    if (!data.script) caption.innerText = 'Mode: Host Live Shopping & Promo';
   }
 }
 
-let avConfig = { style: 'cyber', color: '#38bdf8', isSpeaking: false, mouthOpen: 0 };
+let avConfig = { style: 'cyber', color: '#38bdf8', isSpeaking: false, mouthOpen: 0, photoImg: null, faceBox: null };
 data.style = 'cyber';
 data.voice = 'female';
+
+function setAvatarPhoto(src, box, origW, origH) {
+  const img = new Image();
+  img.onload = () => {
+    avConfig.photoImg = img;
+    avConfig.faceBox = { x: box.x / origW, y: box.y / origH, w: box.width / origW, h: box.height / origH };
+  };
+  img.src = src;
+}
 
 function setAvatarStyle(style, color, btn) {
   avConfig.style = style;
@@ -336,26 +344,20 @@ function setAvatarStyle(style, color, btn) {
 }
 
 function testAIVoice() {
-  if (!('speechSynthesis' in window)) {
-    alert('Browser tidak mendukung suara AI.');
-    return;
-  }
+  if (!('speechSynthesis' in window)) { alert('Browser tidak mendukung suara AI.'); return; }
   window.speechSynthesis.cancel();
   const nicheText = {
     EDUKASI: 'Halo semuanya! Selamat datang di sesi edukasi bersama host AI.',
     HIBURAN: 'Halo guys! Gimana kabarnya hari ini? Yuk ngobrol seru bareng aku!',
     JUALAN: 'Halo kak! Promo spesial hari ini stoknya terbatas banget, yuk buruan dicek!'
   };
-  const teks = nicheText[data.niche || 'EDUKASI'];
-  const utter = new SpeechSynthesisUtterance(teks);
+  const utter = new SpeechSynthesisUtterance(nicheText[data.niche || 'EDUKASI']);
   utter.lang = 'id-ID';
   utter.pitch = data.voice === 'female' ? 1.25 : 0.85;
   utter.rate = 1.05;
-
   utter.onstart = () => { avConfig.isSpeaking = true; };
   utter.onend = () => { avConfig.isSpeaking = false; avConfig.mouthOpen = 0; };
   utter.onerror = () => { avConfig.isSpeaking = false; avConfig.mouthOpen = 0; };
-
   window.speechSynthesis.speak(utter);
 }
 
@@ -366,49 +368,67 @@ function testAIVoice() {
     const w = cvs.width, h = cvs.height;
     ctx.clearRect(0, 0, w, h);
 
-    const t = Date.now() / 400;
-    const bobY = Math.sin(t) * 4;
+    const now = Date.now();
     if (avConfig.isSpeaking) {
-      avConfig.mouthOpen = Math.abs(Math.sin(Date.now() / 85)) * 12;
+      avConfig.mouthOpen = (Math.sin(now / 65) * 0.5 + 0.5) * 9 + Math.abs(Math.sin(now / 115)) * 4;
+    } else {
+      avConfig.mouthOpen *= 0.75;
     }
 
-    const cx = w / 2, cy = h * 0.48 + bobY;
+    if (avConfig.photoImg && avConfig.photoImg.complete) {
+      const img = avConfig.photoImg;
+      const scaleBase = Math.max(w / img.width, h / img.height);
+      const breathZoom = 1.03 + Math.sin(now / 650) * 0.012;
+      const swayX = Math.sin(now / 1100) * 3.5;
+      const swayY = Math.cos(now / 750) * 2.5;
+      const tilt = Math.sin(now / 1300) * 0.012;
 
-    const grad = ctx.createRadialGradient(cx, cy, 20, cx, cy, 110);
-    grad.addColorStop(0, avConfig.color + '44');
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(cx, cy, 110, 0, Math.PI * 2); ctx.fill();
+      const drawW = img.width * scaleBase * breathZoom;
+      const drawH = img.height * scaleBase * breathZoom;
+      const drawX = (w - drawW) / 2 + swayX;
+      const drawY = (h - drawH) / 2 + swayY;
 
-    ctx.fillStyle = avConfig.style === 'pro' ? '#1e293b' : avConfig.color;
-    ctx.beginPath();
-    ctx.roundRect(cx - 55, cy + 52, 110, 80, [20, 20, 0, 0]);
-    ctx.fill();
+      ctx.save();
+      ctx.translate(w / 2, h / 2);
+      ctx.rotate(tilt);
+      ctx.translate(-w / 2, -h / 2);
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
 
-    ctx.fillStyle = '#fde68a';
-    ctx.beginPath(); ctx.arc(cx, cy, 46, 0, Math.PI * 2); ctx.fill();
+      if (avConfig.faceBox && avConfig.mouthOpen > 0.8) {
+        const fb = avConfig.faceBox;
+        const mouthX = drawX + (fb.x + fb.w * 0.5) * drawW;
+        const mouthY = drawY + (fb.y + fb.h * 0.77) * drawH;
+        const mouthW = Math.max(8, fb.w * drawW * 0.24);
+        const mouthH = Math.min(avConfig.mouthOpen * 0.75, fb.h * drawH * 0.14);
 
-    ctx.fillStyle = avConfig.style === 'cyber' ? '#0f172a' : (avConfig.style === 'casual' ? '#7e22ce' : '#1e293b');
-    ctx.beginPath(); ctx.arc(cx, cy - 10, 48, Math.PI, 0); ctx.fill();
+        ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
+        ctx.beginPath();
+        ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
+        ctx.fill();
 
-    ctx.fillStyle = '#0f172a';
-    ctx.beginPath(); ctx.arc(cx - 16, cy - 4, 5, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(cx + 16, cy - 4, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = 'rgba(225, 110, 110, 0.45)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.restore();
 
-    if (avConfig.style === 'cyber') {
-      ctx.strokeStyle = avConfig.color;
-      ctx.lineWidth = 2.5;
-      ctx.strokeRect(cx - 28, cy - 12, 24, 15);
-      ctx.strokeRect(cx + 4, cy - 12, 24, 15);
+      const rim = ctx.createRadialGradient(w / 2, h * 0.45, w * 0.25, w / 2, h * 0.5, h * 0.65);
+      rim.addColorStop(0, 'transparent');
+      rim.addColorStop(1, avConfig.color + '33');
+      ctx.fillStyle = rim;
+      ctx.fillRect(0, 0, w, h);
+    } else {
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Menunggu Foto Wajah dari Slide 2...', w / 2, h / 2);
     }
-
-    ctx.fillStyle = '#ef4444';
-    ctx.beginPath();
-    ctx.ellipse(cx, cy + 18, 10, 3 + avConfig.mouthOpen, 0, 0, Math.PI * 2);
-    ctx.fill();
   }
   requestAnimationFrame(renderAvatarLoop);
 })();
+
+
+
 function setStudioBg(type, val) {
   const frame = document.getElementById('studioFrame');
   if (!frame) return;
