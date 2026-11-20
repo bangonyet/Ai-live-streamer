@@ -64,25 +64,37 @@
 </div>
 
 
-<div id="s2" class="slide">
+
+ <div id="s2" class="slide">
   <h2>2. Verifikasi & Scan Wajah Wajib</h2>
-  <p class="sub">Wajah wajib dipindai agar AI Avatar dapat aktif</p>
-  <div class="grid">
-    <div class="card sel">
-      <h3>📷 Kamera Deteksi Live</h3>
-      <div style="position:relative;width:160px;height:185px;margin:10px auto;border-radius:12px;overflow:hidden;border:2px solid #2dd4bf;background:#020617">
-        <video id="camVid" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1)"></video>
-        <div id="scanBar" style="display:none;position:absolute;left:0;right:0;height:3px;background:#34d399;box-shadow:0 0 12px #34d399;top:20%"></div>
+  <p class="sub">Wajah wajib dipindai agar AI Avatar dapat aktif & lolos moderasi platform</p>
+
+  <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+    <div class="card" style="text-align:center;">
+      <p style="font-weight:bold; margin-bottom:8px;">📷 Kamera Deteksi Live</p>
+      <div id="camBox" style="width:140px; height:140px; margin:0 auto 10px; background:#0f172a; border:2px solid #334155; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+        <video id="camVid" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; display:none;"></video>
+        <span id="camPlaceholder" style="font-size:11px; color:#64748b;">Kamera Siap</span>
       </div>
-      <p id="scanStat" style="font-size:12px;color:#fbbf24;margin-bottom:8px">⚠️ Menunggu pemindaian wajah...</p>
-      <button id="btnScan" class="btn btn-green" onclick="startFaceScan()">🔍 Mulai Scan Wajah Sekarang</button>
+      <button id="btnScan" class="btn btn-green" onclick="startFaceScan()">🔍 Mulai Scan Wajah</button>
     </div>
-    <div class="card" style="display:flex;flex-direction:column;justify-content:center">
-      <h3>🖼️ Alternatif Upload Foto</h3>
-      <p style="font-size:12px;color:#94a3b8;margin:10px 0">Upload foto wajah jelas jika kamera bermasalah</p>
-      <input type="file" accept="image/*" style="font-size:12px;margin:0 auto" onchange="verifyUpload(this)">
+
+    <div class="card" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
+      <p style="font-weight:bold; margin-bottom:6px;">🖼️ Alternatif Upload Foto</p>
+      <p style="font-size:11px; color:#94a3b8; margin-bottom:10px;">Upload foto wajah jelas menghadap depan (bukan pemandangan/kartun)</p>
+      <input type="file" id="faceFileIn" accept="image/*" onchange="verifyUpload(this)" style="font-size:12px; margin:0 auto; max-width:200px;">
+      <img id="previewImg" style="display:none; width:80px; height:80px; object-fit:cover; border-radius:8px; margin:10px auto 0; border:1px solid #38bdf8;">
     </div>
   </div>
+
+  <div style="margin-top:14px; text-align:left; background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border:1px solid #334155;">
+    <label style="display:flex; align-items:flex-start; gap:8px; font-size:11.5px; color:#cbd5e1; cursor:pointer; line-height:1.4;">
+      <input type="checkbox" id="agreeFace" style="margin-top:3px; accent-color:#10b981;">
+      <span>Saya menyatakan wajah ini adalah <b>wajah saya sendiri</b> (atau telah mendapat izin pemiliknya) dan bersedia mengaktifkan <b>label Konten AI</b> saat live di TikTok/YouTube/IG.</span>
+    </label>
+  </div>
+
+  <p id="scanStat" style="margin-top:12px; font-size:12.5px; font-weight:bold; color:#fbbf24;">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p>
 </div>
 <div id="s3" class="slide">
   <h2>3. Pilih Niche Live Streaming</h2>
@@ -137,20 +149,66 @@
   </div>
   <button class="btn btn-green" style="margin-top:14px" onclick="startLive()">🚀 MULAI LIVE (OBS / RTMP)</button>
 </div>
+
 <div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
+<script defer src="https://jsdelivr.net"></script>
 <script>
-let cur=1,camStream=null,data={user:'@creatortiktok',niche:'',style:'',pkg:'Paket 2 Jam - Rp 5.500'};
+let cur=1,camStream=null,modelsLoaded=false,data={user:'@creatortiktok',niche:'',style:'',pkg:'Paket 2 Jam - Rp 5.500'};
+const MODEL_URL='https://github.io';
+
 function go(n){cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===n-1));document.getElementById('stepNum').innerText=`Tahap ${n}/6`;}
 function doLogin(via){let v=uIn.value.trim();if(v)data.user=v.startsWith('@')?v:'@'+v;uLabel.innerText=data.user;go(2);}
-async function startFaceScan(){btnScan.disabled=true;btnScan.innerText='Memindai...';scanStat.style.color='#38bdf8';scanStat.innerText='Membuka kamera & memindai wajah...';camBox.style.display='block';try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});camVid.srcObject=camStream;scanStat.style.color='#34d399';scanStat.innerText='✅ Wajah Terverifikasi!';setTimeout(()=>go(3),1200);}catch(e){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Kamera ditolak/error. Silakan pakai Upload Foto di kanan.';btnScan.disabled=false;btnScan.innerText='🔄 Coba Scan Lagi';}}
-function verifyUpload(inp){if(!inp.files||!inp.files)return;scanStat.style.color='#34d399';scanStat.innerText='✅ Foto Wajah Terverifikasi!';setTimeout(()=>go(3),1000);}
+
+async function loadFaceModels(){
+  if(modelsLoaded)return true;
+  scanStat.style.color='#38bdf8';scanStat.innerText='⏳ Memuat sistem deteksi wajah AI...';
+  try{await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);modelsLoaded=true;return true;}
+  catch(err){scanStat.style.color='#f87171';scanStat.innerText='❌ Gagal memuat AI deteksi wajah. Cek internet.';return false;}
+}
+
+async function startFaceScan(){
+  if(!document.getElementById('agreeFace').checked){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Harap centang kotak persetujuan terlebih dahulu!';return;}
+  btnScan.disabled=true;btnScan.innerText='Memproses...';
+  if(!(await loadFaceModels())){btnScan.disabled=false;btnScan.innerText='🔄 Coba Scan Lagi';return;}
+  scanStat.style.color='#38bdf8';scanStat.innerText='📷 Membuka kamera... Arahkan wajah ke kotak.';
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+    camVid.srcObject=camStream;camVid.style.display='block';document.getElementById('camPlaceholder').style.display='none';
+    camVid.onloadedmetadata=()=>{
+      const scanLoop=setInterval(async()=>{
+        const detections=await faceapi.detectAllFaces(camVid,new faceapi.TinyFaceDetectorOptions());
+        if(detections.length===1){
+          clearInterval(scanLoop);if(camStream)camStream.getTracks().forEach(t=>t.stop());
+          scanStat.style.color='#34d399';scanStat.innerText='✅ 1 Wajah Asli Terverifikasi! Melanjutkan...';
+          setTimeout(()=>go(3),1200);
+        }else if(detections.length>1){scanStat.style.color='#fbbf24';scanStat.innerText='⚠️ Terdeteksi lebih dari 1 wajah. Pastikan hanya wajah Anda.';}
+        else{scanStat.style.color='#38bdf8';scanStat.innerText='🔍 Mencari wajah... Pastikan cahaya cukup & wajah jelas.';}
+      },700);
+    };
+  }catch(e){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Kamera ditolak/error. Pakai Upload Foto di samping.';btnScan.disabled=false;btnScan.innerText='🔄 Coba Scan Lagi';}
+}
+
+async function verifyUpload(inp){
+  if(!inp.files||!inp.files[0])return;
+  if(!document.getElementById('agreeFace').checked){scanStat.style.color='#f87171';scanStat.innerText='⚠️ Harap centang kotak persetujuan terlebih dahulu!';inp.value='';return;}
+  if(!(await loadFaceModels()))return;
+  scanStat.style.color='#38bdf8';scanStat.innerText='🔍 Menganalisis wajah pada foto...';
+  const imgEl=document.getElementById('previewImg');imgEl.src=URL.createObjectURL(inp.files[0]);imgEl.style.display='block';
+  imgEl.onload=async()=>{
+    const detections=await faceapi.detectAllFaces(imgEl,new faceapi.TinyFaceDetectorOptions());
+    if(detections.length===1){scanStat.style.color='#34d399';scanStat.innerText='✅ Foto Wajah Valid Terverifikasi! Melanjutkan...';setTimeout(()=>go(3),1200);}
+    else if(detections.length>1){scanStat.style.color='#f87171';scanStat.innerText='❌ Foto berisi lebih dari 1 wajah! Unggah foto solo.';inp.value='';}
+    else{scanStat.style.color='#f87171';scanStat.innerText='❌ Wajah tidak terdeteksi pada foto! Gunakan foto wajah jelas.';inp.value='';}
+  };
+}
+
 function chooseNiche(el,t){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.niche=t;setTimeout(()=>go(4),400);}
 function chooseStyle(el,t){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.style=t;summaryTxt.innerText=`${data.niche} • ${t}`;setTimeout(()=>go(5),400);}
 function pickPkg(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.pkg=txt;pkgLbl.innerText=txt;}
 function startLive(){alert(`🔴 LIVE DIMULAI!\nAkun: ${data.user}\nNiche: ${data.niche} (${data.style})\nPaket: ${data.pkg}`);}
 </script>
-<script>
 
+ <script>
 const c=galaxy,x=c.getContext('2d');let w,h,st=[],mt=[];
 function rs(){w=c.width=innerWidth;h=c.height=innerHeight;st=Array.from({length:450},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.3+.4,c:['#fff','#fde68a','#67e8f9','#f0abfc','#fdba74'][Math.floor(Math.random()*5)],a:Math.random()*6.28}))}
 addEventListener('resize',rs);rs();
@@ -201,7 +259,7 @@ let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
     if (uInEl) uInEl.value = nama;
   document.getElementById('uLabel').innerText = nama;
  document.getElementById('uLabel').innerText = nama;
-    data.user = nama;
+    data.user = nama;l
     authMsg.style.color = '#34d399';
     authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
 
