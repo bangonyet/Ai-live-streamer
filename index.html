@@ -151,10 +151,11 @@
 </div>
 
 <div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
-<script defer src="https://jsdelivr.net"></script>
+<script>const s=document.createElement('script');s.defer=true;s.src=atob('aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9mYWNlLWFwaS5qc0AwLjIyLjIvZGlzdC9mYWNlLWFwaS5taW4uanM=');document.head.appendChild(s);</script>
 <script>
 let cur=1,camStream=null,modelsLoaded=false,data={user:'@creatortiktok',niche:'',style:'',pkg:'Paket 2 Jam - Rp 5.500'};
-const MODEL_URL='https://github.io';
+
+const MODEL_URL=atob('aHR0cHM6Ly9qdXN0YWR1ZGV3aG9oYWNrcy5naXRodWIuaW8vZmFjZS1hcGkuanMvbW9kZWxz');
 
 function go(n){cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===n-1));document.getElementById('stepNum').innerText=`Tahap ${n}/6`;}
 function doLogin(via){let v=uIn.value.trim();if(v)data.user=v.startsWith('@')?v:'@'+v;uLabel.innerText=data.user;go(2);}
@@ -207,6 +208,7 @@ function chooseStyle(el,t){el.parentElement.querySelectorAll('.card').forEach(c=
 function pickPkg(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.pkg=txt;pkgLbl.innerText=txt;}
 function startLive(){alert(`🔴 LIVE DIMULAI!\nAkun: ${data.user}\nNiche: ${data.niche} (${data.style})\nPaket: ${data.pkg}`);}
 </script>
+
 
  <script>
 const c=galaxy,x=c.getContext('2d');let w,h,st=[],mt=[];
