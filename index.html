@@ -100,7 +100,7 @@
   <h2>3. Studio Live AI</h2>
   <p class="sub">Pilih niche untuk mengatur suasana & materi host AI</p>
 
-  <!-- Pilihan Niche -->
+  <!-- Pilihan Niche (3 Kolom Rapi) -->
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;">
     <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
       <div style="font-size:20px;">🎓</div>
@@ -120,33 +120,30 @@
   <div id="studioFrame" style="width:100%; max-width:240px; aspect-ratio:9/16; margin:0 auto 14px; background:linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border:2px solid #38bdf8; border-radius:16px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
     
     <!-- Header Overlay Live -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; z-index:2;">
+    <div style="display:flex; justify-content:flex-start; align-items:center; padding:10px; z-index:2;">
       <span style="background:#ef4444; color:#fff; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:6px; letter-spacing:0.5px;">● PREVIEW 9:16</span>
-      
+    </div>
 
-    <!-- Canvas Avatar 2D (Siap untuk Tahap 2) -->
+    <!-- Canvas Avatar Foto Live -->
     <canvas id="avatarCanvas" width="270" height="480" style="position:absolute; inset:0; width:100%; height:100%; z-index:1;"></canvas>
 
-    <!-- Footer Overlay Status -->
-    <div style="padding:10px; background:linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%); z-index:2; text-align:left;">
+    <!-- Footer Overlay Status (Tetap di Bawah) -->
+    <div style="margin-top:auto; padding:10px; background:linear-gradient(0deg, rgba(0,0,0,0.88) 0%, transparent 100%); z-index:2; text-align:left;">
       <div id="studioCaption" style="font-size:11px; color:#f8fafc; font-weight:600;">Mode: Mentor Edukasi AI</div>
-      <div style="font-size:10px; color:#94a3b8; margin-top:2px;">Siap dikonfigurasi...</div>
+      <div id="studioSubCaption" style="font-size:10px; color:#94a3b8; margin-top:2px;">Siap dikonfigurasi...</div>
     </div>
   </div>
 
-  <!-- Tempat Editor Tahap 2, 3, 4 akan diletakkan di bawah sini -->
-  
-   <div id="studioControls" style="text-align:left;">
-    <!-- Tahap 2: Editor Visual Avatar & Tes Suara AI -->
+  <!-- Panel Kontrol Lengkap di Bawah Preview -->
+  <div id="studioControls" style="text-align:left;">
+    <!-- Gaya Visual & Suara AI -->
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default;">
-      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">👤 Gaya Avatar & Suara AI</div>
-      
+      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">👤 Gaya Visual & Suara AI</div>
       <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;">
         <button type="button" class="av-btn" onclick="setAvatarStyle('cyber', '#38bdf8', this)" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #38bdf8; background:#0f172a; color:#fff; font-weight:bold;">🤖 Cyber</button>
         <button type="button" class="av-btn" onclick="setAvatarStyle('casual', '#c084fc', this)" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#cbd5e1;">😎 Santai</button>
         <button type="button" class="av-btn" onclick="setAvatarStyle('pro', '#34d399', this)" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#cbd5e1;">👔 Formal</button>
       </div>
-
       <div style="display:flex; gap:6px; align-items:center;">
         <select id="aiVoiceGender" onchange="data.voice = this.value" style="flex:1; padding:8px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #334155; font-size:12px;">
           <option value="female">👩 Suara Wanita (Ceria)</option>
@@ -156,10 +153,9 @@
       </div>
     </div>
 
-    <!-- Tahap 3: Editor Background Studio + Upload Latar -->
+    <!-- Background Studio -->
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default;">
       <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🖼️ Background Studio</div>
-      
       <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
         <button type="button" onclick="setStudioBg('gradient', 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)')" style="padding:7px 4px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#fff; cursor:pointer;">🌑 Gelap</button>
         <button type="button" onclick="setStudioBg('gradient', 'linear-gradient(180deg, #311042 0%, #0f172a 100%)')" style="padding:7px 4px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#311042; color:#fff; cursor:pointer;">🌌 Neon</button>
@@ -171,23 +167,30 @@
       </div>
     </div>
 
-    <!-- Tempat Tahap 4 -->
-      <!-- Tahap 4: Editor Materi/Produk + Tombol Lanjut -->
+    <!-- Materi Dinamis Sesuai Niche (Edukasi / Hiburan / Jualan) -->
     <div class="card" style="padding:12px; margin-bottom:14px; cursor:default;">
-      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">📝 Materi Live / Info Produk</div>
+      <div id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🎓 Materi Edukasi & Poin Penjelasan</div>
       
-      <textarea id="liveScriptInput" rows="3" oninput="updateLiveOverlay(this.value)" placeholder="Tulis poin materi edukasi, topik obrolan, atau detail & harga produk promo di sini..." style="width:100%; padding:8px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #334155; font-size:12px; box-sizing:border-box; resize:none; margin-bottom:8px;"></textarea>    
+      <input id="liveTitleInput" type="text" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris Cepat)" style="width:100%; padding:8px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #334155; font-size:12px; box-sizing:border-box; margin-bottom:8px;">
+      
+      <textarea id="liveScriptInput" rows="3" oninput="syncLiveMateri()" placeholder="Tulis poin materi edukasi, fakta menarik, atau pertanyaan kuis untuk penonton..." style="width:100%; padding:8px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #334155; font-size:12px; box-sizing:border-box; resize:none; margin-bottom:8px;"></textarea>
+      
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-        <label style="flex:1; padding:7px; font-size:11px; border-radius:6px; border:1px dashed #94a3b8; background:#0f172a; color:#cbd5e1; text-align:center; cursor:pointer;">
-          🖼️ + Gambar Produk/Slide (Opsional)
+        <label id="overlayUploadLabel" style="flex:1; padding:7px; font-size:11px; border-radius:6px; border:1px dashed #94a3b8; background:#0f172a; color:#cbd5e1; text-align:center; cursor:pointer;">
+          🖼️ + Gambar Slide / Materi (Opsional)
           <input type="file" accept="image/*" onchange="uploadOverlayItem(this)" style="display:none;">
         </label>
         <button type="button" onclick="clearOverlayItem()" style="padding:7px 10px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#1e293b; color:#f87171; cursor:pointer;">Hapus</button>
       </div>
     </div>
+
     <button type="button" class="btn btn-green" onclick="finishSlide3()">Simpan Studio & Lanjut ke Slide 4 ➔</button>
   </div>
 </div>
+
+
+
+  
 <div id="s4" class="slide">
   <h2>4. Pilih Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
   <p class="sub">Klik karakter pembawa acara AI yang diinginkan</p>
@@ -301,20 +304,51 @@ function selectNiche(el, niche) {
   el.classList.add('sel');
   data.niche = niche;
 
-  const caption = document.getElementById('studioCaption');
   const frame = document.getElementById('studioFrame');
+  const titleEl = document.getElementById('materiBoxTitle');
+  const inTitle = document.getElementById('liveTitleInput');
+  const inScript = document.getElementById('liveScriptInput');
+  const upLbl = document.getElementById('overlayUploadLabel');
 
   if (niche === 'EDUKASI') {
     frame.style.borderColor = '#38bdf8';
-    if (!data.script) caption.innerText = 'Mode: Mentor Edukasi AI';
+    titleEl.innerText = '🎓 Materi Edukasi & Poin Penjelasan';
+    titleEl.style.color = '#38bdf8';
+    inTitle.placeholder = 'Judul Materi (misal: Tips Belajar Bahasa Inggris Cepat)';
+    inScript.placeholder = 'Tulis poin materi edukasi, fakta menarik, atau pertanyaan kuis...';
+    upLbl.childNodes[0].nodeValue = '🖼️ + Gambar Slide / Materi (Opsional) ';
   } else if (niche === 'HIBURAN') {
     frame.style.borderColor = '#c084fc';
-    if (!data.script) caption.innerText = 'Mode: Host Interaktif & Santai';
+    titleEl.innerText = '🎭 Topik Hiburan & Obrolan Interaktif';
+    titleEl.style.color = '#c084fc';
+    inTitle.placeholder = 'Tema Live (misal: Cerita Horor Malam Jumat / Tebak Lagu)';
+    inScript.placeholder = 'Tulis topik obrolan santai, candaan, atau sapaan khas untuk penonton...';
+    upLbl.childNodes[0].nodeValue = '🖼️ + Meme / Gambar Topik (Opsional) ';
   } else {
     frame.style.borderColor = '#34d399';
-    if (!data.script) caption.innerText = 'Mode: Host Live Shopping & Promo';
+    titleEl.innerText = '🛍️ Info Produk & Promo Live Shopping';
+    titleEl.style.color = '#34d399';
+    inTitle.placeholder = 'Nama Produk & Harga (misal: Serum Wajah Glowing - Rp 49.000)';
+    inScript.placeholder = 'Tulis keunggulan produk, promo diskon, dan ajakan checkout keranjang...';
+    upLbl.childNodes[0].nodeValue = '🖼️ + Foto Produk Jualan (Opsional) ';
   }
+  syncLiveMateri();
 }
+
+function syncLiveMateri() {
+  const jdl = (document.getElementById('liveTitleInput')?.value || '').trim();
+  const isi = (document.getElementById('liveScriptInput')?.value || '').trim();
+  data.script = jdl ? `${jdl}: ${isi}` : isi;
+
+  const cap = document.getElementById('studioCaption');
+  const sub = document.getElementById('studioSubCaption');
+  if (!cap || !sub) return;
+
+  const defMode = { EDUKASI: 'Mode: Mentor Edukasi AI', HIBURAN: 'Mode: Host Interaktif & Santai', JUALAN: 'Mode: Host Live Shopping & Promo' };
+  cap.innerText = jdl ? (jdl.length > 36 ? jdl.substring(0, 36) + '...' : jdl) : defMode[data.niche || 'EDUKASI'];
+  sub.innerText = isi ? (isi.length > 42 ? isi.substring(0, 42) + '...' : isi) : 'Siap dikonfigurasi...';
+}
+
 
 let avConfig = { style: 'cyber', color: '#38bdf8', isSpeaking: false, mouthOpen: 0, photoImg: null, faceBox: null };
 data.style = 'cyber';
@@ -450,17 +484,6 @@ function uploadStudioBg(input) {
   }
 }
 
-function updateLiveOverlay(text) {
-  data.script = text.trim();
-  const cap = document.getElementById('studioCaption');
-  if (!cap) return;
-  if (data.script) {
-    cap.innerText = data.script.length > 48 ? data.script.substring(0, 48) + '...' : data.script;
-  } else {
-    const def = { EDUKASI: 'Mode: Mentor Edukasi AI', HIBURAN: 'Mode: Host Interaktif & Santai', JUALAN: 'Mode: Host Live Shopping & Promo' };
-    cap.innerText = def[data.niche || 'EDUKASI'];
-  }
-}
 
 function uploadOverlayItem(input) {
   if (input.files && input.files[0]) {
@@ -484,7 +507,8 @@ function clearOverlayItem() {
 }
 
 function finishSlide3() {
-  const txt = document.getElementById('liveScriptInput').value.trim();
+  const txt = (data.script || '').trim();
+
   if (!txt) {
     alert('Isi minimal 1 kalimat materi atau info produk terlebih dahulu agar AI punya bahan bicara!');
     return;
