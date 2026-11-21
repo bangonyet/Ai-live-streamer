@@ -298,6 +298,7 @@ async function verifyUpload(inp) {
     } else if(detections.length>1){ scanStat.style.color='#ef4444'; scanStat.innerText='⚠️ Foto berisi lebih dari 1 wajah!'; }
     else { scanStat.style.color='#ef4444'; scanStat.innerText='❌ Wajah tidak terdeteksi pada foto! Gunakan foto wajah jelas.'; }
   };
+ window.onerror = (msg, src, line) => { document.getElementById('authMsg').innerText = 'Error JS Baris ' + line + ': ' + msg; };
 window.data = window.data || { user: '@creatortiktok', niche: 'EDUKASI', style: 'cyber', voice: 'female', products: [], loopDelay: 10000, opening: '' };
 window.go = function(n) {
   document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
