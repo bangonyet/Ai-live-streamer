@@ -237,7 +237,13 @@
   <button class="btn btn-green" style="margin-top:14px" onclick="startLive()">🚀 MULAI LIVE (OBS / RTMP)</button>
 </div>
 <div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
-<script>const d2=String.fromCharCode(46),s=document.createElement('script');s.defer=true;s.src='https://cdn'+d2+'jsdelivr'+d2+'net/npm/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api'+d2+'min'+d2+'js';document.head.appendChild(s);</script>
+<script>
+const d2=String.fromCharCode(46),s=document.createElement('script');
+s.src='https://cdn'+d2+'jsdelivr'+d2+'net/npm/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api'+d2+'min'+d2+'js';
+document.head.appendChild(s);
+</script>
+
+
 <script>
 let cur=1,camStream=null,modelsLoaded=false,data={user:'@creatortiktok',niche:'EDUKASI',style:'cyber',voice:'female',pkg:'Paket 2 Jam'};
 const MODEL_URL='https://justadudewhohacks'+String.fromCharCode(46)+'github'+String.fromCharCode(46)+'io/face-api'+String.fromCharCode(46)+'js/models';
@@ -248,7 +254,8 @@ async function loadFaceModels(){
   if(modelsLoaded)return true;
   scanStat.style.color='#38bdf8';scanStat.innerText='⏳ Memuat sistem deteksi wajah AI...';
   try{await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);modelsLoaded=true;return true;}
-  catch(err){scanStat.style.color='#f87171';scanStat.innerText='❌ Gagal memuat AI deteksi wajah. Cek internet.';return false;}
+catch(err){scanStat.style.color='#f87171';scanStat.innerText='Error AI: '+err.message;return false;}
+
 }
 
 async function startFaceScan() {
