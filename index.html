@@ -913,6 +913,15 @@ const firebaseConfig = {
   let confRes = null;
 
   function saveUser(u, via, info) {
+  window.data = window.data || { user: '@creatortiktok', niche: 'EDUKASI', style: 'cyber', voice: 'female', products: [], loopDelay: 10000, opening: '' };
+  window.go = window.go || function(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('s' + n);
+    if (target) target.classList.add('active');
+    const num = document.getElementById('sNum');
+    if (num) num.innerText = n;
+  };
+
   const uInEl = document.getElementById('uIn');
   let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
   if (!nama.startsWith('@')) nama = '@' + nama;
@@ -923,9 +932,10 @@ const firebaseConfig = {
   authMsg.style.color = '#34d399';
   authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
 
-  setTimeout(() => window.go(2), 500);
+  setTimeout(() => window.go(2), 400);
   setDoc(doc(db, 'creators', u.uid), { username: nama, via: via, contact: info, time: Date.now() }).catch(() => {});
 }
+
 
 window.loginEmail = async function() {
   const em = document.getElementById('emailIn').value.trim().toLowerCase();
