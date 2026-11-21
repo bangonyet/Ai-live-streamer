@@ -98,95 +98,96 @@
 </div>
 <div id="s3" class="slide">
   <h2>3. Studio Live AI</h2>
-  <p class="sub">Pilih niche untuk mengatur suasana & materi host AI</p>
+  <p class="sub">Atur studio, host AI, dan materi siaran Anda</p>
 
   <!-- Pilihan Niche (3 Kolom Rapi) -->
-  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;">
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px;">
     <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
-      <div style="font-size:20px;">🎓</div>
-      <div style="font-size:12px; font-weight:bold; margin-top:4px;">EDUKASI</div>
+      <div style="font-size:18px;">🎓</div>
+      <div style="font-size:11.5px; font-weight:bold; margin-top:3px;">EDUKASI</div>
     </div>
     <div class="card niche-btn" onclick="selectNiche(this, 'HIBURAN')" style="padding:10px 6px; text-align:center;">
-      <div style="font-size:20px;">🎭</div>
-      <div style="font-size:12px; font-weight:bold; margin-top:4px;">HIBURAN</div>
+      <div style="font-size:18px;">🎭</div>
+      <div style="font-size:11.5px; font-weight:bold; margin-top:3px;">HIBURAN</div>
     </div>
     <div class="card niche-btn" onclick="selectNiche(this, 'JUALAN')" style="padding:10px 6px; text-align:center;">
-      <div style="font-size:20px;">🛍️</div>
-      <div style="font-size:12px; font-weight:bold; margin-top:4px;">JUALAN</div>
+      <div style="font-size:18px;">🛍️</div>
+      <div style="font-size:11.5px; font-weight:bold; margin-top:3px;">JUALAN</div>
     </div>
   </div>
 
-  <!-- Kotak Live Preview Studio 9:16 -->
-  <div id="studioFrame" style="width:100%; max-width:240px; aspect-ratio:9/16; margin:0 auto 14px; background:linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border:2px solid #38bdf8; border-radius:16px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
-    
-    <!-- Header Overlay Live -->
-    <div style="display:flex; justify-content:flex-start; align-items:center; padding:10px; z-index:2;">
-      <span style="background:#ef4444; color:#fff; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:6px; letter-spacing:0.5px;">● PREVIEW 9:16</span>
-    </div>
+  <!-- STICKY MINI-PREVIEW 9:16 -->
+  <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
+    <div style="display:flex; gap:10px; align-items:center; justify-content:center;">
+      <div id="studioFrame" style="position:relative; width:146px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; background-image:linear-gradient(180deg, #1e1b4b 0%, #312e81 45%, #0f172a 100%); background-size:cover; background-position:center; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; z-index:3;">
+          <span style="background:#ef4444; color:#fff; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">● LIVE</span>
+          <span id="studioNicheBadge" style="background:rgba(15,23,42,0.8); color:#38bdf8; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">EDUKASI</span>
+        </div>
 
-    <!-- Canvas Avatar Foto Live -->
-    <canvas id="avatarCanvas" width="270" height="480" style="position:absolute; inset:0; width:100%; height:100%; z-index:1;"></canvas>
+        <canvas id="avatarCanvas" width="270" height="480" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
 
-    <!-- Footer Overlay Status (Tetap di Bawah) -->
-    <div style="margin-top:auto; padding:10px; background:linear-gradient(0deg, rgba(0,0,0,0.88) 0%, transparent 100%); z-index:2; text-align:left;">
-      <div id="studioCaption" style="font-size:11px; color:#f8fafc; font-weight:600;">Mode: Mentor Edukasi AI</div>
-      <div id="studioSubCaption" style="font-size:10px; color:#94a3b8; margin-top:2px;">Siap dikonfigurasi...</div>
+        <div id="studioEtalaseOverlay" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(15,23,42,0.92); border:1px solid #fbbf24; border-radius:8px; padding:5px 6px; text-align:left;">
+          <div id="etalaseBadgeTxt" style="font-size:8px; font-weight:bold; color:#fbbf24;">👇 Cek Keranjang • Etalase No. 1</div>
+          <div id="etalaseTitleTxt" style="font-size:9px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Nama Produk</div>
+          <a id="etalaseWebBtn" href="#" target="_blank" style="display:none; margin-top:3px; background:#10b981; color:#064e3b; font-size:8px; font-weight:bold; text-align:center; padding:2px 4px; border-radius:4px; text-decoration:none;">Beli Sekarang ↗</a>
+        </div>
+
+        <div style="position:relative; z-index:3; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 100%); text-align:left;">
+          <div id="studioCaption" style="font-size:9px; font-weight:bold; color:#f8fafc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mode: Mentor Edukasi</div>
+          <div id="studioSubCaption" style="font-size:8px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Siap dikonfigurasi...</div>
+        </div>
+      </div>
+
+      <div style="flex:1; display:flex; flex-direction:column; gap:6px; text-align:left;">
+        <div style="font-size:11px; color:#cbd5e1; font-weight:bold;">⚡ Kontrol Cepat Live</div>
+        <button type="button" onclick="testAIVoice()" style="padding:8px; border-radius:8px; border:1px solid #38bdf8; background:rgba(56,189,248,0.15); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔊 Tes Suara & Opening</button>
+        <button type="button" id="btnAutoLoop" onclick="toggleAutoLoopSim()" style="padding:8px; border-radius:8px; border:1px solid #10b981; background:rgba(16,185,129,0.15); color:#34d399; font-size:11px; font-weight:bold; cursor:pointer;">🔁 Simulasi Auto-Loop</button>
+        <button type="button" onclick="stopAllSpeech()" style="padding:6px; border-radius:8px; border:1px solid #475569; background:rgba(30,41,59,0.8); color:#94a3b8; font-size:10.5px; cursor:pointer;">⏹️ Hentikan Suara</button>
+      </div>
     </div>
   </div>
 
-  <!-- Panel Kontrol Lengkap di Bawah Preview -->
-  <div id="studioControls" style="text-align:left;">
-    <!-- Gaya Visual & Suara AI -->
-    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default;">
-      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">👤 Gaya Visual & Suara AI</div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;">
-        <button type="button" class="av-btn" onclick="setAvatarStyle('cyber', '#38bdf8', this)" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #38bdf8; background:#0f172a; color:#fff; font-weight:bold;">🤖 Cyber</button>
-        <button type="button" class="av-btn" onclick="setAvatarStyle('casual', '#c084fc', this)" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#cbd5e1;">😎 Santai</button>
-        <button type="button" class="av-btn" onclick="setAvatarStyle('pro', '#34d399', this)" style="padding:6px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#cbd5e1;">👔 Formal</button>
-      </div>
-      <div style="display:flex; gap:6px; align-items:center;">
-        <select id="aiVoiceGender" onchange="data.voice = this.value" style="flex:1; padding:8px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #334155; font-size:12px;">
-          <option value="female">👩 Suara Wanita (Ceria)</option>
-          <option value="male">👨 Suara Pria (Berwibawa)</option>
-        </select>
-        <button type="button" onclick="testAIVoice()" style="padding:8px 12px; border-radius:8px; background:#38bdf8; color:#0f172a; border:none; font-weight:bold; font-size:12px; cursor:pointer; white-space:nowrap;">🔊 Tes Suara</button>
-      </div>
-    </div>
+  <!-- TAB MENU MINI -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
+    <button type="button" class="s3-tab sel" onclick="switchS3Tab(this, 'tabStudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🎨 1. Studio</button>
+    <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabMateri')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">📝 2. Materi</button>
+    <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabAudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ 3. Audio/Loop</button>
+  </div>
 
-    <!-- Background Studio -->
-    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default;">
-      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🖼️ Background Studio</div>
-      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
-        <button type="button" onclick="setStudioBg('gradient', 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)')" style="padding:7px 4px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#fff; cursor:pointer;">🌑 Gelap</button>
-        <button type="button" onclick="setStudioBg('gradient', 'linear-gradient(180deg, #311042 0%, #0f172a 100%)')" style="padding:7px 4px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#311042; color:#fff; cursor:pointer;">🌌 Neon</button>
-        <button type="button" onclick="setStudioBg('gradient', 'linear-gradient(180deg, #422006 0%, #0f172a 100%)')" style="padding:7px 4px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#422006; color:#fff; cursor:pointer;">☕ Hangat</button>
-        <label style="padding:7px 4px; font-size:11px; border-radius:6px; border:1px dashed #38bdf8; background:#0f172a; color:#38bdf8; text-align:center; cursor:pointer; font-weight:bold;">
-          📁 Upload
+  <!-- TAB 1: STUDIO & GAYA HOST -->
+  <div id="tabStudio" class="s3-panel" style="text-align:left;">
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🖼️ Pilih Background Studio 3D / Upload</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px;">
+        <button type="button" onclick="setStudioBg('preset', 'https://unsplash.com')" style="height:48px; border-radius:8px; border:1px solid #38bdf8; background:url('https://unsplash.com') center/cover; color:#fff; font-size:10px; font-weight:bold; text-shadow:0 1px 3px #000; cursor:pointer;">Studio 1</button>
+        <button type="button" onclick="setStudioBg('preset', 'https://unsplash.com')" style="height:48px; border-radius:8px; border:1px solid #c084fc; background:url('https://unsplash.com') center/cover; color:#fff; font-size:10px; font-weight:bold; text-shadow:0 1px 3px #000; cursor:pointer;">Studio 2</button>
+        <button type="button" onclick="setStudioBg('preset', 'https://unsplash.com')" style="height:48px; border-radius:8px; border:1px solid #34d399; background:url('https://unsplash.com') center/cover; color:#fff; font-size:10px; font-weight:bold; text-shadow:0 1px 3px #000; cursor:pointer;">Studio 3</button>
+        <label style="height:48px; border-radius:8px; border:1px dashed #fbbf24; background:rgba(251,191,36,0.1); color:#fbbf24; font-size:10px; font-weight:bold; display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer;">
+          + Upload BG
           <input type="file" accept="image/*" onchange="uploadStudioBg(this)" style="display:none;">
         </label>
       </div>
-    </div>
 
-    <!-- Materi Dinamis Sesuai Niche (Edukasi / Hiburan / Jualan) -->
-    <div class="card" style="padding:12px; margin-bottom:14px; cursor:default;">
-      <div id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🎓 Materi Edukasi & Poin Penjelasan</div>
-      
-      <input id="liveTitleInput" type="text" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris Cepat)" style="width:100%; padding:8px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #334155; font-size:12px; box-sizing:border-box; margin-bottom:8px;">
-      
-      <textarea id="liveScriptInput" rows="3" oninput="syncLiveMateri()" placeholder="Tulis poin materi edukasi, fakta menarik, atau pertanyaan kuis untuk penonton..." style="width:100%; padding:8px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #334155; font-size:12px; box-sizing:border-box; resize:none; margin-bottom:8px;"></textarea>
-      
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-        <label id="overlayUploadLabel" style="flex:1; padding:7px; font-size:11px; border-radius:6px; border:1px dashed #94a3b8; background:#0f172a; color:#cbd5e1; text-align:center; cursor:pointer;">
-          🖼️ + Gambar Slide / Materi (Opsional)
-          <input type="file" accept="image/*" onchange="uploadOverlayItem(this)" style="display:none;">
-        </label>
-        <button type="button" onclick="clearOverlayItem()" style="padding:7px 10px; font-size:11px; border-radius:6px; border:1px solid #334155; background:#1e293b; color:#f87171; cursor:pointer;">Hapus</button>
+      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:6px;">🎭 Gaya Bingkai Host AI</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;">
+        <button type="button" class="av-btn" onclick="setAvatarStyle('cyber', '#38bdf8', this)" style="padding:7px; border-radius:8px; border:1px solid #38bdf8; background:rgba(56,189,248,0.15); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Cyber Neon</button>
+        <button type="button" class="av-btn" onclick="setAvatarStyle('casual', '#c084fc', this)" style="padding:7px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#cbd5e1; font-size:11px; cursor:pointer;">Casual Glow</button>
+        <button type="button" class="av-btn" onclick="setAvatarStyle('pro', '#34d399', this)" style="padding:7px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#cbd5e1; font-size:11px; cursor:pointer;">Pro Clean</button>
       </div>
     </div>
-
-    <button type="button" class="btn btn-green" onclick="finishSlide3()">Simpan Studio & Lanjut ke Slide 4 ➔</button>
   </div>
-</div>
+
+  <!-- TAB 2: MONOLOG OPENING & MATERI / ETALASE -->
+  <div id="tabMateri" class="s3-panel" style="display:none; text-align:left;">
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#fbbf24; margin-bottom:6px;">👋 Monolog Perkenalan Akun (Opening Live)</div>
+      <textarea id="openingScriptInput" rows="2" oninput="syncLiveMateri()" placeholder="Contoh: Halo semuanya selamat datang di live akun kami! Jangan lupa tap-tap layar dan follow dulu ya..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px; margin-bottom:4px;"></textarea>
+      <div style="font-size:10.5px; color:#94a3b8;">Dibacakan pertama kali saat Live dimulai sebelum masuk ke materi utama.</div>
+    </div>
+
+    <div id="boxMateriUmum" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">📚 Materi Edukasi & Poin Penjelasan</div>
 
 
 
@@ -298,6 +299,27 @@ async function verifyUpload(inp) {
     else { scanStat.style.color='#ef4444'; scanStat.innerText='❌ Wajah tidak terdeteksi pada foto! Gunakan foto wajah jelas.'; }
   };
 }
+let ytPlayerObj = null;
+let autoLoopTimer = null;
+let loopIndex = 0;
+let isAutoLooping = false;
+data.products = [];
+data.loopDelay = 10000;
+data.opening = '';
+
+function switchS3Tab(btn, panelId) {
+  document.querySelectorAll('.s3-tab').forEach(t => {
+    t.style.borderColor = '#334155';
+    t.style.background = 'rgba(15,23,42,0.8)';
+    t.style.color = '#94a3b8';
+  });
+  btn.style.borderColor = '#2dd4bf';
+  btn.style.background = 'rgba(45,212,191,0.2)';
+  btn.style.color = '#fff';
+
+  document.querySelectorAll('.s3-panel').forEach(p => p.style.display = 'none');
+  document.getElementById(panelId).style.display = 'block';
+}
 
 function selectNiche(el, niche) {
   document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
@@ -305,50 +327,121 @@ function selectNiche(el, niche) {
   data.niche = niche;
 
   const frame = document.getElementById('studioFrame');
+  const badge = document.getElementById('studioNicheBadge');
+  const boxUmum = document.getElementById('boxMateriUmum');
+  const boxJualan = document.getElementById('boxMateriJualan');
   const titleEl = document.getElementById('materiBoxTitle');
   const inTitle = document.getElementById('liveTitleInput');
   const inScript = document.getElementById('liveScriptInput');
-  const upLbl = document.getElementById('overlayUploadLabel');
+  const etalaseOv = document.getElementById('studioEtalaseOverlay');
 
-  if (niche === 'EDUKASI') {
-    frame.style.borderColor = '#38bdf8';
-    titleEl.innerText = '🎓 Materi Edukasi & Poin Penjelasan';
-    titleEl.style.color = '#38bdf8';
-    inTitle.placeholder = 'Judul Materi (misal: Tips Belajar Bahasa Inggris Cepat)';
-    inScript.placeholder = 'Tulis poin materi edukasi, fakta menarik, atau pertanyaan kuis...';
-    upLbl.childNodes[0].nodeValue = '🖼️ + Gambar Slide / Materi (Opsional) ';
-  } else if (niche === 'HIBURAN') {
-    frame.style.borderColor = '#c084fc';
-    titleEl.innerText = '🎭 Topik Hiburan & Obrolan Interaktif';
-    titleEl.style.color = '#c084fc';
-    inTitle.placeholder = 'Tema Live (misal: Cerita Horor Malam Jumat / Tebak Lagu)';
-    inScript.placeholder = 'Tulis topik obrolan santai, candaan, atau sapaan khas untuk penonton...';
-    upLbl.childNodes[0].nodeValue = '🖼️ + Meme / Gambar Topik (Opsional) ';
-  } else {
+  if (badge) badge.innerText = niche;
+
+  if (niche === 'JUALAN') {
     frame.style.borderColor = '#34d399';
-    titleEl.innerText = '🛍️ Info Produk & Promo Live Shopping';
-    titleEl.style.color = '#34d399';
-    inTitle.placeholder = 'Nama Produk & Harga (misal: Serum Wajah Glowing - Rp 49.000)';
-    inScript.placeholder = 'Tulis keunggulan produk, promo diskon, dan ajakan checkout keranjang...';
-    upLbl.childNodes[0].nodeValue = '🖼️ + Foto Produk Jualan (Opsional) ';
+    boxUmum.style.display = 'none';
+    boxJualan.style.display = 'block';
+    if (data.products.length === 0) addProductRow();
+    updateEtalasePreview(0);
+  } else {
+    boxUmum.style.display = 'block';
+    boxJualan.style.display = 'none';
+    if (etalaseOv) etalaseOv.style.display = 'none';
+
+    if (niche === 'EDUKASI') {
+      frame.style.borderColor = '#38bdf8';
+      titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan';
+      titleEl.style.color = '#38bdf8';
+      inTitle.placeholder = 'Judul Materi (misal: Tips Belajar Bahasa Inggris)';
+      inScript.placeholder = 'Tulis poin materi (pisahkan dengan baris baru agar dibaca bergantian)...';
+    } else {
+      frame.style.borderColor = '#c084fc';
+      titleEl.innerText = '🎭 Topik Hiburan & Obrolan Interaktif';
+      titleEl.style.color = '#c084fc';
+      inTitle.placeholder = 'Tema Live (misal: Cerita Horor / Tebak-Tebakan Seru)';
+      inScript.placeholder = 'Tulis topik obrolan santai, candaan, atau sapaan penonton...';
+    }
   }
   syncLiveMateri();
 }
 
+function addProductRow() {
+  const idx = data.products.length;
+  data.products.push({ no: idx + 1, name: '', script: '', url: '' });
+  renderProductRows();
+}
+
+function removeProductRow(idx) {
+  data.products.splice(idx, 1);
+  data.products.forEach((p, i) => p.no = i + 1);
+  renderProductRows();
+}
+
+function renderProductRows() {
+  const wrap = document.getElementById('productListContainer');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  data.products.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'background:rgba(15,23,42,0.85); border:1px solid #334155; border-radius:8px; padding:8px;';
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:11px; font-weight:bold; color:#fbbf24;">Etalase No. ${item.no}</span>
+        ${data.products.length > 1 ? `<button type="button" onclick="removeProductRow(${idx})" style="background:none; border:none; color:#f87171; font-size:11px; cursor:pointer;">Hapus</button>` : ''}
+      </div>
+      <input type="text" value="${item.name}" oninput="updateProductData(${idx}, 'name', this.value)" placeholder="Nama Produk & Harga (misal: Serum Glowing - 49rb)" style="text-align:left; font-size:11.5px; padding:8px; margin-bottom:6px;">
+      <textarea rows="2" oninput="updateProductData(${idx}, 'script', this.value)" placeholder="Skrip promosi singkat yang dibaca AI..." style="width:100%; padding:8px; border-radius:8px; border:1px solid #2d354f; background:rgba(15,23,42,0.75); color:#fff; font-size:11.5px; margin-bottom:6px;">${item.script}</textarea>
+      <input type="text" value="${item.url}" oninput="updateProductData(${idx}, 'url', this.value)" placeholder="Link Produk Web / WA / Shopee (Opsional)" style="text-align:left; font-size:11px; padding:7px; margin-bottom:0; border-color:#10b981;">
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+function updateProductData(idx, field, val) {
+  if (!data.products[idx]) return;
+  data.products[idx][field] = val.trim();
+  if (idx === 0) updateEtalasePreview(0);
+}
+
+function updateEtalasePreview(idx) {
+  const ov = document.getElementById('studioEtalaseOverlay');
+  if (!ov || data.niche !== 'JUALAN') return;
+  const item = data.products[idx];
+  if (!item) { ov.style.display = 'none'; return; }
+
+  ov.style.display = 'block';
+  document.getElementById('etalaseBadgeTxt').innerText = `👇 Cek Keranjang • Etalase No. ${item.no}`;
+  document.getElementById('etalaseTitleTxt').innerText = item.name || `Produk Etalase #${item.no}`;
+
+  const webBtn = document.getElementById('etalaseWebBtn');
+  if (item.url && item.url.startsWith('http')) {
+    webBtn.href = item.url;
+    webBtn.style.display = 'block';
+  } else {
+    webBtn.style.display = 'none';
+  }
+}
+
 function syncLiveMateri() {
+  const op = (document.getElementById('openingScriptInput')?.value || '').trim();
   const jdl = (document.getElementById('liveTitleInput')?.value || '').trim();
   const isi = (document.getElementById('liveScriptInput')?.value || '').trim();
-  data.script = jdl ? `${jdl}: ${isi}` : isi;
+
+  data.opening = op;
+  if (data.niche === 'JUALAN') {
+    data.script = data.products.map(p => `Etalase nomor ${p.no}, ${p.name}. ${p.script}`).join('\n');
+  } else {
+    data.script = jdl ? `${jdl}. ${isi}` : isi;
+  }
 
   const cap = document.getElementById('studioCaption');
   const sub = document.getElementById('studioSubCaption');
   if (!cap || !sub) return;
 
-  const defMode = { EDUKASI: 'Mode: Mentor Edukasi AI', HIBURAN: 'Mode: Host Interaktif & Santai', JUALAN: 'Mode: Host Live Shopping & Promo' };
-  cap.innerText = jdl ? (jdl.length > 36 ? jdl.substring(0, 36) + '...' : jdl) : defMode[data.niche || 'EDUKASI'];
-  sub.innerText = isi ? (isi.length > 42 ? isi.substring(0, 42) + '...' : isi) : 'Siap dikonfigurasi...';
+  const defMode = { EDUKASI: 'Mode: Mentor Edukasi', HIBURAN: 'Mode: Host Hiburan', JUALAN: 'Mode: Live Shopping' };
+  cap.innerText = jdl || defMode[data.niche || 'EDUKASI'];
+  sub.innerText = op || isi || 'Siap dikonfigurasi...';
 }
-
 
 let avConfig = { style: 'cyber', color: '#38bdf8', isSpeaking: false, mouthOpen: 0, photoImg: null, faceBox: null };
 data.style = 'cyber';
@@ -370,29 +463,11 @@ function setAvatarStyle(style, color, btn) {
   document.querySelectorAll('.av-btn').forEach(b => {
     b.style.borderColor = '#334155';
     b.style.color = '#cbd5e1';
-    b.style.fontWeight = 'normal';
+    b.style.background = 'rgba(15,23,42,0.8)';
   });
   btn.style.borderColor = color;
   btn.style.color = '#fff';
-  btn.style.fontWeight = 'bold';
-}
-
-function testAIVoice() {
-  if (!('speechSynthesis' in window)) { alert('Browser tidak mendukung suara AI.'); return; }
-  window.speechSynthesis.cancel();
-  const nicheText = {
-    EDUKASI: 'Halo semuanya! Selamat datang di sesi edukasi bersama host AI.',
-    HIBURAN: 'Halo guys! Gimana kabarnya hari ini? Yuk ngobrol seru bareng aku!',
-    JUALAN: 'Halo kak! Promo spesial hari ini stoknya terbatas banget, yuk buruan dicek!'
-  };
-  const utter = new SpeechSynthesisUtterance(nicheText[data.niche || 'EDUKASI']);
-  utter.lang = 'id-ID';
-  utter.pitch = data.voice === 'female' ? 1.25 : 0.85;
-  utter.rate = 1.05;
-  utter.onstart = () => { avConfig.isSpeaking = true; };
-  utter.onend = () => { avConfig.isSpeaking = false; avConfig.mouthOpen = 0; };
-  utter.onerror = () => { avConfig.isSpeaking = false; avConfig.mouthOpen = 0; };
-  window.speechSynthesis.speak(utter);
+  btn.style.background = color + '28';
 }
 
 (function renderAvatarLoop() {
@@ -411,70 +486,71 @@ function testAIVoice() {
 
     if (avConfig.photoImg && avConfig.photoImg.complete) {
       const img = avConfig.photoImg;
-      const scaleBase = Math.max(w / img.width, h / img.height);
-      const breathZoom = 1.03 + Math.sin(now / 650) * 0.012;
-      const swayX = Math.sin(now / 1100) * 3.5;
-      const swayY = Math.cos(now / 750) * 2.5;
+      const targetH = h * 0.52;
+      const scaleBase = targetH / img.height;
+      const breathZoom = 1.02 + Math.sin(now / 650) * 0.012;
+      const swayX = Math.sin(now / 1100) * 3;
+      const swayY = Math.cos(now / 750) * 2;
       const tilt = Math.sin(now / 1300) * 0.012;
 
       const drawW = img.width * scaleBase * breathZoom;
       const drawH = img.height * scaleBase * breathZoom;
-      const drawX = (w - drawW) / 2 + swayX;
-      const drawY = (h - drawH) / 2 + swayY;
+      const centerX = w / 2 + swayX;
+      const centerY = h * 0.62 + swayY;
+      const drawX = centerX - drawW / 2;
+      const drawY = centerY - drawH / 2;
 
       ctx.save();
-      ctx.translate(w / 2, h / 2);
+      ctx.translate(centerX, centerY);
       ctx.rotate(tilt);
-      ctx.translate(-w / 2, -h / 2);
+      ctx.translate(-centerX, -centerY);
+
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
+      ctx.clip();
+
       ctx.drawImage(img, drawX, drawY, drawW, drawH);
 
       if (avConfig.faceBox && avConfig.mouthOpen > 0.8) {
         const fb = avConfig.faceBox;
         const mouthX = drawX + (fb.x + fb.w * 0.5) * drawW;
         const mouthY = drawY + (fb.y + fb.h * 0.77) * drawH;
-        const mouthW = Math.max(8, fb.w * drawW * 0.24);
-        const mouthH = Math.min(avConfig.mouthOpen * 0.75, fb.h * drawH * 0.14);
+        const mouthW = Math.max(7, fb.w * drawW * 0.25);
+        const mouthH = Math.min(avConfig.mouthOpen * 0.7, fb.h * drawH * 0.13);
 
         ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
         ctx.beginPath();
         ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
         ctx.fill();
-
-        ctx.strokeStyle = 'rgba(225, 110, 110, 0.45)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
       }
       ctx.restore();
 
-      const rim = ctx.createRadialGradient(w / 2, h * 0.45, w * 0.25, w / 2, h * 0.5, h * 0.65);
-      rim.addColorStop(0, 'transparent');
-      rim.addColorStop(1, avConfig.color + '33');
-      ctx.fillStyle = rim;
-      ctx.fillRect(0, 0, w, h);
+      ctx.save();
+      ctx.strokeStyle = avConfig.color + '99';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
     } else {
-      ctx.fillStyle = '#94a3b8';
+      ctx.fillStyle = 'rgba(15,23,42,0.75)';
+      ctx.fillRect(20, h * 0.42, w - 40, 44);
+      ctx.fillStyle = '#38bdf8';
       ctx.font = 'bold 12px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Menunggu Foto Wajah dari Slide 2...', w / 2, h / 2);
+      ctx.fillText('Wajah Host dari Slide 2 Tampil di Sini', w / 2, h * 0.42 + 26);
     }
   }
   requestAnimationFrame(renderAvatarLoop);
 })();
 
-
-
 function setStudioBg(type, val) {
   const frame = document.getElementById('studioFrame');
   if (!frame) return;
-  if (type === 'gradient') {
-    frame.style.backgroundImage = val;
-    frame.style.backgroundSize = 'cover';
-    frame.style.backgroundPosition = 'center';
-  } else if (type === 'image') {
-    frame.style.backgroundImage = `url('${val}')`;
-    frame.style.backgroundSize = 'cover';
-    frame.style.backgroundPosition = 'center';
-  }
+  frame.style.backgroundImage = `url('${val}')`;
+  frame.style.backgroundSize = 'cover';
+  frame.style.backgroundPosition = 'center';
+  data.studioBg = val;
 }
 
 function uploadStudioBg(input) {
@@ -484,40 +560,7 @@ function uploadStudioBg(input) {
   }
 }
 
-
-function uploadOverlayItem(input) {
-  if (input.files && input.files[0]) {
-    const url = URL.createObjectURL(input.files[0]);
-    data.overlayImg = url;
-    let box = document.getElementById('studioProductCard');
-    if (!box) {
-      box = document.createElement('img');
-      box.id = 'studioProductCard';
-      box.style.cssText = 'position:absolute; right:10px; bottom:58px; width:64px; height:64px; object-fit:cover; border-radius:8px; border:2px solid #38bdf8; z-index:2; background:#0f172a; box-shadow:0 4px 12px rgba(0,0,0,0.6);';
-      document.getElementById('studioFrame').appendChild(box);
-    }
-    box.src = url;
-  }
-}
-
-function clearOverlayItem() {
-  data.overlayImg = '';
-  const box = document.getElementById('studioProductCard');
-  if (box) box.remove();
-}
-
-function finishSlide3() {
-  const txt = (data.script || '').trim();
-
-  if (!txt) {
-    alert('Isi minimal 1 kalimat materi atau info produk terlebih dahulu agar AI punya bahan bicara!');
-    return;
-  }
-  data.script = txt;
-  const nLbl = document.getElementById('nLbl');
-  if (nLbl) nLbl.innerText = data.niche || 'EDUKASI';
-  go(4);
-}
+function speakTextSafe(text, onDone) {
 
 function chooseStyle(el,t){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.style=t;summaryTxt.innerText=`${data.niche} • ${t}`;setTimeout(()=>go(5),400);}
 function pickPkg(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.pkg=txt;pkgLbl.innerText=txt;}
