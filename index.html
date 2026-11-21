@@ -321,6 +321,29 @@ function switchS3Tab(btn, panelId) {
   document.getElementById(panelId).style.display = 'block';
 }
 
+
+let ytPlayerObj = null;
+let autoLoopTimer = null;
+let loopIndex = 0;
+let isAutoLooping = false;
+data.products = [];
+data.loopDelay = 10000;
+data.opening = '';
+
+function switchS3Tab(btn, panelId) {
+  document.querySelectorAll('.s3-tab').forEach(t => {
+    t.style.borderColor = '#334155';
+    t.style.background = 'rgba(15,23,42,0.8)';
+    t.style.color = '#94a3b8';
+  });
+  btn.style.borderColor = '#2dd4bf';
+  btn.style.background = 'rgba(45,212,191,0.2)';
+  btn.style.color = '#fff';
+
+  document.querySelectorAll('.s3-panel').forEach(p => p.style.display = 'none');
+  document.getElementById(panelId).style.display = 'block';
+}
+
 function selectNiche(el, niche) {
   document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
@@ -561,6 +584,297 @@ function uploadStudioBg(input) {
 }
 
 function speakTextSafe(text, onDone) {
+  if (!text) { if (onDone) onDone(); return; }
+  if (!('speechSynthesis' in window)) {
+    alert('Browser HP Anda tidak mendukung suara AI. Gunakan Google Chrome terbaru.');
+    return;
+  }
+
+
+  const cvs = document.getElementById('avatarCanvas');
+  if (cvs) {
+    const ctx = cvs.getContext('2d');
+    const w = cvs.width, h = cvs.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const now = Date.now();
+    if (avConfig.isSpeaking) {
+      avConfig.mouthOpen = (Math.sin(now / 65) * 0.5 + 0.5) * 9 + Math.abs(Math.sin(now / 115)) * 4;
+    } else {
+      avConfig.mouthOpen *= 0.75;
+    }
+
+    if (avConfig.photoImg && avConfig.photoImg.complete) {
+      const img = avConfig.photoImg;
+      const targetH = h * 0.52;
+      const scaleBase = targetH / img.height;
+      const breathZoom = 1.02 + Math.sin(now / 650) * 0.012;
+      const swayX = Math.sin(now / 1100) * 3;
+      const swayY = Math.cos(now / 750) * 2;
+      const tilt = Math.sin(now / 1300) * 0.012;
+
+      const drawW = img.width * scaleBase * breathZoom;
+      const drawH = img.height * scaleBase * breathZoom;
+      const centerX = w / 2 + swayX;
+      const centerY = h * 0.62 + swayY;
+      const drawX = centerX - drawW / 2;
+      const drawY = centerY - drawH / 2;
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(tilt);
+      ctx.translate(-centerX, -centerY);
+
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
+      ctx.clip();
+
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+
+      if (avConfig.faceBox && avConfig.mouthOpen > 0.8) {
+        const fb = avConfig.faceBox;
+        const mouthX = drawX + (fb.x + fb.w * 0.5) * drawW;
+        const mouthY = drawY + (fb.y + fb.h * 0.77) * drawH;
+        const mouthW = Math.max(7, fb.w * drawW * 0.25);
+        const mouthH = Math.min(avConfig.mouthOpen * 0.7, fb.h * drawH * 0.13);
+
+        ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
+        ctx.beginPath();
+        ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = avConfig.color + '99';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    } else {
+      ctx.fillStyle = 'rgba(15,23,42,0.75)';
+      ctx.fillRect(20, h * 0.42, w - 40, 44);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Wajah Host dari Slide 2 Tampil di Sini', w / 2, h * 0.42 + 26);
+    }
+  }
+  requestAnimationFrame(renderAvatarLoop);
+})();
+
+function setStudioBg(type, val) {
+  const frame = document.getElementById('studioFrame');
+  if (!frame) return;
+  frame.style.backgroundImage = `url('${val}')`;
+  frame.style.backgroundSize = 'cover';
+  frame.style.backgroundPosition = 'center';
+  data.studioBg = val;
+}
+
+function uploadStudioBg(input) {
+  if (input.files && input.files[0]) {
+    const imgUrl = URL.createObjectURL(input.files[0]);
+    setStudioBg('image', imgUrl);
+  }
+}
+
+function speakTextSafe(text, onDone) {
+  if (!text) { if (onDone) onDone(); return; }
+  if (!('speechSynthesis' in window)) {
+    alert('Browser HP Anda tidak mendukung suara AI. Gunakan Google Chrome terbaru.');
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  setYoutubeVolume(15);
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'id-ID';
+  const voices = window.speechSynthesis.getVoices();
+  const idVoice = voices.find(v => v.lang.toLowerCase().includes('id'));
+  if (idVoice) utter.voice = idVoice;
+
+  utter.pitch = data.voice === 'female' ? 1.18 : 0.88;
+  utter.rate = 1.03;
+
+  utter.onstart = () => { avConfig.isSpeaking = true; };
+  utter.onend = () => {
+    avConfig.isSpeaking = false;
+    avConfig.mouthOpen = 0;
+    setYoutubeVolume(65);
+    if (onDone) onDone();
+  };
+  utter.onerror = () => {
+    avConfig.isSpeaking = false;
+    avConfig.mouthOpen = 0;
+    setYoutubeVolume(65);
+  };
+
+  window.speechSynthesis.speak(utter);
+}
+
+function stopAllSpeech() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  avConfig.isSpeaking = false;
+  avConfig.mouthOpen = 0;
+  setYoutubeVolume(65);
+  if (isAutoLooping) toggleAutoLoopSim();
+}
+
+function testAIVoice() {
+  syncLiveMateri();
+  const defaultOpening = {
+    EDUKASI: 'Halo semuanya! Selamat datang di live edukasi hari ini. Jangan lupa tap-tap layar dan follow akun ini ya!',
+    HIBURAN: 'Halo guys! Gimana kabarnya hari ini? Yuk ngobrol seru bareng aku di live kali ini!',
+    JUALAN: 'Halo kak! Selamat datang di live shopping kami, stok promo hari ini terbatas banget, yuk cek keranjang kuning sekarang!'
+  };
+  const teksOpening = data.opening || defaultOpening[data.niche || 'EDUKASI'];
+  document.getElementById('studioSubCaption').innerText = teksOpening;
+  speakTextSafe(teksOpening);
+}
+
+function toggleAutoLoopSim() {
+  const btn = document.getElementById('btnAutoLoop');
+  if (isAutoLooping) {
+    isAutoLooping = false;
+    clearTimeout(autoLoopTimer);
+    btn.innerText = '🔁 Simulasi Auto-Loop';
+    btn.style.background = 'rgba(16,185,129,0.15)';
+    return;
+  }
+
+  syncLiveMateri();
+  isAutoLooping = true;
+  loopIndex = 0;
+  btn.innerText = '⏸️ Stop Auto-Loop';
+  btn.style.background = 'rgba(239,68,68,0.25)';
+
+  const intro = data.opening || 'Halo semuanya, selamat datang di live hari ini!';
+  document.getElementById('studioSubCaption').innerText = intro;
+  speakTextSafe(intro, () => scheduleNextLoop());
+}
+
+function scheduleNextLoop() {
+  if (!isAutoLooping) return;
+  autoLoopTimer = setTimeout(() => {
+    if (!isAutoLooping) return;
+    let nextText = '';
+
+    if (data.niche === 'JUALAN' && data.products.length > 0) {
+      const idx = loopIndex % data.products.length;
+      const p = data.products[idx];
+      updateEtalasePreview(idx);
+      nextText = `Cek etalase nomor ${p.no}, ${p.name}. ${p.script || 'Buruan di-checkout sebelum kehabisan ya kak!'}`;
+      loopIndex++;
+    } else {
+      const lines = (document.getElementById('liveScriptInput')?.value || '')
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (lines.length > 0) {
+        nextText = lines[loopIndex % lines.length];
+        loopIndex++;
+      } else {
+        nextText = 'Terima kasih yang sudah bergabung, tulis pertanyaan kalian di kolom komentar ya!';
+      }
+    }
+
+    document.getElementById('studioSubCaption').innerText = nextText;
+    speakTextSafe(nextText, () => scheduleNextLoop());
+  }, data.loopDelay || 10000);
+}
+
+function extractYouTubeID(url) {
+  const reg = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = url.match(reg);
+  return match ? match[1] : null;
+}
+
+function loadYoutubeMusic() {
+  const url = (document.getElementById('ytMusicUrl')?.value || '').trim();
+  const vidId = extractYouTubeID(url);
+  const stat = document.getElementById('ytMusicStatus');
+  if (!vidId) {
+    stat.style.color = '#f87171';
+    stat.innerText = 'Link YouTube tidak valid!';
+    return;
+  }
+
+  stat.style.color = '#38bdf8';
+  stat.innerText = 'Memuat audio YouTube...';
+
+  if (!window.YT) {
+    const tag = document.createElement('script');
+    tag.src = 'https://youtube.com';
+    document.head.appendChild(tag);
+    window.onYouTubeIframeAPIReady = () => createYTPlayer(vidId);
+  } else {
+    createYTPlayer(vidId);
+  }
+}
+
+function createYTPlayer(vidId) {
+  const stat = document.getElementById('ytMusicStatus');
+  if (ytPlayerObj && ytPlayerObj.loadVideoById) {
+    ytPlayerObj.loadVideoById(vidId);
+    ytPlayerObj.setVolume(65);
+    stat.style.color = '#34d399';
+    stat.innerText = '🎵 Musik YouTube aktif (Auto-Ducking siap)';
+    return;
+  }
+  ytPlayerObj = new YT.Player('ytPlayer', {
+    height: '1', width: '1', videoId: vidId,
+    playerVars: { autoplay: 1, loop: 1, playlist: vidId },
+    events: {
+      onReady: (e) => {
+        e.target.setVolume(65);
+        e.target.playVideo();
+        stat.style.color = '#34d399';
+        stat.innerText = '🎵 Musik YouTube aktif (Auto-Ducking siap)';
+      }
+    }
+  });
+}
+
+function setYoutubeVolume(vol) {
+  if (ytPlayerObj && typeof ytPlayerObj.setVolume === 'function') {
+    ytPlayerObj.setVolume(vol);
+  }
+}
+
+function stopYoutubeMusic() {
+  if (ytPlayerObj && typeof ytPlayerObj.stopVideo === 'function') {
+    ytPlayerObj.stopVideo();
+  }
+  const stat = document.getElementById('ytMusicStatus');
+  if (stat) { stat.style.color = '#94a3b8'; stat.innerText = 'Musik dihentikan'; }
+}
+
+function finishSlide3() {
+  syncLiveMateri();
+  stopAllSpeech();
+
+  if (data.niche === 'JUALAN') {
+    const validProd = data.products.some(p => p.name.trim() !== '');
+    if (!validProd) {
+      alert('Isi minimal 1 Nama Produk di Etalase No. 1 terlebih dahulu!');
+      switchS3Tab(document.querySelectorAll('.s3-tab')[1], 'tabMateri');
+      return;
+    }
+  } else {
+    const txt = (data.script || '').trim();
+    if (!txt) {
+      alert('Isi minimal 1 kalimat materi atau topik terlebih dahulu agar AI punya bahan bicara!');
+      switchS3Tab(document.querySelectorAll('.s3-tab')[1], 'tabMateri');
+      return;
+    }
+  }
+
+  const nlbl = document.getElementById('nlbl');
+  if (nlbl) nlbl.innerText = data.niche || 'EDUKASI';
+  go(4);
+}
+
 
 function chooseStyle(el,t){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.style=t;summaryTxt.innerText=`${data.niche} • ${t}`;setTimeout(()=>go(5),400);}
 function pickPkg(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.pkg=txt;pkgLbl.innerText=txt;}
