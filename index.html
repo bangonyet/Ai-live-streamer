@@ -239,8 +239,9 @@
 <div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
 <script>
 const d2=String.fromCharCode(46),s=document.createElement('script');
-s.src='https://cdn'+d2+'jsdelivr'+d2+'net/npm/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api'+d2+'min'+d2+'js';
+s.src='https://unpkg'+d2+'c'+'om/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api'+d2+'min'+d2+'js';
 document.head.appendChild(s);
+
 </script>
 
 
@@ -274,8 +275,7 @@ async function startFaceScan() {
           const snap=document.createElement('canvas');
           snap.width=camVid.videoWidth||480; snap.height=camVid.videoHeight||640;
           snap.getContext('2d').drawImage(camVid,0,0,snap.width,snap.height);
-          setAvatarPhoto(snap.toDataURL('image/jpeg',0.92), detections[0].box, snap.width, snap.height);
-
+          try { setAvatarPhoto(snap.toDataURL('image/jpeg',0.92), detections.box, snap.width, snap.height); } catch(e) {}
           if(camStream)camStream.getTracks().forEach(t=>t.stop());
           scanStat.style.color='#34d399'; scanStat.innerText='✅ Wajah Asli Terverifikasi! Melanjutkan...';
           setTimeout(()=>go(3),1200);
@@ -288,7 +288,7 @@ async function startFaceScan() {
 
 async function verifyUpload(inp) {
   if(!inp.files||!inp.files[0])return;
-  if(!document.getElementById('agreeFace').checked){ scanStat.style.color='#fbbf24'; scanStat.innerText='⚠️ Harap centang persetujuan!'; inp.value=''; return; }
+  if(!document.getElementById('agreeFace').checked){ scanStat.style.color='#fbbf24'; scanStat.innerText='⚠️ Harap centang persetujuan!'; return; }
   if(!(await loadFaceModels()))return;
   scanStat.style.color='#38bdf8'; scanStat.innerText='⏳ Menganalisis wajah pada foto...';
   const imgEl=document.getElementById('previewImg');
@@ -296,7 +296,7 @@ async function verifyUpload(inp) {
   imgEl.onload=async()=>{
    const detections=await faceapi.detectAllFaces(imgEl,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.3}));
     if(detections.length===1){
-      setAvatarPhoto(imgEl.src, detections[0].box, imgEl.naturalWidth, imgEl.naturalHeight);
+    try { setAvatarPhoto(imgEl.src, detections[0].box, imgEl.naturalWidth, imgEl.naturalHeight); } catch(e) {}
       scanStat.style.color='#34d399'; scanStat.innerText='✅ Foto Wajah Valid Terverifikasi! Melanjutkan...';
       setTimeout(()=>go(3),1200);
     } else if(detections.length>1){ scanStat.style.color='#ef4444'; scanStat.innerText='⚠️ Foto berisi lebih dari 1 wajah!'; }
