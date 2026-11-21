@@ -298,28 +298,14 @@ async function verifyUpload(inp) {
     } else if(detections.length>1){ scanStat.style.color='#ef4444'; scanStat.innerText='⚠️ Foto berisi lebih dari 1 wajah!'; }
     else { scanStat.style.color='#ef4444'; scanStat.innerText='❌ Wajah tidak terdeteksi pada foto! Gunakan foto wajah jelas.'; }
   };
-}
-let ytPlayerObj = null;
-let autoLoopTimer = null;
-let loopIndex = 0;
-let isAutoLooping = false;
-data.products = [];
-data.loopDelay = 10000;
-data.opening = '';
-
-function switchS3Tab(btn, panelId) {
-  document.querySelectorAll('.s3-tab').forEach(t => {
-    t.style.borderColor = '#334155';
-    t.style.background = 'rgba(15,23,42,0.8)';
-    t.style.color = '#94a3b8';
-  });
-  btn.style.borderColor = '#2dd4bf';
-  btn.style.background = 'rgba(45,212,191,0.2)';
-  btn.style.color = '#fff';
-
-  document.querySelectorAll('.s3-panel').forEach(p => p.style.display = 'none');
-  document.getElementById(panelId).style.display = 'block';
-}
+window.data = window.data || { user: '@creatortiktok', niche: 'EDUKASI', style: 'cyber', voice: 'female', products: [], loopDelay: 10000, opening: '' };
+window.go = function(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('s' + n);
+  if (target) target.classList.add('active');
+  const num = document.getElementById('sNum');
+  if (num) num.innerText = n;
+};
 
 
 let ytPlayerObj = null;
