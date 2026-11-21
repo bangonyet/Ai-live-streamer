@@ -241,11 +241,9 @@
 const d2=String.fromCharCode(46),s=document.createElement('script');
 s.src='https://unpkg'+d2+'c'+'om/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api'+d2+'min'+d2+'js';
 document.head.appendChild(s);
-
 </script>
-
-
 <script>
+ window.onerror = (msg, src, line) => { document.getElementById('scanStat').innerText = 'Error Baris ' + line + ': ' + msg; };
 let cur=1,camStream=null,modelsLoaded=false,data={user:'@creatortiktok',niche:'EDUKASI',style:'cyber',voice:'female',pkg:'Paket 2 Jam'};
 const MODEL_URL='https://justadudewhohacks'+String.fromCharCode(46)+'github'+String.fromCharCode(46)+'io/face-api'+String.fromCharCode(46)+'js/models';
 function go(n){cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===n-1));document.getElementById('stepNum').innerText=`Tahap ${n}/6`;}
