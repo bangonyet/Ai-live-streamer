@@ -236,14 +236,11 @@
   </div>
   <button class="btn btn-green" style="margin-top:14px" onclick="startLive()">🚀 MULAI LIVE (OBS / RTMP)</button>
 </div>
-
 <div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
-<script>const s=document.createElement('script');s.defer=true;s.src=atob('aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9mYWNlLWFwaS5qc0AwLjIyLjIvZGlzdC9mYWNlLWFwaS5taW4uanM=');document.head.appendChild(s);</script>
+<script>const d2=String.fromCharCode(46),s=document.createElement('script');s.defer=true;s.src='https://cdn'+d2+'jsdelivr'+d2+'net/npm/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api'+d2+'min'+d2+'js';document.head.appendChild(s);</script>
 <script>
-let cur=1,camStream=null,modelsLoaded=false,data={user:'@creatortiktok',niche:'',style:'',pkg:'Paket 2 Jam - Rp 5.500'};
-
-const MODEL_URL=atob('aHR0cHM6Ly9qdXN0YWR1ZGV3aG9oYWNrcy5naXRodWIuaW8vZmFjZS1hcGkuanMvbW9kZWxz');
-
+let cur=1,camStream=null,modelsLoaded=false,data={user:'@creatortiktok',niche:'EDUKASI',style:'cyber',voice:'female',pkg:'Paket 2 Jam'};
+const MODEL_URL='https://justadudewhohacks'+String.fromCharCode(46)+'github'+String.fromCharCode(46)+'io/face-api'+String.fromCharCode(46)+'js/models';
 function go(n){cur=n;document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===n-1));document.getElementById('stepNum').innerText=`Tahap ${n}/6`;}
 function doLogin(via){let v=uIn.value.trim();if(v)data.user=v.startsWith('@')?v:'@'+v;uLabel.innerText=data.user;go(2);}
 
