@@ -252,10 +252,10 @@ function doLogin(via){let v=uIn.value.trim();if(v)data.user=v.startsWith('@')?v:
 
 async function loadFaceModels(){
   if(modelsLoaded)return true;
+  if(typeof faceapi==='undefined'){scanStat.style.color='#f87171';scanStat.innerText='Library AI belum termuat / diblokir browser!';return false;}
   scanStat.style.color='#38bdf8';scanStat.innerText='⏳ Memuat sistem deteksi wajah AI...';
   try{await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);modelsLoaded=true;return true;}
-catch(err){scanStat.style.color='#f87171';scanStat.innerText='Error AI: '+err.message;return false;}
-
+  catch(err){scanStat.style.color='#f87171';scanStat.innerText='Error AI: '+err.message;return false;}
 }
 
 async function startFaceScan() {
