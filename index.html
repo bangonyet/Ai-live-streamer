@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+6<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -913,43 +913,49 @@ const firebaseConfig = {
   let confRes = null;
 
   function saveUser(u, via, info) {
- const uInEl = document.getElementById('uIn');
-let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
-
-    if (!nama.startsWith('@')) nama = '@' + nama;
-    if (uInEl) uInEl.value = nama;
+  const uInEl = document.getElementById('uIn');
+  let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
+  if (!nama.startsWith('@')) nama = '@' + nama;
+  if (uInEl) uInEl.value = nama;
   document.getElementById('uLabel').innerText = nama;
 
-    data.user = nama;
-    authMsg.style.color = '#34d399';
-    authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
+  window.data.user = nama;
+  authMsg.style.color = '#34d399';
+  authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
 
-    setDoc(doc(db, 'creators', u.uid), { username: nama, via: via, contact: info, time: Date.now() }, { merge: true }).catch(() => {});
-    setTimeout(() => go(2), 600);
+  setTimeout(() => window.go(2), 500);
+  setDoc(doc(db, 'creators', u.uid), { username: nama, via: via, contact: info, time: Date.now() }).catch(() => {});
+}
+
+window.loginEmail = async function() {
+  const em = document.getElementById('emailIn').value.trim().toLowerCase();
+  const pw = document.getElementById('passIn').value;
+  if (!em || pw.length < 6) {
+    authMsg.style.color = '#fbbf24';
+    authMsg.innerText = 'Isi email & password min 6 huruf!';
+    return;
   }
-
-  window.loginEmail = async function() {
-    let em = emailIn.value.trim(), pw = passIn.value.trim();
-    if (!em || pw.length < 6) {
-      authMsg.style.color = '#fbbf24';
-      authMsg.innerText = 'Isi email & password min 6 huruf!';
+  authMsg.style.color = '#60a5fa';
+  authMsg.innerText = 'Memproses Email...';
+  try {
+    const r = await signInWithEmailAndPassword(auth, em, pw);
+    saveUser(r.user, 'Email', em);
+  } catch (e) {
+    if (e.code !== 'auth/user-not-found' && e.code !== 'auth/invalid-credential') {
+      authMsg.style.color = '#f87171';
+      authMsg.innerText = 'Error: ' + e.code;
       return;
     }
-    authMsg.style.color = '#60a5fa';
-    authMsg.innerText = 'Memproses Email...';
     try {
-      const r = await signInWithEmailAndPassword(auth, em, pw);
-      saveUser(r.user, 'Email', em);
-    } catch (e) {
-      try {
-        const r2 = await createUserWithEmailAndPassword(auth, em, pw);
-        saveUser(r2.user, 'Email Baru', em);
-      } catch (e2) {
-        authMsg.style.color = '#f87171';
-        authMsg.innerText = 'Gagal: ' + e2.message;
-      }
+      const r2 = await createUserWithEmailAndPassword(auth, em, pw);
+      saveUser(r2.user, 'Email Baru', em);
+    } catch (e2) {
+      authMsg.style.color = '#f87171';
+      authMsg.innerText = 'Error Login: ' + e.code + ' | Daftar: ' + e2.code;
     }
-  };
+  }
+};
+
 
   window.loginTikTokGoogle = async function() {
       if (!document.getElementById('uIn')?.value.trim()) {    authMsg.style.color = '#fbbf24';
