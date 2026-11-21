@@ -943,7 +943,8 @@ window.loginEmail = async function() {
   } catch (e) {
     if (e.code !== 'auth/user-not-found' && e.code !== 'auth/invalid-credential') {
       authMsg.style.color = '#f87171';
-      authMsg.innerText = 'Error: ' + e.code;
+     authMsg.innerText = 'Error Asli: ' + e.message;
+
       return;
     }
     try {
