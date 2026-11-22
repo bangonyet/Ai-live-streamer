@@ -581,13 +581,8 @@ function setAvatarStyle(style, color, btn) {
   }
   requestAnimationFrame(renderAvatarLoop);
 })();
-
-
   }
-
-
-
-
+  
 function setStudioBg(type, val) {
   const frame = document.getElementById('studioFrame');
   if (!frame) return;
@@ -731,7 +726,6 @@ function loadYoutubeMusic() {
     const tag = document.createElement('script');
    const dYt = String.fromCharCode(46);
 tag.src = 'https://www' + dYt + 'youtube' + dYt + 'com/iframe_api';
-  
     window.onYouTubeIframeAPIReady = () => createYTPlayer(vidId);
   } else {
     createYTPlayer(vidId);
