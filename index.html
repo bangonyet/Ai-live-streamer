@@ -203,7 +203,8 @@ document.head.appendChild(s);
 </script>
 <script>
 let camStream=null,modelsLoaded=false,scanInterval=null;
-const MODEL_URL='https://github.io';
+const dM=String.fromCharCode(46);
+const MODEL_URL='https://justadudewhohacks'+dM+'github'+dM+'io/face-api'+dM+'js/models';
 async function loadFaceModels(){const st=document.getElementById('scanStat');if(modelsLoaded)return true;if(typeof faceapi==='undefined'){st.style.color='#f87171';st.innerText='❌ Library AI belum termuat / cek internet!';return false}st.style.color='#38bdf8';st.innerText='⏳ Memuat AI deteksi wajah...';try{await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);modelsLoaded=true;return true}catch(e){st.style.color='#f87171';st.innerText='Error AI: '+e.message;return false}}
 async function startFaceScan(){const st=document.getElementById('scanStat'),btn=document.getElementById('btnScan'),vid=document.getElementById('camVid');if(!document.getElementById('agreeFace').checked){st.style.color='#fbbf24';st.innerText='⚠️ Centang persetujuan dulu!';return}btn.disabled=true;btn.innerText='Memproses...';if(!(await loadFaceModels())){btn.disabled=false;btn.innerText='🔄 Coba Lagi';return}st.style.color='#38bdf8';st.innerText='📷 Meminta izin kamera HP... Klik "Izinkan / Allow" jika muncul pop-up.';try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});vid.srcObject=camStream;vid.style.display='block';document.getElementById('camPlaceholder').style.display='none';vid.onloadedmetadata=()=>{clearInterval(scanInterval);scanInterval=setInterval(async()=>{const det=await faceapi.detectAllFaces(vid,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.3}));if(det.length===1){clearInterval(scanInterval);const sn=document.createElement('canvas');sn.width=vid.videoWidth||480;sn.height=vid.videoHeight||640;sn.getContext('2d').drawImage(vid,0,0,sn.width,sn.height);if(typeof setAvatarPhoto==='function')setAvatarPhoto(sn.toDataURL('image/jpeg',0.92),det.box,sn.width,sn.height);if(camStream)camStream.getTracks().forEach(t=>t.stop());st.style.color='#34d399';st.innerText='✅ Wajah Terverifikasi! Membuka Studio...';setTimeout(()=>window.go(3),1200)}else if(det.length>1){st.style.color='#ef4444';st.innerText='⚠️ Terdeteksi lebih dari 1 wajah!'}else{st.style.color='#38bdf8';st.innerText='🔍 Mencari wajah... Pastikan cahaya cukup.'}},700)}}catch(e){btn.disabled=false;btn.innerText='🔄 Coba Kamera Lagi';st.style.color='#f87171';st.innerHTML='⚠️ <b>Akses Kamera HP Ditolak / Diblokir!</b><br><span style="font-size:11px;color:#cbd5e1;font-weight:normal">Cara aktifkan: Buka <b>Pengaturan Browser > Setelan Situs > Kamera > Izinkan</b> (atau pastikan web dibuka lewat <b>HTTPS</b>). Jika tetap gagal, gunakan tombol <b>Upload / Selfie</b> di samping.</span>'}}
 async function verifyUpload(inp){const st=document.getElementById('scanStat');if(!inp.files||!inp.files)return;if(!document.getElementById('agreeFace').checked){st.style.color='#fbbf24';st.innerText='⚠️ Centang persetujuan dulu!';return}if(!(await loadFaceModels()))return;st.style.color='#38bdf8';st.innerText='⏳ Menganalisis foto...';const im=document.getElementById('previewImg');im.src=URL.createObjectURL(inp.files);im.style.display='block';im.onload=async()=>{const det=await faceapi.detectAllFaces(im,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.3}));if(det.length===1){if(typeof setAvatarPhoto==='function')setAvatarPhoto(im.src,det.box,im.naturalWidth,im.naturalHeight);clearInterval(scanInterval);if(camStream)camStream.getTracks().forEach(t=>t.stop());st.style.color='#34d399';st.innerText='✅ Foto Wajah Valid! Membuka Studio...';setTimeout(()=>window.go(3),1200)}else if(det.length>1){st.style.color='#ef4444';st.innerText='⚠️ Foto berisi lebih dari 1 wajah!'}else{st.style.color='#ef4444';st.innerText='❌ Wajah tidak terdeteksi! Gunakan foto jelas.'}}}
@@ -489,78 +490,7 @@ function speakTextSafe(text, onDone) {
   }
 
 
-  const cvs = document.getElementById('avatarCanvas');
-  if (cvs) {
-    const ctx = cvs.getContext('2d');
-    const w = cvs.width, h = cvs.height;
-    ctx.clearRect(0, 0, w, h);
 
-    const now = Date.now();
-    if (avConfig.isSpeaking) {
-      avConfig.mouthOpen = (Math.sin(now / 65) * 0.5 + 0.5) * 9 + Math.abs(Math.sin(now / 115)) * 4;
-    } else {
-      avConfig.mouthOpen *= 0.75;
-    }
-
-    if (avConfig.photoImg && avConfig.photoImg.complete) {
-      const img = avConfig.photoImg;
-      const targetH = h * 0.52;
-      const scaleBase = targetH / img.height;
-      const breathZoom = 1.02 + Math.sin(now / 650) * 0.012;
-      const swayX = Math.sin(now / 1100) * 3;
-      const swayY = Math.cos(now / 750) * 2;
-      const tilt = Math.sin(now / 1300) * 0.012;
-
-      const drawW = img.width * scaleBase * breathZoom;
-      const drawH = img.height * scaleBase * breathZoom;
-      const centerX = w / 2 + swayX;
-      const centerY = h * 0.62 + swayY;
-      const drawX = centerX - drawW / 2;
-      const drawY = centerY - drawH / 2;
-
-      ctx.save();
-      ctx.translate(centerX, centerY);
-      ctx.rotate(tilt);
-      ctx.translate(-centerX, -centerY);
-
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
-      ctx.clip();
-
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
-
-      if (avConfig.faceBox && avConfig.mouthOpen > 0.8) {
-        const fb = avConfig.faceBox;
-        const mouthX = drawX + (fb.x + fb.w * 0.5) * drawW;
-        const mouthY = drawY + (fb.y + fb.h * 0.77) * drawH;
-        const mouthW = Math.max(7, fb.w * drawW * 0.25);
-        const mouthH = Math.min(avConfig.mouthOpen * 0.7, fb.h * drawH * 0.13);
-
-        ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
-        ctx.beginPath();
-        ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-
-      ctx.save();
-      ctx.strokeStyle = avConfig.color + '99';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    } else {
-      ctx.fillStyle = 'rgba(15,23,42,0.75)';
-      ctx.fillRect(20, h * 0.42, w - 40, 44);
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Wajah Host dari Slide 2 Tampil di Sini', w / 2, h * 0.42 + 26);
-    }
-  }
-  requestAnimationFrame(renderAvatarLoop);
-})();
 
 function setStudioBg(type, val) {
   const frame = document.getElementById('studioFrame');
@@ -703,8 +633,9 @@ function loadYoutubeMusic() {
 
   if (!window.YT) {
     const tag = document.createElement('script');
-    tag.src = 'https://youtube.com';
-    document.head.appendChild(tag);
+   const dYt = String.fromCharCode(46);
+tag.src = 'https://www' + dYt + 'youtube' + dYt + 'com/iframe_api';
+  tag.src = 'https://youtube.com'; document.head.appendChild(tag);
     window.onYouTubeIframeAPIReady = () => createYTPlayer(vidId);
   } else {
     createYTPlayer(vidId);
@@ -768,7 +699,7 @@ function finishSlide3() {
     }
   }
 
-  const nlbl = document.getElementById('nlbl');
+  const nlbl = document.getElementById('nLbl');
   if (nlbl) nlbl.innerText = data.niche || 'EDUKASI';
   go(4);
 }
