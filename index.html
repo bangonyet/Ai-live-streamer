@@ -582,27 +582,7 @@ function setAvatarStyle(style, color, btn) {
   requestAnimationFrame(renderAvatarLoop);
 })();
 
-function setStudioBg(type, val) {
-  const frame = document.getElementById('studioFrame');
-  if (!frame) return;
-  frame.style.backgroundImage = `url('${val}')`;
-  frame.style.backgroundSize = 'cover';
-  frame.style.backgroundPosition = 'center';
-  data.studioBg = val;
-}
 
-function uploadStudioBg(input) {
-  if (input.files && input.files[0]) {
-    const imgUrl = URL.createObjectURL(input.files[0]);
-    setStudioBg('image', imgUrl);
-  }
-}
-
-function speakTextSafe(text, onDone) {
-  if (!text) { if (onDone) onDone(); return; }
-  if (!('speechSynthesis' in window)) {
-    alert('Browser HP Anda tidak mendukung suara AI. Gunakan Google Chrome terbaru.');
-    return;
   }
 
 
@@ -751,7 +731,7 @@ function loadYoutubeMusic() {
     const tag = document.createElement('script');
    const dYt = String.fromCharCode(46);
 tag.src = 'https://www' + dYt + 'youtube' + dYt + 'com/iframe_api';
-  tag.src = 'https://youtube.com'; document.head.appendChild(tag);
+  
     window.onYouTubeIframeAPIReady = () => createYTPlayer(vidId);
   } else {
     createYTPlayer(vidId);
