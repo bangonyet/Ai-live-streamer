@@ -190,7 +190,12 @@
     <div class="card">
       <p style="font-size:13px;margin-bottom:6px"><b>Pembayaran via QRIS</b></p>
       <p id="pkgLbl" style="font-size:11px;color:#2dd4bf;margin-bottom:8px">Paket 2 Jam - Rp 5.500</p>
-      <img src="https://qrserver.com" style="background:#fff;padding:6px;border-radius:8px">
+     <img id="qrisImg" style="background:#fff;padding:6px;border-radius:8px;width:150px;height:150px">
+<script>
+const dQr=String.fromCharCode(46);
+document.getElementById('qrisImg').src='https://api'+dQr+'qrserver'+dQr+'com/v1/create-qr-code/?size=150x150&data=AILiveStreamer';
+</script>
+
     </div>
   </div>
   <button class="btn btn-green" style="margin-top:14px" onclick="startLive()">🚀 MULAI LIVE (OBS / RTMP)</button>
@@ -202,12 +207,123 @@ s.src='https://unpkg'+d2+'c'+'om/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api
 document.head.appendChild(s);
 </script>
 <script>
-let camStream=null,modelsLoaded=false,scanInterval=null;
-const dM=String.fromCharCode(46);
-const MODEL_URL='https://justadudewhohacks'+dM+'github'+dM+'io/face-api'+dM+'js/models';
-async function loadFaceModels(){const st=document.getElementById('scanStat');if(modelsLoaded)return true;if(typeof faceapi==='undefined'){st.style.color='#f87171';st.innerText='❌ Library AI belum termuat / cek internet!';return false}st.style.color='#38bdf8';st.innerText='⏳ Memuat AI deteksi wajah...';try{await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);modelsLoaded=true;return true}catch(e){st.style.color='#f87171';st.innerText='Error AI: '+e.message;return false}}
-async function startFaceScan(){const st=document.getElementById('scanStat'),btn=document.getElementById('btnScan'),vid=document.getElementById('camVid');if(!document.getElementById('agreeFace').checked){st.style.color='#fbbf24';st.innerText='⚠️ Centang persetujuan dulu!';return}btn.disabled=true;btn.innerText='Memproses...';if(!(await loadFaceModels())){btn.disabled=false;btn.innerText='🔄 Coba Lagi';return}st.style.color='#38bdf8';st.innerText='📷 Meminta izin kamera HP... Klik "Izinkan / Allow" jika muncul pop-up.';try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});vid.srcObject=camStream;vid.style.display='block';document.getElementById('camPlaceholder').style.display='none';vid.onloadedmetadata=()=>{clearInterval(scanInterval);scanInterval=setInterval(async()=>{const det=await faceapi.detectAllFaces(vid,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.3}));if(det.length===1){clearInterval(scanInterval);const sn=document.createElement('canvas');sn.width=vid.videoWidth||480;sn.height=vid.videoHeight||640;sn.getContext('2d').drawImage(vid,0,0,sn.width,sn.height);if(typeof setAvatarPhoto==='function')setAvatarPhoto(sn.toDataURL('image/jpeg',0.92),det.box,sn.width,sn.height);if(camStream)camStream.getTracks().forEach(t=>t.stop());st.style.color='#34d399';st.innerText='✅ Wajah Terverifikasi! Membuka Studio...';setTimeout(()=>window.go(3),1200)}else if(det.length>1){st.style.color='#ef4444';st.innerText='⚠️ Terdeteksi lebih dari 1 wajah!'}else{st.style.color='#38bdf8';st.innerText='🔍 Mencari wajah... Pastikan cahaya cukup.'}},700)}}catch(e){btn.disabled=false;btn.innerText='🔄 Coba Kamera Lagi';st.style.color='#f87171';st.innerHTML='⚠️ <b>Akses Kamera HP Ditolak / Diblokir!</b><br><span style="font-size:11px;color:#cbd5e1;font-weight:normal">Cara aktifkan: Buka <b>Pengaturan Browser > Setelan Situs > Kamera > Izinkan</b> (atau pastikan web dibuka lewat <b>HTTPS</b>). Jika tetap gagal, gunakan tombol <b>Upload / Selfie</b> di samping.</span>'}}
-async function verifyUpload(inp){const st=document.getElementById('scanStat');if(!inp.files||!inp.files)return;if(!document.getElementById('agreeFace').checked){st.style.color='#fbbf24';st.innerText='⚠️ Centang persetujuan dulu!';return}if(!(await loadFaceModels()))return;st.style.color='#38bdf8';st.innerText='⏳ Menganalisis foto...';const im=document.getElementById('previewImg');im.src=URL.createObjectURL(inp.files);im.style.display='block';im.onload=async()=>{const det=await faceapi.detectAllFaces(im,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.3}));if(det.length===1){if(typeof setAvatarPhoto==='function')setAvatarPhoto(im.src,det.box,im.naturalWidth,im.naturalHeight);clearInterval(scanInterval);if(camStream)camStream.getTracks().forEach(t=>t.stop());st.style.color='#34d399';st.innerText='✅ Foto Wajah Valid! Membuka Studio...';setTimeout(()=>window.go(3),1200)}else if(det.length>1){st.style.color='#ef4444';st.innerText='⚠️ Foto berisi lebih dari 1 wajah!'}else{st.style.color='#ef4444';st.innerText='❌ Wajah tidak terdeteksi! Gunakan foto jelas.'}}}
+let camStream = null, modelsLoaded = false, scanInterval = null;
+const dM = String.fromCharCode(46);
+const MODEL_URL = 'https://justadudewhohacks' + dM + 'github' + dM + 'io/face-api' + dM + 'js/models';
+
+async function loadFaceModels() {
+  const st = document.getElementById('scanStat');
+  if (modelsLoaded) return true;
+  if (typeof faceapi === 'undefined') {
+    st.style.color = '#f87171';
+    st.innerText = '❌ Library AI belum termuat / cek internet!';
+    return false;
+  }
+  st.style.color = '#38bdf8';
+  st.innerText = '⏳ Memuat AI deteksi wajah...';
+  try {
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    modelsLoaded = true;
+    return true;
+  } catch (e) {
+    st.style.color = '#f87171';
+    st.innerText = 'Error AI: ' + e.message;
+    return false;
+  }
+}
+
+async function startFaceScan() {
+  const st = document.getElementById('scanStat');
+  const btn = document.getElementById('btnScan');
+  const vid = document.getElementById('camVid');
+  if (!document.getElementById('agreeFace').checked) {
+    st.style.color = '#fbbf24';
+    st.innerText = '⚠️ Centang persetujuan dulu!';
+    return;
+  }
+  btn.disabled = true;
+  btn.innerText = 'Memproses...';
+  if (!(await loadFaceModels())) {
+    btn.disabled = false;
+    btn.innerText = '🔄 Coba Lagi';
+    return;
+  }
+  st.style.color = '#38bdf8';
+  st.innerText = '📷 Meminta izin kamera HP... Klik "Izinkan / Allow".';
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+    vid.srcObject = camStream;
+    vid.style.display = 'block';
+    document.getElementById('camPlaceholder').style.display = 'none';
+    vid.onloadedmetadata = () => {
+      clearInterval(scanInterval);
+      scanInterval = setInterval(async () => {
+        const det = await faceapi.detectAllFaces(vid, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }));
+        if (det.length === 1) {
+          clearInterval(scanInterval);
+          const sn = document.createElement('canvas');
+          sn.width = vid.videoWidth || 480;
+          sn.height = vid.videoHeight || 640;
+          sn.getContext('2d').drawImage(vid, 0, 0, sn.width, sn.height);
+          if (typeof setAvatarPhoto === 'function') {
+            setAvatarPhoto(sn.toDataURL('image/jpeg', 0.92), det[0].box, sn.width, sn.height);
+          }
+          if (camStream) camStream.getTracks().forEach(t => t.stop());
+          st.style.color = '#34d399';
+          st.innerText = '✅ Wajah Terverifikasi! Membuka Studio...';
+          setTimeout(() => window.go(3), 1200);
+        } else if (det.length > 1) {
+          st.style.color = '#ef4444';
+          st.innerText = '⚠️ Terdeteksi lebih dari 1 wajah!';
+        } else {
+          st.style.color = '#38bdf8';
+          st.innerText = '🔍 Mencari wajah... Pastikan cahaya cukup.';
+        }
+      }, 700);
+    };
+  } catch (e) {
+    btn.disabled = false;
+    btn.innerText = '🔄 Coba Kamera Lagi';
+    st.style.color = '#f87171';
+    st.innerHTML = '⚠️ <b>Akses Kamera Ditolak!</b> Gunakan tombol <b>Upload / Selfie</b> di samping.';
+  }
+}
+
+async function verifyUpload(inp) {
+  const st = document.getElementById('scanStat');
+  if (!inp.files || !inp.files[0]) return;
+  if (!document.getElementById('agreeFace').checked) {
+    st.style.color = '#fbbf24';
+    st.innerText = '⚠️ Centang persetujuan dulu!';
+    return;
+  }
+  if (!(await loadFaceModels())) return;
+  st.style.color = '#38bdf8';
+  st.innerText = '⏳ Menganalisis foto...';
+  const im = document.getElementById('previewImg');
+  im.src = URL.createObjectURL(inp.files[0]);
+  im.style.display = 'block';
+  im.onload = async () => {
+    const det = await faceapi.detectAllFaces(im, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }));
+    if (det.length === 1) {
+      if (typeof setAvatarPhoto === 'function') {
+        setAvatarPhoto(im.src, det[0].box, im.naturalWidth, im.naturalHeight);
+      }
+      clearInterval(scanInterval);
+      if (camStream) camStream.getTracks().forEach(t => t.stop());
+      st.style.color = '#34d399';
+      st.innerText = '✅ Foto Wajah Valid! Membuka Studio...';
+      setTimeout(() => window.go(3), 1200);
+    } else if (det.length > 1) {
+      st.style.color = '#ef4444';
+      st.innerText = '⚠️ Foto berisi lebih dari 1 wajah!';
+    } else {
+      st.style.color = '#ef4444';
+      st.innerText = '❌ Wajah tidak terdeteksi! Gunakan foto jelas.';
+    }
+  };
+}
+
 </script>
  <script>
  window.onerror = (msg, src, line) => { document.getElementById('authMsg').innerText = 'Error JS Baris ' + line + ': ' + msg; };
