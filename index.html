@@ -31,24 +31,20 @@
   <h2>1. Masuk ke Studio AI Live</h2>
   <p class="sub">Pilih metode login untuk sinkronisasi akun creator</p>
   <input type="text" id="uIn" placeholder="Username TikTok (contoh: @creatortiktok)" oninput="uLabel.innerText=this.value||'@creatortiktok'">
-
   <div id="authMenu">
     <button class="btn" onclick="showBox('emailBox')">✉️ Masuk dengan Email</button>
     <button class="btn btn-purple" onclick="loginTikTokGoogle()">🎵 Masuk dengan TikTok (Google Sync)</button>
     <button class="btn" onclick="showBox('phoneBox')">📱 Masuk dengan Nomor HP (OTP)</button>
   </div>
-
   <div id="emailBox" style="display:none;margin-top:8px">
     <input type="email" id="emailIn" placeholder="Alamat Email (contoh: nama@gmail.com)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #2dd4bf;background:rgba(15,23,42,.85);color:#fff;margin-bottom:8px">
       <div style="position:relative;margin-bottom:12px">
   <input type="password" id="passIn" placeholder="Password (min. 6 karakter)" style="padding-right:42px;margin-bottom:0">
   <span onclick="passIn.type = passIn.type === 'password' ? 'text' : 'password'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px">👁️</span>
  </div> 
-         <button class="btn btn-green" onclick="if(window.loginEmail){loginEmail()}else{authMsg.style.color='#f87171';authMsg.innerText='Fungsi loginEmail belum aktif!'}">Masuk / Daftar Email</button>
-
-    <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
+   <button class="btn btn-green" onclick="if(window.loginEmail){loginEmail()}else{authMsg.style.color='#f87171';authMsg.innerText='Fungsi loginEmail belum aktif!'}">Masuk / Daftar Email</button>
+ <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
   </div>
-
   <div id="phoneBox" style="display:none;margin-top:8px">
     <input type="tel" id="phIn" placeholder="Nomor HP (contoh: 08123456789)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #34d399;background:rgba(15,23,42,.85);color:#fff;margin-bottom:8px">
     <div id="recaptcha-box" style="display:flex;justify-content:center;margin-bottom:8px"></div>
@@ -59,11 +55,10 @@
     </div>
     <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
   </div>
-
   <p id="authMsg" style="font-size:12px;color:#34d399;margin-top:8px"></p>
 </div>
 <div id="s2" class="slide"><h2>2. Verifikasi & Scan Wajah Wajib</h2><p class="sub">Wajah wajib dipindai agar AI Avatar aktif & lolos moderasi</p><div style="background:rgba(56,189,248,0.12);border:1px solid #38bdf8;border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:11px;color:#e0f2fe;text-align:left;line-height:1.4">📱 <b>Info Kamera HP:</b> Pastikan <b>Izin Kamera (Allow)</b> di browser HP sudah aktif & halaman dibuka lewat link <b>HTTPS</b>. Jika terblokir, klik ikon <b>Gembok / Setelan Situs</b> di atas browser lalu izinkan Kamera.</div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px"><div class="card" style="text-align:center"><p style="font-weight:bold;margin-bottom:8px">📷 Kamera Deteksi Live</p><div id="camBox" style="width:140px;height:140px;margin:0 auto 10px;background:#0f172a;border:2px solid #334155;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center"><video id="camVid" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:none"></video><span id="camPlaceholder" style="font-size:11px;color:#64748b">Kamera Siap</span></div><button id="btnScan" type="button" class="btn btn-green" onclick="startFaceScan()">🔍 Mulai Scan Wajah</button></div><div class="card" style="text-align:center;display:flex;flex-direction:column;justify-content:center"><p style="font-weight:bold;margin-bottom:6px">🖼️ Alternatif Upload / Selfie</p><p style="font-size:11px;color:#94a3b8;margin-bottom:10px">Ambil foto selfie atau pilih dari galeri (wajah menghadap depan)</p><input type="file" id="faceFileIn" accept="image/*" onchange="verifyUpload(this)" style="font-size:12px;margin:0 auto;max-width:200px"><img id="previewImg" style="display:none;width:80px;height:80px;object-fit:cover;border-radius:8px;margin:10px auto 0;border:1px solid #38bdf8"></div></div><div style="margin-top:14px;text-align:left;background:rgba(15,23,42,0.6);padding:10px 12px;border-radius:8px;border:1px solid #334155"><label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:pointer;line-height:1.4"><input type="checkbox" id="agreeFace" style="margin-top:3px;accent-color:#10b981" onchange="if(this.checked&&document.getElementById('faceFileIn').files.length){verifyUpload(document.getElementById('faceFileIn'))}"><span>Saya menyatakan wajah ini adalah <b>wajah saya sendiri</b> dan bersedia mengaktifkan <b>label Konten AI</b> saat live.</span></label></div><p id="scanStat" style="margin-top:12px;font-size:12.5px;font-weight:bold;color:#fbbf24">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p></div>
-
+ 
 <div id="s3" class="slide">
   <h2>3. Studio Live AI</h2>
   <p class="sub">Atur studio, host AI, dan materi siaran Anda</p>
@@ -154,11 +149,8 @@
       <textarea id="openingScriptInput" rows="2" oninput="syncLiveMateri()" placeholder="Contoh: Halo semuanya selamat datang di live akun kami! Jangan lupa tap-tap layar dan follow dulu ya..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px; margin-bottom:4px;"></textarea>
       <div style="font-size:10.5px; color:#94a3b8;">Dibacakan pertama kali saat Live dimulai sebelum masuk ke materi utama.</div>
     </div>
-
 <div id="boxMateriUmum" class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div id="materiBoxTitle" style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:8px">📚 Materi Edukasi & Poin Penjelasan</div><input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left;font-size:12px;padding:9px;margin-bottom:8px"><textarea id="liveScriptInput" rows="4" oninput="syncLiveMateri()" placeholder="Tulis poin materi (pisahkan baris baru agar dibaca bergantian)..." style="width:100%;padding:9px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;font-size:12px"></textarea></div><div id="boxMateriJualan" class="card" style="display:none;padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:bold;color:#34d399">🛍️ Daftar Produk Etalase</span><button type="button" onclick="addProductRow()" style="padding:4px 8px;border-radius:6px;border:none;background:#10b981;color:#064e3b;font-size:11px;font-weight:bold;cursor:pointer">+ Tambah Produk</button></div><div id="productListContainer" style="display:flex;flex-direction:column;gap:8px"></div></div></div><div id="tabAudio" class="s3-panel" style="display:none;text-align:left"><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#c084fc;margin-bottom:8px">🗣️ Karakter Suara & Jeda Loop</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><button type="button" onclick="data.voice='female';alert('Suara Wanita dipilih')" style="padding:8px;border-radius:8px;border:1px solid #c084fc;background:rgba(192,132,252,0.15);color:#fff;font-size:11.5px;cursor:pointer">👩 Suara Wanita</button><button type="button" onclick="data.voice='male';alert('Suara Pria dipilih')" style="padding:8px;border-radius:8px;border:1px solid #38bdf8;background:rgba(56,189,248,0.15);color:#fff;font-size:11.5px;cursor:pointer">👨 Suara Pria</button></div><label style="font-size:11px;color:#94a3b8">Jeda Antar Materi (Detik):</label><input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%;padding:8px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;margin-top:4px"></div><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#f87171;margin-bottom:6px">🎵 Backsound Musik YouTube (Auto-Ducking)</div><div style="display:flex;gap:6px;margin-bottom:6px"><input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be...)" style="text-align:left;font-size:11px;padding:8px;margin-bottom:0"><button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">Putar</button></div><div style="display:flex;justify-content:space-between;align-items:center"><span id="ytMusicStatus" style="font-size:10.5px;color:#94a3b8">Belum ada musik</span><button type="button" onclick="stopYoutubeMusic()" style="background:none;border:none;color:#f87171;font-size:10.5px;cursor:pointer">Stop Musik</button></div><div id="ytPlayer" style="display:none"></div></div></div><button type="button" class="btn btn-green" style="margin-top:8px" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button></div>
 
-
-  
 <div id="s4" class="slide">
   <h2>4. Pilih Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
   <p class="sub">Klik karakter pembawa acara AI yang diinginkan</p>
