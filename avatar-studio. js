@@ -37,14 +37,26 @@
     }
   };
   document.head.appendChild(sc);
+  // 2. Tangkap & Kompres Foto Wajah untuk Akun Pribadi
+  let compressedPhotoB64 = null;
+  function compressForCloud(imgEl) {
+    try {
+      const c = document.createElement('canvas');
+      const maxW = 360;
+      const scale = Math.min(1, maxW / (imgEl.naturalWidth || imgEl.width || 360));
+      c.width = Math.round((imgEl.naturalWidth || imgEl.width || 360) * scale);
+      c.height = Math.round((imgEl.naturalHeight || imgEl.height || 480) * scale);
+      c.getContext('2d').drawImage(imgEl, 0, 0, c.width, c.height);
+      return c.toDataURL('image/jpeg', 0.78);
+    } catch (e) { return null; }
+  }
 
-  // 2. Tangkap Foto & Koordinat Wajah dari Slide 2
-  window.setAvatarPhoto = function (src, box, origW, origH) {
+  window.setAvatarPhoto = function (src, box, origW, origH, fromCloud) {
     facePos = box ? {
-      x: box.x / origW,
-      y: box.y / origH,
-      w: box.width / origW,
-      h: box.height / origH
+      x: (box.x > 1 ? box.x / origW : box.x),
+      y: (box.y > 1 ? box.y / origH : box.y),
+      w: (box.width > 1 ? box.width / origW : (box.w || 0.4)),
+      h: (box.height > 1 ? box.height / origH : (box.h || 0.35))
     } : { x: 0.3, y: 0.2, w: 0.4, h: 0.35 };
 
     const im = new Image();
@@ -52,13 +64,19 @@
     im.onload = async () => {
       rawImg = im;
       segMask = null;
+      if (!fromCloud) compressedPhotoB64 = compressForCloud(im);
       if (segmenter) {
         try { await segmenter.send({ image: im }); } catch (e) {}
       }
-      autoSaveAvatarCloud();
+      if (!fromCloud) autoSaveAvatarCloud();
     };
     im.src = src;
   };
+
+  if (window.savedAvatarData) {
+    window.setAvatarPhoto(window.savedAvatarData.src, window.savedAvatarData.box, window.savedAvatarData.w, window.savedAvatarData.h, false);
+  }
+
 
   // 3. Suntikkan Panel Kustomisasi Avatar ke Tab "1. Studio"
   const tabStudio = document.getElementById('tabStudio');
@@ -151,9 +169,8 @@
         const snap = await getDoc(doc(fbDb, 'creators', user.uid));
         if (snap.exists()) {
           const dataCloud = snap.data();
-          if (dataCloud.avatarConfig) Object.assign(avCfg, dataCloud.avatarConfig);
-          if (dataCloud.avatarPhotoData && !rawImg) {
-            window.setAvatarPhoto(dataCloud.avatarPhotoData, dataCloud.avatarFacePos || { x: 0.3, y: 0.2, width: 0.4, height: 0.35 }, 1, 1);
+                    if (dataCloud.avatarPhotoData && !rawImg) {
+            window.setAvatarPhoto(dataCloud.avatarPhotoData, dataCloud.avatarFacePos || { x: 0.3, y: 0.2, w: 0.4, h: 0.35 }, 1, 1, true);
             const st = document.getElementById('avCloudStat');
             if (st) st.innerText = '☁️ Avatar Tersimpan Dimuat';
           }
@@ -165,12 +182,20 @@
   async function autoSaveAvatarCloud() {
     if (!fbAuth || !fbAuth.currentUser || !fbDb) return;
     try {
-      await fbSetDoc(fbDoc(fbDb, 'creators', fbAuth.currentUser.uid), {
+      const payload = {
         avatarConfig: avCfg,
         avatarUpdated: Date.now()
-      }, { merge: true });
+      };
+      if (compressedPhotoB64) {
+        payload.avatarPhotoData = compressedPhotoB64;
+        payload.avatarFacePos = facePos;
+      }
+      await fbSetDoc(fbDoc(fbDb, 'creators', fbAuth.currentUser.uid), payload, { merge: true });
+      const st = document.getElementById('avCloudStat');
+      if (st && compressedPhotoB64) st.innerText = '☁️ Foto & Avatar Tersimpan';
     } catch (e) {}
   }
+
 
   // 5. Render Overlay Rambut, Aksesoris, & Baju
   function drawAvatarOverlays(ctx, fx, fy, fw, fh, cx, bottomY) {
