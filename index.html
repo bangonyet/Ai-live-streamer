@@ -262,7 +262,8 @@ async function startFaceScan() {
                     const fBox = det[0].box;
           window.savedAvatarData = { src: snapUrl, box: fBox, w: sn.width, h: sn.height };
           if (typeof window.setAvatarPhoto === 'function') {
-            window.setAvatarPhoto(snapUrl, fBox, sn.width, sn.height);         
+            window.setAvatarPhoto(snapUrl, fBox, sn.width, sn.height);   
+         }
           if (camStream) camStream.getTracks().forEach(t => t.stop());
           st.style.color = '#34d399';
           st.innerText = '✅ Wajah Terverifikasi! Membuka Studio...';
