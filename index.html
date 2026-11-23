@@ -87,7 +87,6 @@
           <span style="background:#ef4444; color:#fff; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">● LIVE</span>
           <span id="studioNicheBadge" style="background:rgba(15,23,42,0.8); color:#38bdf8; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">EDUKASI</span>
         </div>
-
         <canvas id="avatarCanvas" width="270" height="480" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
 
         <div id="studioEtalaseOverlay" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(15,23,42,0.92); border:1px solid #fbbf24; border-radius:8px; padding:5px 6px; text-align:left;">
@@ -259,9 +258,12 @@ async function startFaceScan() {
           sn.width = vid.videoWidth || 480;
           sn.height = vid.videoHeight || 640;
           sn.getContext('2d').drawImage(vid, 0, 0, sn.width, sn.height);
-          if (typeof setAvatarPhoto === 'function') {
-            setAvatarPhoto(sn.toDataURL('image/jpeg', 0.92), det[0].box, sn.width, sn.height);
+                   const snapUrl = sn.toDataURL('image/jpeg', 0.92);
+          window.savedAvatarData = { src: snapUrl, box: det.box, w: sn.width, h: sn.height };
+          if (typeof window.setAvatarPhoto === 'function') {
+            window.setAvatarPhoto(snapUrl, det.box, sn.width, sn.height);
           }
+
           if (camStream) camStream.getTracks().forEach(t => t.stop());
           st.style.color = '#34d399';
           st.innerText = '✅ Wajah Terverifikasi! Membuka Studio...';
@@ -300,9 +302,11 @@ async function verifyUpload(inp) {
   im.onload = async () => {
     const det = await faceapi.detectAllFaces(im, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }));
     if (det.length === 1) {
-      if (typeof setAvatarPhoto === 'function') {
-        setAvatarPhoto(im.src, det[0].box, im.naturalWidth, im.naturalHeight);
+           window.savedAvatarData = { src: im.src, box: det.box, w: im.naturalWidth, h: im.naturalHeight };
+      if (typeof window.setAvatarPhoto === 'function') {
+        window.setAvatarPhoto(im.src, det.box, im.naturalWidth, im.naturalHeight);
       }
+
       clearInterval(scanInterval);
       if (camStream) camStream.getTracks().forEach(t => t.stop());
       st.style.color = '#34d399';
@@ -493,12 +497,22 @@ function speakTextSafe(text, onDone) {
 
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'id-ID';
-  const voices = window.speechSynthesis.getVoices();
-  const idVoice = voices.find(v => v.lang.toLowerCase().includes('id'));
-  if (idVoice) utter.voice = idVoice;
+    const voices = window.speechSynthesis.getVoices();
+  const idVoices = voices.filter(v => v.lang.toLowerCase().includes('id') || v.lang.toLowerCase().includes('ms'));
+  if (data.voice === 'male') {
+    const maleV = idVoices.find(v => /male|pria|laki|ardi|osman|david|daniel/i.test(v.name));
+    if (maleV) utter.voice = maleV;
+    else if (idVoices.length > 1) utter.voice = idVoices[1];
+    else if (idVoices[0]) utter.voice = idVoices[0];
+    utter.pitch = 0.60;
+    utter.rate = 0.96;
+  } else {
+    const femV = idVoices.find(v => /female|wanita|gadis|yasmin|damayanti/i.test(v.name)) || idVoices[0];
+    if (femV) utter.voice = femV;
+    utter.pitch = 1.22;
+    utter.rate = 1.04;
+  }
 
-  utter.pitch = data.voice === 'female' ? 1.18 : 0.85;
-  utter.rate = 1.03;
 
   utter.onstart = () => { window.avConfig.isSpeaking = true; };
   utter.onend = () => {
