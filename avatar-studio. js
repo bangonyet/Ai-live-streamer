@@ -1,36 +1,45 @@
 (async function () {
   window.avCfg = {
-    hair: 'none',       // none, short, slick, bob, hijab
-    acc: 'none',        // none, glasses, sun, mic, headphones
-    outfit: 'none',     // none, suit, hoodie, cyber, kebaya
+    hair: 'none',
+    acc: 'none',
+    outfit: 'none',
     rimColor: '#38bdf8',
     cutout: true,
     zoom: 1.12,
     offY: 0
   };
 
+  window.avConfig = window.avConfig || { isSpeaking: false, mouthOpen: 0 };
+
   let rawImg = null, segMask = null, segmenter = null, facePos = null;
   let blinkVal = 0, lastBlink = Date.now();
+  const offCvs = document.createElement('canvas');
+  const offCtx = offCvs.getContext('2d');
+  const dCdn = String.fromCharCode(46);
 
-  // 1. Muat AI Penghapus Background (MediaPipe Selfie Segmentation)
+  // 1. Muat AI Penghapus Background (MediaPipe)
+  const mpBase = 'https://cdn' + dCdn + 'jsdelivr' + dCdn + 'net/npm/@mediapipe/selfie_segmentation/';
   const sc = document.createElement('script');
-  sc.src = 'https://jsdelivr.net';
+  sc.src = mpBase + 'selfie_segmentation' + dCdn + 'js';
+  sc.crossOrigin = 'anonymous';
   sc.onload = () => {
     if (window.SelfieSegmentation) {
       segmenter = new SelfieSegmentation({
-        locateFile: f => `https://jsdelivr.net{f}`
+        locateFile: f => mpBase + f
       });
       segmenter.setOptions({ modelSelection: 1, selfieMode: false });
-      segmenter.onResults(res => { segMask = res.segmentationMask; });
+      segmenter.onResults(res => {
+        segMask = res.segmentationMask;
+        const st = document.getElementById('avCloudStat');
+        if (st) st.innerText = '● Auto-Cutout Aktif';
+      });
       if (rawImg) segmenter.send({ image: rawImg });
     }
   };
   document.head.appendChild(sc);
 
   // 2. Tangkap Foto & Koordinat Wajah dari Slide 2
-  const origSetPhoto = window.setAvatarPhoto;
   window.setAvatarPhoto = function (src, box, origW, origH) {
-    if (typeof origSetPhoto === 'function') origSetPhoto(src, box, origW, origH);
     facePos = box ? {
       x: box.x / origW,
       y: box.y / origH,
@@ -42,23 +51,25 @@
     im.crossOrigin = 'anonymous';
     im.onload = async () => {
       rawImg = im;
-      if (segmenter) await segmenter.send({ image: im });
+      segMask = null;
+      if (segmenter) {
+        try { await segmenter.send({ image: im }); } catch (e) {}
+      }
       autoSaveAvatarCloud();
     };
     im.src = src;
   };
 
-  // 3. Ubah Panel "🎨 1. Studio" menjadi Studio Background + Kustomisasi Avatar
+  // 3. Suntikkan Panel Kustomisasi Avatar ke Tab "1. Studio"
   const tabStudio = document.getElementById('tabStudio');
   if (tabStudio) {
     const avatarPanelHtml = `
       <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#2dd4bf;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <span style="font-size:12px; font-weight:bold; color:#2dd4bf;">🧑 Kustomisasi Visual Avatar AI</span>
-          <span id="avCloudStat" style="font-size:10px; color:#34d399;">● Auto-Cutout Aktif</span>
+          <span id="avCloudStat" style="font-size:10px; color:#34d399;">● Studio Avatar Siap</span>
         </div>
 
-        <!-- 1. Ganti Gaya Rambut -->
         <div style="font-size:11px; font-weight:bold; color:#cbd5e1; margin-bottom:5px;">💇 Gaya Rambut / Hijab</div>
         <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin-bottom:10px;">
           <button type="button" class="av-opt-hair sel" onclick="setAvOpt('hair','none',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #34d399; background:rgba(16,185,129,0.2); color:#fff; font-size:10px; cursor:pointer;">Asli</button>
@@ -68,7 +79,6 @@
           <button type="button" class="av-opt-hair" onclick="setAvOpt('hair','hijab',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Hijab</button>
         </div>
 
-        <!-- 2. Ganti Aksesoris -->
         <div style="font-size:11px; font-weight:bold; color:#cbd5e1; margin-bottom:5px;">🕶️ Aksesoris Host</div>
         <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin-bottom:10px;">
           <button type="button" class="av-opt-acc sel" onclick="setAvOpt('acc','none',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #38bdf8; background:rgba(56,189,248,0.2); color:#fff; font-size:10px; cursor:pointer;">Polos</button>
@@ -78,7 +88,6 @@
           <button type="button" class="av-opt-acc" onclick="setAvOpt('acc','mic',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Mic Live</button>
         </div>
 
-        <!-- 3. Ganti Baju Avatar -->
         <div style="font-size:11px; font-weight:bold; color:#cbd5e1; margin-bottom:5px;">👔 Ganti Baju Avatar</div>
         <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin-bottom:10px;">
           <button type="button" class="av-opt-outfit sel" onclick="setAvOpt('outfit','none',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #c084fc; background:rgba(192,132,252,0.2); color:#fff; font-size:10px; cursor:pointer;">Asli</button>
@@ -88,11 +97,10 @@
           <button type="button" class="av-opt-outfit" onclick="setAvOpt('outfit','batik',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Kemeja</button>
         </div>
 
-        <!-- 4. Zoom & Hapus Background -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:center; padding-top:4px; border-top:1px solid #1e293b;">
           <div>
-            <span style="font-size:10px; color:#94a3b8;">Zoom Wajah</span>
-            <input type="range" id="avZoomIn" min="85" max="160" value="112" oninput="avCfg.zoom=this.value/100" style="width:100%; accent-color:#2dd4bf;">
+            <span style="font-size:10px; color:#94a3b8;">Zoom Avatar</span>
+            <input type="range" id="avZoomIn" min="85" max="155" value="112" oninput="avCfg.zoom=this.value/100" style="width:100%; accent-color:#2dd4bf;">
           </div>
           <label style="display:flex; align-items:center; gap:6px; font-size:10.5px; color:#e2e8f0; cursor:pointer;">
             <input type="checkbox" checked onchange="avCfg.cutout=this.checked; autoSaveAvatarCloud()" style="accent-color:#10b981;">
@@ -101,11 +109,9 @@
         </div>
       </div>`;
 
-    // Ganti bagian "Gaya Bingkai Host AI" dengan panel Avatar lengkap
     const innerCard = tabStudio.querySelector('.card');
     if (innerCard) {
-      const labels = innerCard.querySelectorAll('div');
-      labels.forEach(div => {
+      innerCard.querySelectorAll('div').forEach(div => {
         if (div.innerText.includes('Gaya Bingkai Host AI')) {
           if (div.nextElementSibling) div.nextElementSibling.remove();
           div.remove();
@@ -128,26 +134,26 @@
     btn.style.color = '#fff';
     autoSaveAvatarCloud();
   };
-
   // 4. Auto-Sync Firebase Firestore
   let fbAuth = null, fbDb = null, fbDoc = null, fbSetDoc = null;
   try {
     const d = String.fromCharCode(46);
     const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10" + d + "12" + d + "2/";
-    const { getApps } = await import(u + "firebase-app.js");
-    const { getAuth, onAuthStateChanged } = await import(u + "firebase-auth.js");
-    const { getFirestore, doc, getDoc, setDoc } = await import(u + "firebase-firestore.js");
-    const app = getApps();
-    if (app) {
+    const { getApps } = await import(u + "firebase-app" + d + "js");
+    const { getAuth, onAuthStateChanged } = await import(u + "firebase-auth" + d + "js");
+    const { getFirestore, doc, getDoc, setDoc } = await import(u + "firebase-firestore" + d + "js");
+    const apps = getApps();
+    if (apps && apps.length > 0) {
+      const app = apps[0];
       fbAuth = getAuth(app); fbDb = getFirestore(app); fbDoc = doc; fbSetDoc = setDoc;
       onAuthStateChanged(fbAuth, async user => {
         if (!user) return;
         const snap = await getDoc(doc(fbDb, 'creators', user.uid));
         if (snap.exists()) {
-          const d = snap.data();
-          if (d.avatarConfig) Object.assign(avCfg, d.avatarConfig);
-          if (d.avatarPhotoData && !rawImg) {
-            window.setAvatarPhoto(d.avatarPhotoData, d.avatarFacePos || { x: 0.3, y: 0.2, width: 0.4, height: 0.35 }, 1, 1);
+          const dataCloud = snap.data();
+          if (dataCloud.avatarConfig) Object.assign(avCfg, dataCloud.avatarConfig);
+          if (dataCloud.avatarPhotoData && !rawImg) {
+            window.setAvatarPhoto(dataCloud.avatarPhotoData, dataCloud.avatarFacePos || { x: 0.3, y: 0.2, width: 0.4, height: 0.35 }, 1, 1);
             const st = document.getElementById('avCloudStat');
             if (st) st.innerText = '☁️ Avatar Tersimpan Dimuat';
           }
@@ -157,3 +163,486 @@
   } catch (e) {}
 
   async function autoSaveAvatarCloud() {
+    if (!fbAuth || !fbAuth.currentUser || !fbDb) return;
+    try {
+      await fbSetDoc(fbDoc(fbDb, 'creators', fbAuth.currentUser.uid), {
+        avatarConfig: avCfg,
+        avatarUpdated: Date.now()
+      }, { merge: true });
+    } catch (e) {}
+  }
+
+  // 5. Render Overlay Rambut, Aksesoris, & Baju
+  function drawAvatarOverlays(ctx, fx, fy, fw, fh, cx, bottomY) {
+    const neckY = fy + fh * 1.05;
+    const bodyW = fw * 2.35;
+    const bodyH = bottomY - neckY + 20;
+    if (avCfg.outfit !== 'none' && bodyH > 10) {
+      ctx.save();
+      const colors = {
+        suit: ['#1e293b', '#38bdf8'],
+        hoodie: ['#312e81', '#818cf8'],
+        cyber: ['#0f172a', '#2dd4bf'],
+        batik: ['#78350f', '#fbbf24']
+      };
+      const [bgCol, trimCol] = colors[avCfg.outfit] || ['#1e293b', '#38bdf8'];
+      ctx.fillStyle = bgCol;
+      ctx.beginPath();
+      ctx.moveTo(cx - fw * 0.35, neckY);
+      ctx.quadraticCurveTo(cx - bodyW * 0.55, neckY + 18, cx - bodyW * 0.5, bottomY);
+      ctx.lineTo(cx + bodyW * 0.5, bottomY);
+      ctx.quadraticCurveTo(cx + bodyW * 0.55, neckY + 18, cx + fw * 0.35, neckY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = trimCol;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.moveTo(cx - fw * 0.22, neckY);
+      ctx.lineTo(cx, neckY + fh * 0.45);
+      ctx.lineTo(cx + fw * 0.22, neckY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    if (avCfg.hair !== 'none') {
+      ctx.save();
+      if (avCfg.hair === 'hijab') {
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.92)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.ellipse(cx, fy + fh * 0.48, fw * 0.68, fh * 0.78, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, fy + fh * 0.85, fw * 0.58, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.fill();
+      } else if (avCfg.hair === 'bob') {
+        ctx.fillStyle = '#18181b';
+        ctx.beginPath();
+        ctx.arc(cx, fy + fh * 0.2, fw * 0.65, Math.PI, 0);
+        ctx.lineTo(cx + fw * 0.72, fy + fh * 1.15);
+        ctx.lineTo(cx + fw * 0.52, fy + fh * 1.15);
+        ctx.lineTo(cx + fw * 0.48, fy + fh * 0.25);
+        ctx.lineTo(cx - fw * 0.48, fy + fh * 0.25);
+        ctx.lineTo(cx - fw * 0.52, fy + fh * 1.15);
+        ctx.lineTo(cx - fw * 0.72, fy + fh * 1.15);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.fillStyle = avCfg.hair === 'slick' ? '#09090b' : '#27272a';
+        ctx.beginPath();
+        ctx.ellipse(cx, fy + fh * 0.04, fw * 0.56, fh * 0.26, 0, Math.PI, 0);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    const eyeY = fy + fh * 0.42;
+    if (avCfg.acc === 'glasses' || avCfg.acc === 'sun') {
+      ctx.save();
+      const lensW = fw * 0.34;
+      const lensH = fh * 0.17;
+      ctx.strokeStyle = avCfg.acc === 'sun' ? '#fbbf24' : '#38bdf8';
+      ctx.fillStyle = avCfg.acc === 'sun' ? 'rgba(15, 23, 42, 0.82)' : 'rgba(56, 189, 248, 0.12)';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.roundRect(cx - fw * 0.42, eyeY - lensH / 2, lensW, lensH, 4);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.roundRect(cx + fw * 0.08, eyeY - lensH / 2, lensW, lensH, 4);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - fw * 0.08, eyeY);
+      ctx.lineTo(cx + fw * 0.08, eyeY);
+      ctx.stroke();
+      ctx.restore();
+    } else if (avCfg.acc === 'headphones') {
+      ctx.save();
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, fy + fh * 0.35, fw * 0.66, Math.PI * 1.05, Math.PI * 1.95);
+      ctx.stroke();
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(cx - fw * 0.72, eyeY - 12, 11, 28);
+      ctx.fillRect(cx + fw * 0.61, eyeY - 12, 11, 28);
+      ctx.restore();
+    } else if (avCfg.acc === 'mic') {
+      ctx.save();
+      const micX = cx + fw * 0.48;
+      const micY = fy + fh * 0.95;
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(micX + 25, bottomY);
+      ctx.lineTo(micX, micY);
+      ctx.stroke();
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(micX - 7, micY - 14, 14, 24, 7);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // 6. Loop Render Utama Avatar (Menggantikan Bingkai Lama)
+  function studioRenderLoop() {
+    const cvs = document.getElementById('avatarCanvas');
+    if (cvs) {
+      const ctx = cvs.getContext('2d');
+      const w = cvs.width, h = cvs.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const now = Date.now();
+      const speaking = window.avConfig && window.avConfig.isSpeaking;
+      if (speaking) {
+        window.avConfig.mouthOpen = (Math.sin(now / 65) * 0.5 + 0.5) * 9 + Math.abs(Math.sin(now / 115)) * 4;
+      } else if (window.avConfig) {
+        window.avConfig.mouthOpen *= 0.75;
+      }
+
+      if (now - lastBlink > 3500) {
+        blinkVal = 1;
+        if (now - lastBlink > 3660) { blinkVal = 0; lastBlink = now; }
+      }
+
+      if (rawImg && rawImg.complete) {
+        const targetH = h * 0.64 * (avCfg.zoom || 1.12);
+        const scaleBase = targetH / rawImg.height;
+        const breathZoom = 1 + Math.sin(now / 650) * 0.01;
+        const swayX = Math.sin(now / 1100) * 2.5;
+        const swayY = Math.cos(now / 750) * 2;
+        const tilt = Math.sin(now / 1300) * 0.01;
+
+        const drawW = rawImg.width * scaleBase * breathZoom;
+        const drawH = rawImg.height * scaleBase * breathZoom;
+        const centerX = w / 2 + swayX;
+        const bottomAnchor = h * 0.90 + swayY;
+        const drawX = centerX - drawW / 2;
+        const drawY = bottomAnchor - drawH;
+
+        ctx.save();
+        ctx.translate(centerX, bottomAnchor - drawH * 0.5);
+        ctx.rotate(tilt);
+        ctx.translate(-centerX, -(bottomAnchor - drawH * 0.5));
+
+        if (avCfg.cutout && segMask) {
+          offCvs.width = w;
+          offCvs.height = h;
+          offCtx.clearRect(0, 0, w, h);
+          offCtx.drawImage(segMask, drawX, drawY, drawW, drawH);
+          offCtx.globalCompositeOperation = 'source-in';
+          offCtx.drawImage(rawImg, drawX, drawY, drawW, drawH);
+          offCtx.globalCompositeOperation = 'source-over';
+          ctx.drawImage(offCvs, 0, 0);
+        } else {
+          ctx.beginPath();
+          ctx.roundRect(Math.max(12, drawX), Math.max(45, drawY), Math.min(w - 24, drawW), drawH, 24);
+          ctx.clip();
+          ctx.drawImage(rawImg, drawX, drawY, drawW, drawH);
+        }
+
+        const fb = facePos || { x: 0.3, y: 0.2, w: 0.4, h: 0.35 };
+        const fx = drawX + fb.x * drawW;
+        const fy = drawY + fb.y * drawH;
+        const fw = fb.w * drawW;
+        const fh = fb.h * drawH;
+
+        const mOpen = window.avConfig ? window.avConfig.mouthOpen : 0;
+        if (mOpen > 0.8) {
+          const mouthX = fx + fw * 0.5;
+          const mouthY = fy + fh * 0.77;
+          const mouthW = Math.max(6, fw * 0.24);
+          const mouthH = Math.min(mOpen * 0.68, fh * 0.13);
+          ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
+          ctx.beginPath();
+          ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (blinkVal > 0) {
+          ctx.fillStyle = 'rgba(210, 165, 140, 0.55)';
+          ctx.fillRect(fx + fw * 0.22, fy + fh * 0.40, fw * 0.18, 3);
+          ctx.fillRect(fx + fw * 0.60, fy + fh * 0.40, fw * 0.18, 3);
+        }
+
+        drawAvatarOverlays(ctx, fx, fy, fw, fh, centerX, bottomAnchor);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = 'rgba(15,23,42,0.78)';
+        ctx.beginPath();
+        ctx.roundRect(16, h * 0.43, w - 32, 42, 10);
+        ctx.fill();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Wajah Host dari Tahap 2 Tampil di Sini', w / 2, h * 0.43 + 25);
+      }
+    }
+    requestAnimationFrame(studioRenderLoop);
+  }
+
+  requestAnimationFrame(studioRenderLoop);
+})();
+  // 4. Auto-Sync Firebase Firestore
+  let fbAuth = null, fbDb = null, fbDoc = null, fbSetDoc = null;
+  try {
+    const d = String.fromCharCode(46);
+    const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10" + d + "12" + d + "2/";
+    const { getApps } = await import(u + "firebase-app" + d + "js");
+    const { getAuth, onAuthStateChanged } = await import(u + "firebase-auth" + d + "js");
+    const { getFirestore, doc, getDoc, setDoc } = await import(u + "firebase-firestore" + d + "js");
+    const apps = getApps();
+    if (apps && apps.length > 0) {
+      const app = apps[0];
+      fbAuth = getAuth(app); fbDb = getFirestore(app); fbDoc = doc; fbSetDoc = setDoc;
+      onAuthStateChanged(fbAuth, async user => {
+        if (!user) return;
+        const snap = await getDoc(doc(fbDb, 'creators', user.uid));
+        if (snap.exists()) {
+          const dataCloud = snap.data();
+          if (dataCloud.avatarConfig) Object.assign(avCfg, dataCloud.avatarConfig);
+          if (dataCloud.avatarPhotoData && !rawImg) {
+            window.setAvatarPhoto(dataCloud.avatarPhotoData, dataCloud.avatarFacePos || { x: 0.3, y: 0.2, width: 0.4, height: 0.35 }, 1, 1);
+            const st = document.getElementById('avCloudStat');
+            if (st) st.innerText = '☁️ Avatar Tersimpan Dimuat';
+          }
+        }
+      });
+    }
+  } catch (e) {}
+
+  async function autoSaveAvatarCloud() {
+    if (!fbAuth || !fbAuth.currentUser || !fbDb) return;
+    try {
+      await fbSetDoc(fbDoc(fbDb, 'creators', fbAuth.currentUser.uid), {
+        avatarConfig: avCfg,
+        avatarUpdated: Date.now()
+      }, { merge: true });
+    } catch (e) {}
+  }
+
+  // 5. Render Overlay Rambut, Aksesoris, & Baju
+  function drawAvatarOverlays(ctx, fx, fy, fw, fh, cx, bottomY) {
+    const neckY = fy + fh * 1.05;
+    const bodyW = fw * 2.35;
+    const bodyH = bottomY - neckY + 20;
+    if (avCfg.outfit !== 'none' && bodyH > 10) {
+      ctx.save();
+      const colors = {
+        suit: ['#1e293b', '#38bdf8'],
+        hoodie: ['#312e81', '#818cf8'],
+        cyber: ['#0f172a', '#2dd4bf'],
+        batik: ['#78350f', '#fbbf24']
+      };
+      const [bgCol, trimCol] = colors[avCfg.outfit] || ['#1e293b', '#38bdf8'];
+      ctx.fillStyle = bgCol;
+      ctx.beginPath();
+      ctx.moveTo(cx - fw * 0.35, neckY);
+      ctx.quadraticCurveTo(cx - bodyW * 0.55, neckY + 18, cx - bodyW * 0.5, bottomY);
+      ctx.lineTo(cx + bodyW * 0.5, bottomY);
+      ctx.quadraticCurveTo(cx + bodyW * 0.55, neckY + 18, cx + fw * 0.35, neckY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = trimCol;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.moveTo(cx - fw * 0.22, neckY);
+      ctx.lineTo(cx, neckY + fh * 0.45);
+      ctx.lineTo(cx + fw * 0.22, neckY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    if (avCfg.hair !== 'none') {
+      ctx.save();
+      if (avCfg.hair === 'hijab') {
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.92)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.ellipse(cx, fy + fh * 0.48, fw * 0.68, fh * 0.78, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, fy + fh * 0.85, fw * 0.58, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.fill();
+      } else if (avCfg.hair === 'bob') {
+        ctx.fillStyle = '#18181b';
+        ctx.beginPath();
+        ctx.arc(cx, fy + fh * 0.2, fw * 0.65, Math.PI, 0);
+        ctx.lineTo(cx + fw * 0.72, fy + fh * 1.15);
+        ctx.lineTo(cx + fw * 0.52, fy + fh * 1.15);
+        ctx.lineTo(cx + fw * 0.48, fy + fh * 0.25);
+        ctx.lineTo(cx - fw * 0.48, fy + fh * 0.25);
+        ctx.lineTo(cx - fw * 0.52, fy + fh * 1.15);
+        ctx.lineTo(cx - fw * 0.72, fy + fh * 1.15);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.fillStyle = avCfg.hair === 'slick' ? '#09090b' : '#27272a';
+        ctx.beginPath();
+        ctx.ellipse(cx, fy + fh * 0.04, fw * 0.56, fh * 0.26, 0, Math.PI, 0);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    const eyeY = fy + fh * 0.42;
+    if (avCfg.acc === 'glasses' || avCfg.acc === 'sun') {
+      ctx.save();
+      const lensW = fw * 0.34;
+      const lensH = fh * 0.17;
+      ctx.strokeStyle = avCfg.acc === 'sun' ? '#fbbf24' : '#38bdf8';
+      ctx.fillStyle = avCfg.acc === 'sun' ? 'rgba(15, 23, 42, 0.82)' : 'rgba(56, 189, 248, 0.12)';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.roundRect(cx - fw * 0.42, eyeY - lensH / 2, lensW, lensH, 4);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.roundRect(cx + fw * 0.08, eyeY - lensH / 2, lensW, lensH, 4);
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - fw * 0.08, eyeY);
+      ctx.lineTo(cx + fw * 0.08, eyeY);
+      ctx.stroke();
+      ctx.restore();
+    } else if (avCfg.acc === 'headphones') {
+      ctx.save();
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, fy + fh * 0.35, fw * 0.66, Math.PI * 1.05, Math.PI * 1.95);
+      ctx.stroke();
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(cx - fw * 0.72, eyeY - 12, 11, 28);
+      ctx.fillRect(cx + fw * 0.61, eyeY - 12, 11, 28);
+      ctx.restore();
+    } else if (avCfg.acc === 'mic') {
+      ctx.save();
+      const micX = cx + fw * 0.48;
+      const micY = fy + fh * 0.95;
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(micX + 25, bottomY);
+      ctx.lineTo(micX, micY);
+      ctx.stroke();
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(micX - 7, micY - 14, 14, 24, 7);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // 6. Loop Render Utama Avatar (Menggantikan Bingkai Lama)
+  function studioRenderLoop() {
+    const cvs = document.getElementById('avatarCanvas');
+    if (cvs) {
+      const ctx = cvs.getContext('2d');
+      const w = cvs.width, h = cvs.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const now = Date.now();
+      const speaking = window.avConfig && window.avConfig.isSpeaking;
+      if (speaking) {
+        window.avConfig.mouthOpen = (Math.sin(now / 65) * 0.5 + 0.5) * 9 + Math.abs(Math.sin(now / 115)) * 4;
+      } else if (window.avConfig) {
+        window.avConfig.mouthOpen *= 0.75;
+      }
+
+      if (now - lastBlink > 3500) {
+        blinkVal = 1;
+        if (now - lastBlink > 3660) { blinkVal = 0; lastBlink = now; }
+      }
+
+      if (rawImg && rawImg.complete) {
+        const targetH = h * 0.64 * (avCfg.zoom || 1.12);
+        const scaleBase = targetH / rawImg.height;
+        const breathZoom = 1 + Math.sin(now / 650) * 0.01;
+        const swayX = Math.sin(now / 1100) * 2.5;
+        const swayY = Math.cos(now / 750) * 2;
+        const tilt = Math.sin(now / 1300) * 0.01;
+
+        const drawW = rawImg.width * scaleBase * breathZoom;
+        const drawH = rawImg.height * scaleBase * breathZoom;
+        const centerX = w / 2 + swayX;
+        const bottomAnchor = h * 0.90 + swayY;
+        const drawX = centerX - drawW / 2;
+        const drawY = bottomAnchor - drawH;
+
+        ctx.save();
+        ctx.translate(centerX, bottomAnchor - drawH * 0.5);
+        ctx.rotate(tilt);
+        ctx.translate(-centerX, -(bottomAnchor - drawH * 0.5));
+
+        if (avCfg.cutout && segMask) {
+          offCvs.width = w;
+          offCvs.height = h;
+          offCtx.clearRect(0, 0, w, h);
+          offCtx.drawImage(segMask, drawX, drawY, drawW, drawH);
+          offCtx.globalCompositeOperation = 'source-in';
+          offCtx.drawImage(rawImg, drawX, drawY, drawW, drawH);
+          offCtx.globalCompositeOperation = 'source-over';
+          ctx.drawImage(offCvs, 0, 0);
+        } else {
+          ctx.beginPath();
+          ctx.roundRect(Math.max(12, drawX), Math.max(45, drawY), Math.min(w - 24, drawW), drawH, 24);
+          ctx.clip();
+          ctx.drawImage(rawImg, drawX, drawY, drawW, drawH);
+        }
+
+        const fb = facePos || { x: 0.3, y: 0.2, w: 0.4, h: 0.35 };
+        const fx = drawX + fb.x * drawW;
+        const fy = drawY + fb.y * drawH;
+        const fw = fb.w * drawW;
+        const fh = fb.h * drawH;
+
+        const mOpen = window.avConfig ? window.avConfig.mouthOpen : 0;
+        if (mOpen > 0.8) {
+          const mouthX = fx + fw * 0.5;
+          const mouthY = fy + fh * 0.77;
+          const mouthW = Math.max(6, fw * 0.24);
+          const mouthH = Math.min(mOpen * 0.68, fh * 0.13);
+          ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
+          ctx.beginPath();
+          ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (blinkVal > 0) {
+          ctx.fillStyle = 'rgba(210, 165, 140, 0.55)';
+          ctx.fillRect(fx + fw * 0.22, fy + fh * 0.40, fw * 0.18, 3);
+          ctx.fillRect(fx + fw * 0.60, fy + fh * 0.40, fw * 0.18, 3);
+        }
+
+        drawAvatarOverlays(ctx, fx, fy, fw, fh, centerX, bottomAnchor);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = 'rgba(15,23,42,0.78)';
+        ctx.beginPath();
+        ctx.roundRect(16, h * 0.43, w - 32, 42, 10);
+        ctx.fill();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Wajah Host dari Tahap 2 Tampil di Sini', w / 2, h * 0.43 + 25);
+      }
+    }
+    requestAnimationFrame(studioRenderLoop);
+  }
+
+  requestAnimationFrame(studioRenderLoop);
+})();
