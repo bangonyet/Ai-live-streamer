@@ -89,7 +89,7 @@
         </div>
         <canvas id="avatarCanvas" width="270" height="480" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
                      <!-- Layar Mini Karaoke (Khusus Niche HIBURAN) -->
-        <div id="studioKaraokeMini" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(24,24,27,0.92); border:1px solid #e879f9; border-radius:8px; padding:4px 6px; text-align:left;">
+        <div id="studioKaraokeMini" style="display:none; position:relative; z-index:3; margin:auto 6px 4px; background:rgba(24,24,27,0.92); border:1px solid #e879f9; border-radius:8px; padding:4px 6px; text-align:left;">
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:7.5px; color:#f0abfc; font-weight:bold; margin-bottom:2px;">
             <span>🎤 KARAOKE LIVE</span><span style="color:#34d399;">● ON</span>
           </div>
@@ -154,6 +154,32 @@
           <input type="file" accept="image/*" onchange="uploadStudioBg(this)" style="display:none;">
         </label>
       </div>
+            <div style="border-top:1px solid #334155; padding-top:10px; margin-top:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:11.5px; font-weight:bold; color:#38bdf8;">🧍 Posisi Host & Batas Meja Studio</span>
+          <button type="button" onclick="resetHostTransform()" style="background:#1e293b; border:1px solid #475569; color:#cbd5e1; font-size:10px; padding:3px 7px; border-radius:5px; cursor:pointer;">Reset</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:10.5px;">
+          <div>
+            <span>↔️ Kiri / Kanan</span>
+            <input type="range" id="rngHostX" min="-100" max="100" value="0" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;">
+          </div>
+          <div>
+            <span>↕️ Naik / Turun</span>
+            <input type="range" id="rngHostY" min="-100" max="100" value="-18" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;">
+          </div>
+          <div>
+            <span>🔍 Ukuran Host</span>
+            <input type="range" id="rngHostScale" min="50" max="125" value="85" oninput="updateHostTransform()" style="width:100%; accent-color:#34d399;">
+          </div>
+          <div>
+            <span>🪑 Batas Tinggi Meja</span>
+            <input type="range" id="rngDeskCut" min="50" max="100" value="72" oninput="updateHostTransform()" style="width:100%; accent-color:#fbbf24;">
+          </div>
+        </div>
+      </div>
+
+
   </div>
   </div>
 
@@ -1104,6 +1130,24 @@ window.loginEmail = async function() {
       setYoutubeVolume(mVal);
     }
   };
+   window.updateHostTransform = function () {
+    if (!window.AvatarStudio || !window.AvatarStudio.setTransform) return;
+    window.AvatarStudio.setTransform({
+      posX: Number(document.getElementById('rngHostX')?.value ?? 0),
+      posY: Number(document.getElementById('rngHostY')?.value ?? -18),
+      scale: Number(document.getElementById('rngHostScale')?.value ?? 85) / 100,
+      deskCutY: Number(document.getElementById('rngDeskCut')?.value ?? 72) / 100
+    });
+  };
+
+  window.resetHostTransform = function () {
+    if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
+    if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = -18;
+    if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 85;
+    if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 72;
+    window.updateHostTransform();
+  };
+
 })();
  </script>
 </body>
