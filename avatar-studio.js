@@ -562,3 +562,42 @@
         ctx.fill();
 
         ctx.strokeStyle = '#d946ef';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.ellipse(offsetX, 0, earRadiusX * 0.65, earRadiusY * 0.65, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        if (idx === 0) {
+          ctx.strokeStyle = '#27272a';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(offsetX, earRadiusY * 0.5);
+          ctx.quadraticCurveTo(
+            offsetX * 0.7,
+            metrics.faceWidth * 0.45,
+            -metrics.mouthWidth * 0.65,
+            metrics.faceWidth * 0.36
+          );
+          ctx.stroke();
+
+          ctx.fillStyle = '#09090b';
+          ctx.beginPath();
+          ctx.ellipse(-metrics.mouthWidth * 0.65, metrics.faceWidth * 0.36, 9, 6, 0.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+      ctx.restore();
+    }
+
+    _drawPlaceholderGuide(ctx, W, H) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.font = '600 22px system-ui, -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Menunggu Scan / Foto Wajah di Tahap 2...', W / 2, H / 2);
+      ctx.restore();
+    }
+  }
+
+  global.AvatarStudio = new AvatarStudioEngine();
+})(window);
