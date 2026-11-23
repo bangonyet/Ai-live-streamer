@@ -163,8 +163,39 @@
       <div style="font-size:12px; font-weight:bold; color:#fbbf24; margin-bottom:6px;">👋 Monolog Perkenalan Akun (Opening Live)</div>
       <textarea id="openingScriptInput" rows="2" oninput="syncLiveMateri()" placeholder="Contoh: Halo semuanya selamat datang di live akun kami! Jangan lupa tap-tap layar dan follow dulu ya..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px; margin-bottom:4px;"></textarea>
       <div style="font-size:10.5px; color:#94a3b8;">Dibacakan pertama kali saat Live dimulai sebelum masuk ke materi utama.</div>
+         <div id="boxFiturEdukasi" class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left;border-color:#38bdf8">
+      <div style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:6px">💬 Simulasi & Jawab Q&A Penonton</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <input type="text" id="qnaUserIn" placeholder="@penonton" value="@belajar_yuk" style="width:34%;text-align:left;font-size:11px;padding:7px;margin-bottom:0">
+        <input type="text" id="qnaQuestionIn" placeholder="Tulis pertanyaan penonton..." style="flex:1;text-align:left;font-size:11px;padding:7px;margin-bottom:0">
+      </div>
+      <button type="button" onclick="triggerQnaAnswer()" style="width:100%;padding:8px;border-radius:8px;border:none;background:#0284c7;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">🎙️ Tampilkan Pertanyaan & Jawab Otomatis</button>
+    </div>
+
+    <div id="boxFiturHiburan" class="card" style="display:none;padding:12px;margin-bottom:10px;cursor:default;text-align:left;border-color:#e879f9">
+      <div style="font-size:12px;font-weight:bold;color:#e879f9;margin-bottom:6px">🎤 Lirik Lagu Karaoke (Layar Mini & Teks Berjalan)</div>
+      <textarea id="karaokeLyricsIn" rows="3" oninput="updateKaraokeLyrics()" placeholder="Tempel lirik lagu di sini untuk ditampilkan berjalan di layar live..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #c084fc;background:rgba(15,23,42,0.85);color:#fff;font-size:11.5px;margin-bottom:6px"></textarea>
+      <div style="font-size:10px;color:#cbd5e1">💡 Gunakan input YouTube Musik di Tab 3 untuk memutar instrumen karaoke.</div>
+    </div>
+
     </div>
 <div id="boxMateriUmum" class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div id="materiBoxTitle" style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:8px">📚 Materi Edukasi & Poin Penjelasan</div><input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left;font-size:12px;padding:9px;margin-bottom:8px"><textarea id="liveScriptInput" rows="4" oninput="syncLiveMateri()" placeholder="Tulis poin materi (pisahkan baris baru agar dibaca bergantian)..." style="width:100%;padding:9px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;font-size:12px"></textarea></div><div id="boxMateriJualan" class="card" style="display:none;padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:bold;color:#34d399">🛍️ Daftar Produk Etalase</span><button type="button" onclick="addProductRow()" style="padding:4px 8px;border-radius:6px;border:none;background:#10b981;color:#064e3b;font-size:11px;font-weight:bold;cursor:pointer">+ Tambah Produk</button></div><div id="productListContainer" style="display:flex;flex-direction:column;gap:8px"></div></div></div>
+     <div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left;border-color:#2dd4bf">
+      <div style="font-size:12px;font-weight:bold;color:#2dd4bf;margin-bottom:8px">🎚️ Mixer Volume Audio Studio</div>
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span>🎙️ Volume Suara Host (AI / Asli)</span><b id="lblHostVol" style="color:#34d399">100%</b>
+        </div>
+        <input type="range" id="rngHostVol" min="0" max="100" value="100" oninput="updateAudioMixer()" style="width:100%;accent-color:#34d399">
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span>🎵 Volume Musik Backsound</span><b id="lblMusicVol" style="color:#38bdf8">65%</b>
+        </div>
+        <input type="range" id="rngMusicVol" min="0" max="100" value="65" oninput="updateAudioMixer()" style="width:100%;accent-color:#38bdf8">
+      </div>
+    </div>
+
  <div id="tabAudio" class="s3-panel" style="display:none;text-align:left"><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#c084fc;margin-bottom:8px">🗣️ Pilih Karakter Suara Host</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px"><button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px;border-radius:8px;border:1.5px solid #c084fc;background:rgba(192,132,252,0.25);color:#fff;font-size:11px;font-weight:bold;cursor:pointer">👩 AI Wanita</button><button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">👨 AI Pria</button><button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">🎙️ Suara Asli</button></div><div id="voiceStatusTxt" style="font-size:11px;color:#34d399;margin-bottom:8px">● Aktif: Suara AI Wanita</div><div id="customVoiceBox" style="display:none;background:rgba(15,23,42,0.9);border:1px solid #10b981;border-radius:10px;padding:10px;margin-bottom:10px"><div style="font-size:11.5px;font-weight:bold;color:#34d399;margin-bottom:4px">🎙️ Rekam Contoh Suara Asli Anda</div><p style="font-size:10.5px;color:#94a3b8;margin-bottom:8px">Rekam suara Anda. Saat Live / Auto-Loop berjalan, rekaman ini akan diputar otomatis.</p><div style="display:flex;gap:6px;margin-bottom:8px"><button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1;padding:8px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">🔴 Mulai Rekam</button><button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1;padding:8px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#94a3b8;font-size:11px;font-weight:bold;cursor:pointer">⏹️ Selesai</button></div><div id="recTimerTxt" style="font-size:11px;color:#fbbf24;margin-bottom:6px">Siap merekam via mikrofon HP...</div><audio id="userCustomAudio" controls style="display:none;width:100%;height:34px"></audio></div><label style="font-size:11px;color:#94a3b8">Jeda Antar Materi (Detik):</label><input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%;padding:8px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;margin-top:4px"></div><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#f87171;margin-bottom:6px">🎵 Backsound Musik YouTube (Auto-Ducking)</div><div style="display:flex;gap:6px;margin-bottom:6px"><input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be...)" style="text-align:left;font-size:11px;padding:8px;margin-bottom:0"><button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">Putar</button></div><div style="display:flex;justify-content:space-between;align-items:center"><span id="ytMusicStatus" style="font-size:10.5px;color:#94a3b8">Belum ada musik</span><button type="button" onclick="stopYoutubeMusic()" style="background:none;border:none;color:#f87171;font-size:10.5px;cursor:pointer">Stop Musik</button></div><div id="ytPlayer" style="display:none"></div></div></div><button type="button" class="btn btn-green" style="margin-top:8px" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button></div>
  <div id="s4" class="slide">
   <h2>4. Pilih Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
@@ -931,5 +962,149 @@ window.loginEmail = async function() {
 })();
 </script>
  <script src="avatar-studio.js"></script>
+ <script>
+(function () {
+  window.addEventListener('DOMContentLoaded', async () => {
+    if (window.AvatarStudio) {
+      await window.AvatarStudio.init('#avatarCanvas');
+      const customAud = document.getElementById('userCustomAudio');
+      if (customAud) window.AvatarStudio.bindAudioElement(customAud);
+      if (window.savedAvatarData && window.savedAvatarData.src) {
+        window.AvatarStudio.setFaceImage(window.savedAvatarData.src);
+      }
+    }
+  });
+
+  window.setAvatarPhoto = function (src) {
+    if (window.AvatarStudio && src) window.AvatarStudio.setFaceImage(src);
+  };
+
+  if (window.avConfig) {
+    let _speakingState = Boolean(window.avConfig.isSpeaking);
+    Object.defineProperty(window.avConfig, 'isSpeaking', {
+      get() { return _speakingState; },
+      set(val) {
+        _speakingState = Boolean(val);
+        if (window.AvatarStudio) {
+          if (_speakingState) window.AvatarStudio.startSpeaking();
+          else window.AvatarStudio.stopSpeaking();
+        }
+      }
+    });
+  }
+
+  const origSelectNiche = window.selectNiche;
+  window.selectNiche = function (el, niche) {
+    if (origSelectNiche) origSelectNiche(el, niche);
+    if (window.AvatarStudio) window.AvatarStudio.setNiche(niche);
+
+    const fEdu = document.getElementById('boxFiturEdukasi');
+    const fHib = document.getElementById('boxFiturHiburan');
+    const ovQna = document.getElementById('studioQnaOverlay');
+    const ovKar = document.getElementById('studioKaraokeMini');
+
+    if (fEdu) fEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
+    if (fHib) fHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
+    if (ovQna) ovQna.style.display = 'none';
+    if (ovKar) ovKar.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
+  };
+
+  const origSetStudioBg = window.setStudioBg;
+  window.setStudioBg = function (type, val) {
+    if (origSetStudioBg) origSetStudioBg(type, val);
+    if (window.AvatarStudio) window.AvatarStudio.setBackground(type === 'image' ? val : null);
+  };
+
+  const origChooseStyle = window.chooseStyle;
+  window.chooseStyle = function (el, t) {
+    if (window.AvatarStudio) window.AvatarStudio.setHostStyle(t);
+    if (origChooseStyle) origChooseStyle(el, t);
+  };
+
+  window.addProductRow = function () {
+    const no = data.products.length + 1;
+    data.products.push({ no, name: '', script: '', imgUrl: '' });
+    const container = document.getElementById('productListContainer');
+    if (!container) return;
+    const row = document.createElement('div');
+    row.style.cssText = 'background:rgba(15,23,42,0.85);padding:8px;border-radius:8px;border:1px solid #334155';
+    row.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">' +
+        '<span style="font-size:11px;color:#fbbf24;font-weight:bold">Etalase No. ' + no + '</span>' +
+        '<label style="font-size:10px;background:#334155;color:#38bdf8;padding:3px 7px;border-radius:5px;cursor:pointer">' +
+          '📷 + Foto Produk<input type="file" accept="image/*" onchange="setProductPhoto(' + (no - 1) + ', this)" style="display:none">' +
+        '</label>' +
+      '</div>' +
+      '<input type="text" placeholder="Nama Produk" oninput="data.products[' + (no - 1) + '].name=this.value; updateEtalasePreview(' + (no - 1) + ')" style="text-align:left;font-size:11px;padding:7px;margin-bottom:5px">' +
+      '<input type="text" placeholder="Deskripsi / Promo Singkat" oninput="data.products[' + (no - 1) + '].script=this.value" style="text-align:left;font-size:11px;padding:7px;margin-bottom:0">';
+    container.appendChild(row);
+  };
+
+  window.setProductPhoto = function (idx, inp) {
+    if (inp.files && inp.files[0] && data.products[idx]) {
+      data.products[idx].imgUrl = URL.createObjectURL(inp.files[0]);
+      updateEtalasePreview(idx);
+    }
+  };
+
+  window.updateEtalasePreview = function (idx) {
+    const ov = document.getElementById('studioEtalaseOverlay');
+    const p = data.products[idx];
+    if (ov && p) {
+      ov.style.display = 'block';
+      document.getElementById('etalaseBadgeTxt').innerText = '👇 Cek Keranjang • Etalase No. ' + p.no;
+      document.getElementById('etalaseTitleTxt').innerText = p.name || 'Nama Produk';
+      const imgEl = document.getElementById('etalaseProdImg');
+      if (imgEl) {
+        if (p.imgUrl) { imgEl.src = p.imgUrl; imgEl.style.display = 'block'; }
+        else { imgEl.style.display = 'none'; }
+      }
+    }
+  };
+
+  window.triggerQnaAnswer = function () {
+    const user = (document.getElementById('qnaUserIn')?.value || '@penonton').trim();
+    const q = (document.getElementById('qnaQuestionIn')?.value || '').trim();
+    if (!q) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
+
+    const ov = document.getElementById('studioQnaOverlay');
+    if (ov) {
+      ov.style.display = 'block';
+      document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + user;
+      document.getElementById('qnaAskText').innerText = q;
+    }
+    const jawaban = 'Pertanyaan bagus dari ' + user.replace('@', '') + ': ' + q + '. Mari kita bahas langsung poin pentingnya ya!';
+    document.getElementById('studioSubCaption').innerText = jawaban;
+    if (typeof speakTextSafe === 'function') speakTextSafe(jawaban);
+  };
+
+  window.updateKaraokeLyrics = function () {
+    const raw = (document.getElementById('karaokeLyricsIn')?.value || '').trim();
+    const scrollEl = document.getElementById('karaokeLyricScroll');
+    if (scrollEl) {
+      scrollEl.innerText = raw ? ('♪ ' + raw.replace(/\n+/g, '   •   ') + ' ♪') : '♪ Masukkan lirik lagu karaoke di Tab 2 Materi... ♪';
+    }
+  };
+
+  window.mixerState = { hostVol: 1.0, musicVol: 65 };
+  window.updateAudioMixer = function () {
+    const hVal = Number(document.getElementById('rngHostVol')?.value ?? 100);
+    const mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
+    window.mixerState.hostVol = hVal / 100;
+    window.mixerState.musicVol = mVal;
+
+    const lblH = document.getElementById('lblHostVol');
+    const lblM = document.getElementById('lblMusicVol');
+    if (lblH) lblH.innerText = hVal + '%';
+    if (lblM) lblM.innerText = mVal + '%';
+
+    const aud = document.getElementById('userCustomAudio');
+    if (aud) aud.volume = window.mixerState.hostVol;
+    if (typeof setYoutubeVolume === 'function' && !window.avConfig?.isSpeaking) {
+      setYoutubeVolume(mVal);
+    }
+  };
+})();
+ </script>
 </body>
 </html>
