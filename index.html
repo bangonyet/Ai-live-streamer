@@ -221,6 +221,21 @@
         <input type="range" id="rngMusicVol" min="0" max="100" value="65" oninput="updateAudioMixer()" style="width:100%;accent-color:#38bdf8">
       </div>
     </div>
+    <!-- PANEL AUTOPILOT KOMENTAR REAL-TIME & ANTREAN (100% GRATIS) -->
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#a855f7;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:12px; font-weight:bold; color:#c084fc;">🤖 Autopilot Komentar Penonton (Anti-Pelanggaran)</span>
+        <span id="autopilotBadge" style="font-size:9.5px; background:#065f46; color:#34d399; padding:2px 6px; border-radius:4px;">● POLICY GUARD ON</span>
+      </div>
+      <div style="display:flex; gap:6px; margin-bottom:6px;">
+        <input type="text" id="liveChatUser" placeholder="@penonton" value="@kak_sari" style="width:32%; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
+        <input type="text" id="liveChatMsg" placeholder="Komen: req lagu Gereja Tua / spill no 1 / apa itu..." style="flex:1; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
+      </div>
+      <button type="button" onclick="handleIncomingComment()" style="width:100%; padding:8px; border-radius:8px; border:none; background:#7e22ce; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">⚡ Proses Komentar Otomatis (Autopilot)</button>
+      <div id="karaokeQueueBox" style="display:none; margin-top:8px; padding-top:6px; border-top:1px dashed #475569; font-size:10.5px; color:#f0abfc;">
+        🎶 <b>Antrean Karaoke:</b> <span id="karaokeQueueTxt">Belum ada antrean</span>
+      </div>
+    </div>
 
  <div id="tabAudio" class="s3-panel" style="display:none;text-align:left"><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#c084fc;margin-bottom:8px">🗣️ Pilih Karakter Suara Host</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px"><button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px;border-radius:8px;border:1.5px solid #c084fc;background:rgba(192,132,252,0.25);color:#fff;font-size:11px;font-weight:bold;cursor:pointer">👩 AI Wanita</button><button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">👨 AI Pria</button><button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">🎙️ Suara Asli</button></div><div id="voiceStatusTxt" style="font-size:11px;color:#34d399;margin-bottom:8px">● Aktif: Suara AI Wanita</div><div id="customVoiceBox" style="display:none;background:rgba(15,23,42,0.9);border:1px solid #10b981;border-radius:10px;padding:10px;margin-bottom:10px"><div style="font-size:11.5px;font-weight:bold;color:#34d399;margin-bottom:4px">🎙️ Rekam Contoh Suara Asli Anda</div><p style="font-size:10.5px;color:#94a3b8;margin-bottom:8px">Rekam suara Anda. Saat Live / Auto-Loop berjalan, rekaman ini akan diputar otomatis.</p><div style="display:flex;gap:6px;margin-bottom:8px"><button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1;padding:8px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">🔴 Mulai Rekam</button><button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1;padding:8px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#94a3b8;font-size:11px;font-weight:bold;cursor:pointer">⏹️ Selesai</button></div><div id="recTimerTxt" style="font-size:11px;color:#fbbf24;margin-bottom:6px">Siap merekam via mikrofon HP...</div><audio id="userCustomAudio" controls style="display:none;width:100%;height:34px"></audio></div><label style="font-size:11px;color:#94a3b8">Jeda Antar Materi (Detik):</label><input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%;padding:8px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;margin-top:4px"></div><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#f87171;margin-bottom:6px">🎵 Backsound Musik YouTube (Auto-Ducking)</div><div style="display:flex;gap:6px;margin-bottom:6px"><input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be...)" style="text-align:left;font-size:11px;padding:8px;margin-bottom:0"><button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">Putar</button></div><div style="display:flex;justify-content:space-between;align-items:center"><span id="ytMusicStatus" style="font-size:10.5px;color:#94a3b8">Belum ada musik</span><button type="button" onclick="stopYoutubeMusic()" style="background:none;border:none;color:#f87171;font-size:10.5px;cursor:pointer">Stop Musik</button></div><div id="ytPlayer" style="display:none"></div></div></div><button type="button" class="btn btn-green" style="margin-top:8px" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button></div>
  <div id="s4" class="slide">
@@ -1146,6 +1161,142 @@ window.loginEmail = async function() {
     if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 85;
     if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 72;
     window.updateHostTransform();
+  };
+  // === OTAK AUTOPILOT GRATIS (PERAGAAN PRODUK + WIKIPEDIA + POLICY GUARD + ANTREAN KARAOKE) ===
+  const origUpdateEtalase = window.updateEtalasePreview;
+  window.updateEtalasePreview = function (idx) {
+    if (origUpdateEtalase) origUpdateEtalase(idx);
+    const p = data.products[idx];
+    if (window.AvatarStudio && window.AvatarStudio.setActiveProduct) {
+      window.AvatarStudio.setActiveProduct(p && p.imgUrl ? p.imgUrl : null, 1.0);
+    }
+  };
+
+  // Daftar antrean lagu karaoke otomatis
+  window.karaokeQueue = [];
+
+  function checkPolicyGuard(text) {
+    const low = text.toLowerCase();
+    const bannedWords = ['wa ', 'whatsapp', 'nomor hp', 'transfer', 'rekening', 'judi', 'slot', 'gacor', 'link bio', 'telegram', 'youtube', 'ig ', 'instagram', 'followers', 'bypass', 'hack'];
+    return bannedWords.some(w => low.includes(w));
+  }
+
+  async function fetchWikiFreeSummary(query) {
+    try {
+      const cleanQ = encodeURIComponent(query.replace(/[?!.]/g, '').trim());
+      const url = 'https:' + '//id.wikipedia.org/api/rest_v1/page/summary/' + cleanQ;
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      const json = await res.json();
+      if (json && json.extract) {
+        return json.extract.split('. ').slice(0, 2).join('. ') + '.';
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  window.handleIncomingComment = async function (customUser, customMsg) {
+    const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
+    const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
+    if (!msg) return;
+
+    const cleanName = user.replace('@', '');
+    const lowMsg = msg.toLowerCase();
+
+    // 1. Perisai Anti-Pelanggaran Platform (TikTok / Live Community Guard)
+    if (checkPolicyGuard(lowMsg)) {
+      const safeReply = 'Terima kasih sudah mampir kak ' + cleanName + '! Biar live kita tetap aman dan nyaman sesuai aturan komunitas, kita ngobrol seru di sini aja ya. Jangan lupa tap-tap layar dan follow akun ini!';
+      document.getElementById('studioSubCaption').innerText = safeReply;
+      if (typeof speakTextSafe === 'function') speakTextSafe(safeReply);
+      return;
+    }
+
+    // 2. Niche JUALAN -> Peragakan produk di tangan host otomatis
+    if (data.niche === 'JUALAN') {
+      const numMatch = lowMsg.match(/(?:no|nomor|etalase)\s*(\d+)/);
+      let idx = numMatch ? (parseInt(numMatch[1], 10) - 1) : 0;
+      if (idx < 0 || idx >= data.products.length) idx = 0;
+
+      const prod = data.products[idx];
+      if (prod && prod.name) {
+        window.updateEtalasePreview(idx);
+        const reply = 'Halo kak ' + cleanName + '! Ini dia etalase nomor ' + prod.no + ', ' + prod.name + '. ' + (prod.script || 'Stok promonya terbatas banget, langsung klik keranjang kuning sekarang ya kak!');
+        document.getElementById('studioSubCaption').innerText = reply;
+        if (typeof speakTextSafe === 'function') speakTextSafe(reply);
+      } else {
+        const reply = 'Halo kak ' + cleanName + ', selamat datang di live shopping kami! Langsung cek keranjang kuning di bawah ya kak!';
+        document.getElementById('studioSubCaption').innerText = reply;
+        if (typeof speakTextSafe === 'function') speakTextSafe(reply);
+      }
+      return;
+    }
+
+    // 3. Niche HIBURAN -> Deteksi Request Lagu & Masukkan ke Antrean Otomatis
+    if (data.niche === 'HIBURAN') {
+      const reqMatch = lowMsg.match(/(?:req|request|nyanyi|lagu)\s+(.+)/i);
+      if (reqMatch && reqMatch[1]) {
+        const songTitle = reqMatch[1].trim();
+        window.karaokeQueue.push({ user: user, title: songTitle });
+        updateQueueDisplay();
+
+        const reply = 'Siap kak ' + cleanName + '! Request lagu ' + songTitle + ' sudah masuk antrean nomor ' + window.karaokeQueue.length + ' ya, ditunggu sebentar!';
+        document.getElementById('studioSubCaption').innerText = reply;
+        if (typeof speakTextSafe === 'function') speakTextSafe(reply);
+
+        if (window.karaokeQueue.length === 1) {
+          playNextKaraokeQueue();
+        }
+        return;
+      }
+    }
+
+    // 4. Niche EDUKASI (atau Umum) -> Cek Materi User dulu, lalu Wikipedia Gratis
+    const ov = document.getElementById('studioQnaOverlay');
+    if (ov) {
+      ov.style.display = 'block';
+      document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + user;
+      document.getElementById('qnaAskText').innerText = msg;
+    }
+
+    const userMateri = (document.getElementById('liveScriptInput')?.value || '').split('\n').map(s => s.trim()).filter(Boolean);
+    const keywords = lowMsg.replace(/[?!.,]/g, '').split(' ').filter(w => w.length > 3);
+    let matchedLine = userMateri.find(line => keywords.some(k => line.toLowerCase().includes(k)));
+
+    if (!matchedLine) {
+      const topicGuess = lowMsg.replace(/^(apa itu|siapa|jelaskan|pengertian|cara|kenapa|mengapa)\s+/i, '').trim();
+      const wikiAns = await fetchWikiFreeSummary(topicGuess);
+      matchedLine = wikiAns || 'Poin utamanya adalah kita perlu konsisten belajar dan praktik bertahap sesuai materi kita hari ini.';
+    }
+
+    const eduReply = 'Pertanyaan bagus dari kak ' + cleanName + '! ' + matchedLine;
+    document.getElementById('studioSubCaption').innerText = eduReply;
+    if (typeof speakTextSafe === 'function') speakTextSafe(eduReply);
+  };
+
+  function updateQueueDisplay() {
+    const box = document.getElementById('karaokeQueueBox');
+    const txt = document.getElementById('karaokeQueueTxt');
+    if (!box || !txt) return;
+    box.style.display = 'block';
+    txt.innerText = window.karaokeQueue.length
+      ? window.karaokeQueue.map((item, i) => (i + 1) + '. ' + item.title + ' (' + item.user + ')').join(' | ')
+      : 'Belum ada antrean';
+  }
+
+  window.playNextKaraokeQueue = function () {
+    if (!window.karaokeQueue.length) return;
+    const current = window.karaokeQueue.shift();
+    updateQueueDisplay();
+
+    const scrollEl = document.getElementById('karaokeLyricScroll');
+    if (scrollEl) {
+      scrollEl.innerText = '♪ Sedang Diputar: ' + current.title + ' (Request dari ' + current.user + ') • Selamat Bernyanyi! ♪';
+    }
+    const stat = document.getElementById('ytMusicStatus');
+    if (stat) {
+      stat.style.color = '#e879f9';
+      stat.innerText = '🎤 Antrean Aktif: ' + current.title + ' (' + current.user + ')';
+    }
   };
 
 })();
