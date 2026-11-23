@@ -1,419 +1,564 @@
-(async function () {
-  window.avCfg = {
-    hair: 'none',
-    acc: 'none',
-    outfit: 'none',
-    rimColor: '#38bdf8',
-    cutout: true,
-    zoom: 1.12,
-    offY: 0
+(function (global) {
+  'use strict';
+
+  const CDN_BASE = 'https:' + '//cdn.jsdelivr.net/npm/@mediapipe/';
+  const MEDIAPIPE_CDN = {
+    segmentation: CDN_BASE + 'selfie_segmentation',
+    faceMesh: CDN_BASE + 'face_mesh'
   };
 
-  window.avConfig = window.avConfig || { isSpeaking: false, mouthOpen: 0 };
-
-  let rawImg = null, segMask = null, segmenter = null, facePos = null;
-  let blinkVal = 0, lastBlink = Date.now();
-  const offCvs = document.createElement('canvas');
-  const offCtx = offCvs.getContext('2d');
-  const dCdn = String.fromCharCode(46);
-
-  // 1. Muat AI Penghapus Background (MediaPipe)
-  const mpBase = 'https://cdn' + dCdn + 'jsdelivr' + dCdn + 'net/npm/@mediapipe/selfie_segmentation/';
-  const sc = document.createElement('script');
-  sc.src = mpBase + 'selfie_segmentation' + dCdn + 'js';
-  sc.crossOrigin = 'anonymous';
-  sc.onload = () => {
-    if (window.SelfieSegmentation) {
-      segmenter = new SelfieSegmentation({
-        locateFile: f => mpBase + f
-      });
-      segmenter.setOptions({ modelSelection: 1, selfieMode: false });
-      segmenter.onResults(res => {
-        segMask = res.segmentationMask;
-        const st = document.getElementById('avCloudStat');
-        if (st) st.innerText = '● Auto-Cutout Aktif';
-      });
-      if (rawImg) segmenter.send({ image: rawImg });
+  const NICHE_THEMES = {
+    EDUKASI: {
+      rimColor: 'rgba(56, 189, 248, 0.85)',
+      ambientTint: 'rgba(14, 165, 233, 0.08)',
+      bgGradient: ['#0f172a', '#1e293b', '#0284c7'],
+      outfitType: 'blazer_formal',
+      showHeadset: false
+    },
+    HIBURAN: {
+      rimColor: 'rgba(232, 121, 249, 0.9)',
+      ambientTint: 'rgba(192, 38, 211, 0.10)',
+      bgGradient: ['#18181b', '#2e1065', '#701a75'],
+      outfitType: 'casual_hoodie',
+      showHeadset: true
+    },
+    JUALAN: {
+      rimColor: 'rgba(251, 191, 36, 0.88)',
+      ambientTint: 'rgba(245, 158, 11, 0.08)',
+      bgGradient: ['#1c1917', '#451a03', '#b45309'],
+      outfitType: 'smart_casual_host',
+      showHeadset: false
     }
   };
-  document.head.appendChild(sc);
-  // 2. Tangkap & Kompres Foto Wajah untuk Akun Pribadi
-  let compressedPhotoB64 = null;
-  function compressForCloud(imgEl) {
-    try {
-      const c = document.createElement('canvas');
-      const maxW = 360;
-      const scale = Math.min(1, maxW / (imgEl.naturalWidth || imgEl.width || 360));
-      c.width = Math.round((imgEl.naturalWidth || imgEl.width || 360) * scale);
-      c.height = Math.round((imgEl.naturalHeight || imgEl.height || 480) * scale);
-      c.getContext('2d').drawImage(imgEl, 0, 0, c.width, c.height);
-      return c.toDataURL('image/jpeg', 0.78);
-    } catch (e) { return null; }
-  }
 
-  window.setAvatarPhoto = function (src, box, origW, origH, fromCloud) {
-    facePos = box ? {
-      x: (box.x > 1 ? box.x / origW : box.x),
-      y: (box.y > 1 ? box.y / origH : box.y),
-      w: (box.width > 1 ? box.width / origW : (box.w || 0.4)),
-      h: (box.height > 1 ? box.height / origH : (box.h || 0.35))
-    } : { x: 0.3, y: 0.2, w: 0.4, h: 0.35 };
+  class AvatarStudioEngine {
+    constructor() {
+      this.canvas = null;
+      this.ctx = null;
 
-    const im = new Image();
-    im.crossOrigin = 'anonymous';
-    im.onload = async () => {
-      rawImg = im;
-      segMask = null;
-      if (!fromCloud) compressedPhotoB64 = compressForCloud(im);
-      if (segmenter) {
-        try { await segmenter.send({ image: im }); } catch (e) {}
+      this.personCanvas = document.createElement('canvas');
+      this.personCtx = this.personCanvas.getContext('2d');
+
+      this.rimCanvas = document.createElement('canvas');
+      this.rimCtx = this.rimCanvas.getContext('2d');
+
+      this.sourceImage = null;
+      this.bgImage = null;
+      this.segmentationMask = null;
+      this.faceLandmarks = null;
+
+      this.niche = 'EDUKASI';
+      this.hostStyle = 'Mentor Edukasi';
+      this.isSpeaking = false;
+      this.speechEnergy = 0;
+      this.targetSpeechEnergy = 0;
+
+      this.audioCtx = null;
+      this.analyser = null;
+      this.dataArray = null;
+
+      this.selfieSegmentation = null;
+      this.faceMesh = null;
+      this.isModelsReady = false;
+
+      this.rafId = null;
+      this.clock = 0;
+    }
+
+    async init(canvasSelector = '#avatarCanvas') {
+      this.canvas = typeof canvasSelector === 'string'
+        ? document.querySelector(canvasSelector)
+        : canvasSelector;
+
+      if (!this.canvas) {
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = 720;
+        this.canvas.height = 1280;
       }
-      if (!fromCloud) autoSaveAvatarCloud();
-    };
-    im.src = src;
-  };
 
-  if (window.savedAvatarData) {
-    window.setAvatarPhoto(window.savedAvatarData.src, window.savedAvatarData.box, window.savedAvatarData.w, window.savedAvatarData.h, false);
-  }
-
-
-  // 3. Suntikkan Panel Kustomisasi Avatar ke Tab "1. Studio"
-  const tabStudio = document.getElementById('tabStudio');
-  if (tabStudio) {
-    const avatarPanelHtml = `
-      <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#2dd4bf;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-size:12px; font-weight:bold; color:#2dd4bf;">🧑 Kustomisasi Visual Avatar AI</span>
-          <span id="avCloudStat" style="font-size:10px; color:#34d399;">● Studio Avatar Siap</span>
-        </div>
-
-        <div style="font-size:11px; font-weight:bold; color:#cbd5e1; margin-bottom:5px;">💇 Gaya Rambut / Hijab</div>
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin-bottom:10px;">
-          <button type="button" class="av-opt-hair sel" onclick="setAvOpt('hair','none',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #34d399; background:rgba(16,185,129,0.2); color:#fff; font-size:10px; cursor:pointer;">Asli</button>
-          <button type="button" class="av-opt-hair" onclick="setAvOpt('hair','short',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Rapi Pria</button>
-          <button type="button" class="av-opt-hair" onclick="setAvOpt('hair','slick',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Undercut</button>
-          <button type="button" class="av-opt-hair" onclick="setAvOpt('hair','bob',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Bob Panjang</button>
-          <button type="button" class="av-opt-hair" onclick="setAvOpt('hair','hijab',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Hijab</button>
-        </div>
-
-        <div style="font-size:11px; font-weight:bold; color:#cbd5e1; margin-bottom:5px;">🕶️ Aksesoris Host</div>
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin-bottom:10px;">
-          <button type="button" class="av-opt-acc sel" onclick="setAvOpt('acc','none',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #38bdf8; background:rgba(56,189,248,0.2); color:#fff; font-size:10px; cursor:pointer;">Polos</button>
-          <button type="button" class="av-opt-acc" onclick="setAvOpt('acc','glasses',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Kacamata</button>
-          <button type="button" class="av-opt-acc" onclick="setAvOpt('acc','sun',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Hitam</button>
-          <button type="button" class="av-opt-acc" onclick="setAvOpt('acc','headphones',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Headset</button>
-          <button type="button" class="av-opt-acc" onclick="setAvOpt('acc','mic',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Mic Live</button>
-        </div>
-
-        <div style="font-size:11px; font-weight:bold; color:#cbd5e1; margin-bottom:5px;">👔 Ganti Baju Avatar</div>
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin-bottom:10px;">
-          <button type="button" class="av-opt-outfit sel" onclick="setAvOpt('outfit','none',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #c084fc; background:rgba(192,132,252,0.2); color:#fff; font-size:10px; cursor:pointer;">Asli</button>
-          <button type="button" class="av-opt-outfit" onclick="setAvOpt('outfit','suit',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Jas Formal</button>
-          <button type="button" class="av-opt-outfit" onclick="setAvOpt('outfit','hoodie',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Hoodie</button>
-          <button type="button" class="av-opt-outfit" onclick="setAvOpt('outfit','cyber',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Cyber Suit</button>
-          <button type="button" class="av-opt-outfit" onclick="setAvOpt('outfit','batik',this)" style="padding:6px 2px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">Kemeja</button>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:center; padding-top:4px; border-top:1px solid #1e293b;">
-          <div>
-            <span style="font-size:10px; color:#94a3b8;">Zoom Avatar</span>
-            <input type="range" id="avZoomIn" min="85" max="155" value="112" oninput="avCfg.zoom=this.value/100" style="width:100%; accent-color:#2dd4bf;">
-          </div>
-          <label style="display:flex; align-items:center; gap:6px; font-size:10.5px; color:#e2e8f0; cursor:pointer;">
-            <input type="checkbox" checked onchange="avCfg.cutout=this.checked; autoSaveAvatarCloud()" style="accent-color:#10b981;">
-            <span>Hapus Latar Foto</span>
-          </label>
-        </div>
-      </div>`;
-
-    const innerCard = tabStudio.querySelector('.card');
-    if (innerCard) {
-      innerCard.querySelectorAll('div').forEach(div => {
-        if (div.innerText.includes('Gaya Bingkai Host AI')) {
-          if (div.nextElementSibling) div.nextElementSibling.remove();
-          div.remove();
-        }
-      });
+      this.ctx = this.canvas.getContext('2d');
+      this._syncBufferSizes();
+      await this._loadMediaPipeDependencies();
+      this._startRenderLoop();
+      return true;
     }
-    tabStudio.insertAdjacentHTML('beforeend', avatarPanelHtml);
-  }
 
-  window.setAvOpt = function (key, val, btn) {
-    avCfg[key] = val;
-    const colorMap = { hair: '#34d399', acc: '#38bdf8', outfit: '#c084fc' };
-    document.querySelectorAll('.av-opt-' + key).forEach(b => {
-      b.style.borderColor = '#334155';
-      b.style.background = '#0f172a';
-      b.style.color = '#cbd5e1';
-    });
-    btn.style.borderColor = colorMap[key];
-    btn.style.background = colorMap[key] + '33';
-    btn.style.color = '#fff';
-    autoSaveAvatarCloud();
-  };
-  // 4. Auto-Sync Firebase Firestore
-  let fbAuth = null, fbDb = null, fbDoc = null, fbSetDoc = null;
-  try {
-    const d = String.fromCharCode(46);
-    const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10" + d + "12" + d + "2/";
-    const { getApps } = await import(u + "firebase-app" + d + "js");
-    const { getAuth, onAuthStateChanged } = await import(u + "firebase-auth" + d + "js");
-    const { getFirestore, doc, getDoc, setDoc } = await import(u + "firebase-firestore" + d + "js");
-    const apps = getApps();
-    if (apps && apps.length > 0) {
-      const app = apps[0];
-      fbAuth = getAuth(app); fbDb = getFirestore(app); fbDoc = doc; fbSetDoc = setDoc;
-      onAuthStateChanged(fbAuth, async user => {
-        if (!user) return;
-        const snap = await getDoc(doc(fbDb, 'creators', user.uid));
-        if (snap.exists()) {
-          const dataCloud = snap.data();
-                    if (dataCloud.avatarPhotoData && !rawImg) {
-            window.setAvatarPhoto(dataCloud.avatarPhotoData, dataCloud.avatarFacePos || { x: 0.3, y: 0.2, w: 0.4, h: 0.35 }, 1, 1, true);
-            const st = document.getElementById('avCloudStat');
-            if (st) st.innerText = '☁️ Avatar Tersimpan Dimuat';
+    _syncBufferSizes() {
+      const w = this.canvas.width || 720;
+      const h = this.canvas.height || 1280;
+      this.personCanvas.width = w;
+      this.personCanvas.height = h;
+      this.rimCanvas.width = w;
+      this.rimCanvas.height = h;
+    }
+
+    async _loadMediaPipeDependencies() {
+      const loadScript = (src) => new Promise((resolve, reject) => {
+        if (document.querySelector('script[src="' + src + '"]')) return resolve();
+        const s = document.createElement('script');
+        s.src = src;
+        s.crossOrigin = 'anonymous';
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+
+      try {
+        if (!global.SelfieSegmentation) {
+          await loadScript(MEDIAPIPE_CDN.segmentation + '/selfie_segmentation.js');
+        }
+        if (!global.FaceMesh) {
+          await loadScript(MEDIAPIPE_CDN.faceMesh + '/face_mesh.js');
+        }
+
+        this.selfieSegmentation = new global.SelfieSegmentation({
+          locateFile: (file) => MEDIAPIPE_CDN.segmentation + '/' + file
+        });
+        this.selfieSegmentation.setOptions({ modelSelection: 1, selfieMode: false });
+        this.selfieSegmentation.onResults((res) => {
+          this.segmentationMask = res.segmentationMask;
+        });
+
+        this.faceMesh = new global.FaceMesh({
+          locateFile: (file) => MEDIAPIPE_CDN.faceMesh + '/' + file
+        });
+        this.faceMesh.setOptions({
+          maxNumFaces: 1,
+          refineLandmarks: true,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5
+        });
+        this.faceMesh.onResults((res) => {
+          if (res.multiFaceLandmarks && res.multiFaceLandmarks.length > 0) {
+            this.faceLandmarks = res.multiFaceLandmarks[0];
           }
+        });
+
+        this.isModelsReady = true;
+      } catch (err) {
+        console.error('[AvatarStudio] Gagal memuat MediaPipe:', err);
+      }
+    }
+    async setFaceImage(imageSource) {
+      return new Promise((resolve, reject) => {
+        if (typeof imageSource === 'string') {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = async () => {
+            this.sourceImage = img;
+            await this._processFaceAnalysis();
+            resolve(true);
+          };
+          img.onerror = reject;
+          img.src = imageSource;
+        } else {
+          this.sourceImage = imageSource;
+          this._processFaceAnalysis().then(() => resolve(true));
         }
       });
     }
-  } catch (e) {}
 
-  async function autoSaveAvatarCloud() {
-    if (!fbAuth || !fbAuth.currentUser || !fbDb) return;
-    try {
-      const payload = {
-        avatarConfig: avCfg,
-        avatarUpdated: Date.now()
-      };
-      if (compressedPhotoB64) {
-        payload.avatarPhotoData = compressedPhotoB64;
-        payload.avatarFacePos = facePos;
+    async _processFaceAnalysis() {
+      if (!this.sourceImage || !this.isModelsReady) return;
+      try {
+        await this.selfieSegmentation.send({ image: this.sourceImage });
+        await this.faceMesh.send({ image: this.sourceImage });
+      } catch (e) {
+        console.warn('[AvatarStudio] Analisis wajah fallback:', e);
       }
-      await fbSetDoc(fbDoc(fbDb, 'creators', fbAuth.currentUser.uid), payload, { merge: true });
-      const st = document.getElementById('avCloudStat');
-      if (st && compressedPhotoB64) st.innerText = '☁️ Foto & Avatar Tersimpan';
-    } catch (e) {}
-  }
-
-
-  // 5. Render Overlay Rambut, Aksesoris, & Baju
-  function drawAvatarOverlays(ctx, fx, fy, fw, fh, cx, bottomY) {
-    const neckY = fy + fh * 1.05;
-    const bodyW = fw * 2.35;
-    const bodyH = bottomY - neckY + 20;
-    if (avCfg.outfit !== 'none' && bodyH > 10) {
-      ctx.save();
-      const colors = {
-        suit: ['#1e293b', '#38bdf8'],
-        hoodie: ['#312e81', '#818cf8'],
-        cyber: ['#0f172a', '#2dd4bf'],
-        batik: ['#78350f', '#fbbf24']
-      };
-      const [bgCol, trimCol] = colors[avCfg.outfit] || ['#1e293b', '#38bdf8'];
-      ctx.fillStyle = bgCol;
-      ctx.beginPath();
-      ctx.moveTo(cx - fw * 0.35, neckY);
-      ctx.quadraticCurveTo(cx - bodyW * 0.55, neckY + 18, cx - bodyW * 0.5, bottomY);
-      ctx.lineTo(cx + bodyW * 0.5, bottomY);
-      ctx.quadraticCurveTo(cx + bodyW * 0.55, neckY + 18, cx + fw * 0.35, neckY);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = trimCol;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.fillStyle = '#f8fafc';
-      ctx.beginPath();
-      ctx.moveTo(cx - fw * 0.22, neckY);
-      ctx.lineTo(cx, neckY + fh * 0.45);
-      ctx.lineTo(cx + fw * 0.22, neckY);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
     }
 
-    if (avCfg.hair !== 'none') {
-      ctx.save();
-      if (avCfg.hair === 'hijab') {
-        ctx.strokeStyle = '#e2e8f0';
-        ctx.fillStyle = 'rgba(30, 41, 59, 0.92)';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.ellipse(cx, fy + fh * 0.48, fw * 0.68, fh * 0.78, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(cx, fy + fh * 0.85, fw * 0.58, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.fill();
-      } else if (avCfg.hair === 'bob') {
-        ctx.fillStyle = '#18181b';
-        ctx.beginPath();
-        ctx.arc(cx, fy + fh * 0.2, fw * 0.65, Math.PI, 0);
-        ctx.lineTo(cx + fw * 0.72, fy + fh * 1.15);
-        ctx.lineTo(cx + fw * 0.52, fy + fh * 1.15);
-        ctx.lineTo(cx + fw * 0.48, fy + fh * 0.25);
-        ctx.lineTo(cx - fw * 0.48, fy + fh * 0.25);
-        ctx.lineTo(cx - fw * 0.52, fy + fh * 1.15);
-        ctx.lineTo(cx - fw * 0.72, fy + fh * 1.15);
-        ctx.closePath();
-        ctx.fill();
+    setNiche(nicheName) {
+      const key = String(nicheName || 'EDUKASI').toUpperCase();
+      if (NICHE_THEMES[key]) this.niche = key;
+    }
+
+    setHostStyle(styleName) {
+      this.hostStyle = styleName || 'Mentor Edukasi';
+    }
+
+    setBackground(bgUrl) {
+      if (!bgUrl) {
+        this.bgImage = null;
+        return;
+      }
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => { this.bgImage = img; };
+      img.src = bgUrl;
+    }
+
+    startSpeaking() {
+      this.isSpeaking = true;
+    }
+
+    stopSpeaking() {
+      this.isSpeaking = false;
+      this.targetSpeechEnergy = 0;
+    }
+
+    bindAudioElement(audioEl) {
+      if (!audioEl) return;
+      try {
+        if (!this.audioCtx) {
+          const AudioContext = global.AudioContext || global.webkitAudioContext;
+          this.audioCtx = new AudioContext();
+        }
+        const source = this.audioCtx.createMediaElementSource(audioEl);
+        this.analyser = this.audioCtx.createAnalyser();
+        this.analyser.fftSize = 128;
+        source.connect(this.analyser);
+        this.analyser.connect(this.audioCtx.destination);
+        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+
+        audioEl.addEventListener('play', () => {
+          if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+          this.startSpeaking();
+        });
+        audioEl.addEventListener('pause', () => this.stopSpeaking());
+        audioEl.addEventListener('ended', () => this.stopSpeaking());
+      } catch (e) {
+        console.warn('[AvatarStudio] AudioContext warning:', e);
+      }
+    }
+
+    _updateSpeechEnergy() {
+      if (!this.isSpeaking) {
+        this.speechEnergy += (0 - this.speechEnergy) * 0.25;
+        return;
+      }
+      if (this.analyser && this.dataArray) {
+        this.analyser.getByteFrequencyData(this.dataArray);
+        let sum = 0;
+        for (let i = 2; i < 24; i++) sum += this.dataArray[i];
+        const avg = sum / 22;
+        this.targetSpeechEnergy = Math.min(1, Math.max(0, (avg - 25) / 110));
       } else {
-        ctx.fillStyle = avCfg.hair === 'slick' ? '#09090b' : '#27272a';
-        ctx.beginPath();
-        ctx.ellipse(cx, fy + fh * 0.04, fw * 0.56, fh * 0.26, 0, Math.PI, 0);
-        ctx.fill();
+        const wave = Math.sin(this.clock * 16) * 0.45 + Math.sin(this.clock * 27) * 0.35 + Math.cos(this.clock * 9) * 0.20;
+        this.targetSpeechEnergy = Math.max(0.08, Math.min(1, 0.45 + wave));
       }
-      ctx.restore();
+      this.speechEnergy += (this.targetSpeechEnergy - this.speechEnergy) * 0.38;
     }
 
-    const eyeY = fy + fh * 0.42;
-    if (avCfg.acc === 'glasses' || avCfg.acc === 'sun') {
-      ctx.save();
-      const lensW = fw * 0.34;
-      const lensH = fh * 0.17;
-      ctx.strokeStyle = avCfg.acc === 'sun' ? '#fbbf24' : '#38bdf8';
-      ctx.fillStyle = avCfg.acc === 'sun' ? 'rgba(15, 23, 42, 0.82)' : 'rgba(56, 189, 248, 0.12)';
-      ctx.lineWidth = 2.2;
-      ctx.beginPath();
-      ctx.roundRect(cx - fw * 0.42, eyeY - lensH / 2, lensW, lensH, 4);
-      ctx.fill(); ctx.stroke();
-      ctx.beginPath();
-      ctx.roundRect(cx + fw * 0.08, eyeY - lensH / 2, lensW, lensH, 4);
-      ctx.fill(); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(cx - fw * 0.08, eyeY);
-      ctx.lineTo(cx + fw * 0.08, eyeY);
-      ctx.stroke();
-      ctx.restore();
-    } else if (avCfg.acc === 'headphones') {
-      ctx.save();
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.arc(cx, fy + fh * 0.35, fw * 0.66, Math.PI * 1.05, Math.PI * 1.95);
-      ctx.stroke();
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(cx - fw * 0.72, eyeY - 12, 11, 28);
-      ctx.fillRect(cx + fw * 0.61, eyeY - 12, 11, 28);
-      ctx.restore();
-    } else if (avCfg.acc === 'mic') {
-      ctx.save();
-      const micX = cx + fw * 0.48;
-      const micY = fy + fh * 0.95;
-      ctx.strokeStyle = '#94a3b8';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(micX + 25, bottomY);
-      ctx.lineTo(micX, micY);
-      ctx.stroke();
-      ctx.fillStyle = '#1e293b';
-      ctx.strokeStyle = '#34d399';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(micX - 7, micY - 14, 14, 24, 7);
-      ctx.fill(); ctx.stroke();
-      ctx.restore();
+    _getHeadMetrics(drawRect) {
+      if (!this.faceLandmarks) {
+        return {
+          centerX: drawRect.x + drawRect.w * 0.5,
+          centerY: drawRect.y + drawRect.h * 0.38,
+          rollAngle: 0,
+          faceWidth: drawRect.w * 0.42,
+          mouthCenter: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.48 },
+          mouthWidth: drawRect.w * 0.14,
+          chinBottom: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.58 },
+          neckBase: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.65 }
+        };
+      }
+      const lm = this.faceLandmarks;
+      const mapPt = (idx) => ({
+        x: drawRect.x + lm[idx].x * drawRect.w,
+        y: drawRect.y + lm[idx].y * drawRect.h
+      });
+      const leftEye = mapPt(33);
+      const rightEye = mapPt(263);
+      const upperLip = mapPt(13);
+      const lowerLip = mapPt(14);
+      const mouthLeft = mapPt(61);
+      const mouthRight = mapPt(291);
+      const chin = mapPt(152);
+      const leftTemple = mapPt(234);
+      const rightTemple = mapPt(454);
+
+      const rollAngle = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x);
+      const faceWidth = Math.hypot(rightTemple.x - leftTemple.x, rightTemple.y - leftTemple.y);
+      const mouthWidth = Math.hypot(mouthRight.x - mouthLeft.x, mouthRight.y - mouthLeft.y);
+
+      return {
+        centerX: (leftTemple.x + rightTemple.x) / 2,
+        centerY: (leftTemple.y + rightTemple.y) / 2,
+        rollAngle,
+        faceWidth,
+        mouthCenter: { x: (upperLip.x + lowerLip.x) / 2, y: (upperLip.y + lowerLip.y) / 2 },
+        mouthWidth,
+        chinBottom: chin,
+        neckBase: {
+          x: chin.x - Math.sin(rollAngle) * (faceWidth * 0.25),
+          y: chin.y + Math.cos(rollAngle) * (faceWidth * 0.28)
+        }
+      };
     }
-  }
+    _startRenderLoop() {
+      const render = () => {
+        this.clock += 0.016;
+        this._updateSpeechEnergy();
+        this._renderFrame();
+        this.rafId = requestAnimationFrame(render);
+      };
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+      render();
+    }
 
-  // 6. Loop Render Utama Avatar (Menggantikan Bingkai Lama)
-  function studioRenderLoop() {
-    const cvs = document.getElementById('avatarCanvas');
-    if (cvs) {
-      const ctx = cvs.getContext('2d');
-      const w = cvs.width, h = cvs.height;
-      ctx.clearRect(0, 0, w, h);
+    _renderFrame() {
+      const W = this.canvas.width;
+      const H = this.canvas.height;
+      const ctx = this.ctx;
+      const theme = NICHE_THEMES[this.niche] || NICHE_THEMES.EDUKASI;
 
-      const now = Date.now();
-      const speaking = window.avConfig && window.avConfig.isSpeaking;
-      if (speaking) {
-        window.avConfig.mouthOpen = (Math.sin(now / 65) * 0.5 + 0.5) * 9 + Math.abs(Math.sin(now / 115)) * 4;
-      } else if (window.avConfig) {
-        window.avConfig.mouthOpen *= 0.75;
+      ctx.clearRect(0, 0, W, H);
+      this._drawStudioBackground(ctx, W, H, theme);
+
+      if (!this.sourceImage) {
+        this._drawPlaceholderGuide(ctx, W, H);
+        return;
       }
 
-      if (now - lastBlink > 3500) {
-        blinkVal = 1;
-        if (now - lastBlink > 3660) { blinkVal = 0; lastBlink = now; }
-      }
+      const imgRatio = this.sourceImage.width / this.sourceImage.height;
+      const targetH = H * 0.86;
+      const targetW = targetH * imgRatio;
 
-      if (rawImg && rawImg.complete) {
-        const targetH = h * 0.64 * (avCfg.zoom || 1.12);
-        const scaleBase = targetH / rawImg.height;
-        const breathZoom = 1 + Math.sin(now / 650) * 0.01;
-        const swayX = Math.sin(now / 1100) * 2.5;
-        const swayY = Math.cos(now / 750) * 2;
-        const tilt = Math.sin(now / 1300) * 0.01;
+      const breathY = Math.sin(this.clock * 2.1) * 4;
+      const swayX = Math.cos(this.clock * 1.2) * 2.5;
+      const idleTilt = Math.sin(this.clock * 1.4) * 0.012;
 
-        const drawW = rawImg.width * scaleBase * breathZoom;
-        const drawH = rawImg.height * scaleBase * breathZoom;
-        const centerX = w / 2 + swayX;
-        const bottomAnchor = h * 0.90 + swayY;
-        const drawX = centerX - drawW / 2;
-        const drawY = bottomAnchor - drawH;
+      const drawRect = {
+        x: (W - targetW) / 2 + swayX,
+        y: H - targetH + 18 + breathY,
+        w: targetW,
+        h: targetH
+      };
+
+      const metrics = this._getHeadMetrics(drawRect);
+      this._prepareCutoutPerson(drawRect, theme);
+      this._drawRimLightAura(ctx, theme);
+
+      ctx.save();
+      ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
+      ctx.rotate(idleTilt);
+      ctx.translate(-metrics.neckBase.x, -metrics.neckBase.y);
+
+      ctx.drawImage(this.personCanvas, 0, 0);
+      this._applyLipAndJawWarping(ctx, metrics);
+      this._drawRealisticWardrobe(ctx, metrics, theme);
+      if (theme.showHeadset) this._drawStudioHeadset(ctx, metrics);
+      ctx.restore();
+
+      ctx.fillStyle = theme.ambientTint;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    _drawStudioBackground(ctx, W, H, theme) {
+      if (this.bgImage) {
+        const bgRatio = this.bgImage.width / this.bgImage.height;
+        const canvasRatio = W / H;
+        let bw, bh, bx, by;
+        if (bgRatio > canvasRatio) {
+          bh = H; bw = H * bgRatio; bx = (W - bw) / 2; by = 0;
+        } else {
+          bw = W; bh = W / bgRatio; bx = 0; by = (H - bh) / 2;
+        }
+        ctx.drawImage(this.bgImage, bx, by, bw, bh);
+        const grad = ctx.createRadialGradient(W / 2, H / 2, W * 0.2, W / 2, H / 2, H * 0.75);
+        grad.addColorStop(0, 'rgba(0,0,0,0.05)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.55)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+      } else {
+        const grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, theme.bgGradient[0]);
+        grad.addColorStop(0.55, theme.bgGradient[1]);
+        grad.addColorStop(1, theme.bgGradient[2]);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
 
         ctx.save();
-        ctx.translate(centerX, bottomAnchor - drawH * 0.5);
-        ctx.rotate(tilt);
-        ctx.translate(-centerX, -(bottomAnchor - drawH * 0.5));
-
-        if (avCfg.cutout && segMask) {
-          offCvs.width = w;
-          offCvs.height = h;
-          offCtx.clearRect(0, 0, w, h);
-          offCtx.drawImage(segMask, drawX, drawY, drawW, drawH);
-          offCtx.globalCompositeOperation = 'source-in';
-          offCtx.drawImage(rawImg, drawX, drawY, drawW, drawH);
-          offCtx.globalCompositeOperation = 'source-over';
-          ctx.drawImage(offCvs, 0, 0);
-        } else {
-          ctx.beginPath();
-          ctx.roundRect(Math.max(12, drawX), Math.max(45, drawY), Math.min(w - 24, drawW), drawH, 24);
-          ctx.clip();
-          ctx.drawImage(rawImg, drawX, drawY, drawW, drawH);
-        }
-
-        const fb = facePos || { x: 0.3, y: 0.2, w: 0.4, h: 0.35 };
-        const fx = drawX + fb.x * drawW;
-        const fy = drawY + fb.y * drawH;
-        const fw = fb.w * drawW;
-        const fh = fb.h * drawH;
-
-        const mOpen = window.avConfig ? window.avConfig.mouthOpen : 0;
-        if (mOpen > 0.8) {
-          const mouthX = fx + fw * 0.5;
-          const mouthY = fy + fh * 0.77;
-          const mouthW = Math.max(6, fw * 0.24);
-          const mouthH = Math.min(mOpen * 0.68, fh * 0.13);
-          ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
-          ctx.beginPath();
-          ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        if (blinkVal > 0) {
-          ctx.fillStyle = 'rgba(210, 165, 140, 0.55)';
-          ctx.fillRect(fx + fw * 0.22, fy + fh * 0.40, fw * 0.18, 3);
-          ctx.fillRect(fx + fw * 0.60, fy + fh * 0.40, fw * 0.18, 3);
-        }
-
-        drawAvatarOverlays(ctx, fx, fy, fw, fh, centerX, bottomAnchor);
-        ctx.restore();
-      } else {
-        ctx.fillStyle = 'rgba(15,23,42,0.78)';
+        ctx.fillStyle = theme.rimColor;
+        ctx.globalAlpha = 0.14;
         ctx.beginPath();
-        ctx.roundRect(16, h * 0.43, w - 32, 42, 10);
+        ctx.arc(W * 0.2, H * 0.25, 90, 0, Math.PI * 2);
+        ctx.arc(W * 0.82, H * 0.35, 120, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#38bdf8';
-        ctx.font = 'bold 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Wajah Host dari Tahap 2 Tampil di Sini', w / 2, h * 0.43 + 25);
+        ctx.restore();
       }
     }
-    requestAnimationFrame(studioRenderLoop);
-  }
 
-  requestAnimationFrame(studioRenderLoop);
-})();
+    _prepareCutoutPerson(drawRect, theme) {
+      const pCtx = this.personCtx;
+      const W = this.personCanvas.width;
+      const H = this.personCanvas.height;
 
-  
+      pCtx.clearRect(0, 0, W, H);
+      pCtx.save();
+      if (this.segmentationMask) {
+        pCtx.drawImage(this.segmentationMask, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+        pCtx.globalCompositeOperation = 'source-in';
+      }
+      pCtx.drawImage(this.sourceImage, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+      pCtx.restore();
+
+      const rCtx = this.rimCtx;
+      rCtx.clearRect(0, 0, W, H);
+      rCtx.save();
+      rCtx.drawImage(this.personCanvas, 0, 0);
+      rCtx.globalCompositeOperation = 'source-in';
+      rCtx.fillStyle = theme.rimColor;
+      rCtx.fillRect(0, 0, W, H);
+      rCtx.restore();
+    }
+
+    _drawRimLightAura(ctx, theme) {
+      ctx.save();
+      ctx.filter = 'blur(10px)';
+      ctx.globalAlpha = 0.78;
+      ctx.drawImage(this.rimCanvas, -6, -4);
+      ctx.drawImage(this.rimCanvas, 6, -4);
+      ctx.restore();
+    }
+
+    _applyLipAndJawWarping(ctx, metrics) {
+      if (this.speechEnergy < 0.02) return;
+      const jawDrop = this.speechEnergy * (metrics.faceWidth * 0.095);
+      const patchW = metrics.mouthWidth * 1.45;
+      const patchH = (metrics.chinBottom.y - metrics.mouthCenter.y) * 1.25;
+      if (patchW <= 4 || patchH <= 4) return;
+
+      ctx.save();
+      ctx.translate(metrics.mouthCenter.x, metrics.mouthCenter.y);
+      ctx.rotate(metrics.rollAngle);
+
+      const innerMouthH = jawDrop * 0.85;
+      const innerMouthW = metrics.mouthWidth * 0.72;
+      const grad = ctx.createRadialGradient(0, innerMouthH * 0.3, 1, 0, innerMouthH * 0.3, innerMouthW * 0.6);
+      grad.addColorStop(0, '#2a080d');
+      grad.addColorStop(0.75, '#4c111a');
+      grad.addColorStop(1, 'rgba(76, 17, 26, 0)');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(0, innerMouthH * 0.35, innerMouthW * 0.5, Math.max(1.5, innerMouthH * 0.52), 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.ellipse(0, patchH * 0.45 + jawDrop * 0.5, patchW * 0.52, patchH * 0.58 + jawDrop * 0.4, 0, 0, Math.PI * 2);
+      ctx.clip();
+
+      ctx.rotate(-metrics.rollAngle);
+      ctx.translate(-metrics.mouthCenter.x, -metrics.mouthCenter.y);
+
+      const shiftX = -Math.sin(metrics.rollAngle) * jawDrop;
+      const shiftY = Math.cos(metrics.rollAngle) * jawDrop;
+
+      ctx.drawImage(
+        this.personCanvas,
+        metrics.mouthCenter.x - patchW,
+        metrics.mouthCenter.y - 2,
+        patchW * 2,
+        patchH * 1.5,
+        metrics.mouthCenter.x - patchW + shiftX,
+        metrics.mouthCenter.y - 2 + shiftY,
+        patchW * 2,
+        patchH * 1.5 + jawDrop * 0.25
+      );
+      ctx.restore();
+    }
+
+    _drawRealisticWardrobe(ctx, metrics, theme) {
+      const shoulderW = metrics.faceWidth * 2.35;
+      const shoulderH = metrics.faceWidth * 1.35;
+
+      ctx.save();
+      ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
+      ctx.rotate(metrics.rollAngle * 0.45);
+
+      if (theme.outfitType === 'blazer_formal') {
+        const blazerGrad = ctx.createLinearGradient(0, 0, 0, shoulderH);
+        blazerGrad.addColorStop(0, '#1e293b');
+        blazerGrad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = blazerGrad;
+        ctx.beginPath();
+        ctx.ellipse(0, shoulderH * 0.42, shoulderW * 0.5, shoulderH * 0.52, 0, Math.PI, Math.PI * 2);
+        ctx.fillRect(-shoulderW * 0.5, shoulderH * 0.42, shoulderW, shoulderH * 0.6);
+        ctx.fill();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.moveTo(-metrics.faceWidth * 0.32, 0);
+        ctx.lineTo(0, shoulderH * 0.48);
+        ctx.lineTo(metrics.faceWidth * 0.32, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      } else if (theme.outfitType === 'casual_hoodie') {
+        const hoodieGrad = ctx.createLinearGradient(-shoulderW * 0.5, 0, shoulderW * 0.5, shoulderH);
+        hoodieGrad.addColorStop(0, '#27272a');
+        hoodieGrad.addColorStop(0.5, '#18181b');
+        hoodieGrad.addColorStop(1, '#3b0764');
+        ctx.fillStyle = hoodieGrad;
+        ctx.beginPath();
+        ctx.ellipse(0, shoulderH * 0.44, shoulderW * 0.52, shoulderH * 0.52, 0, Math.PI, Math.PI * 2);
+        ctx.fillRect(-shoulderW * 0.52, shoulderH * 0.44, shoulderW * 1.04, shoulderH * 0.6);
+        ctx.fill();
+
+        ctx.strokeStyle = '#e879f9';
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-metrics.faceWidth * 0.18, shoulderH * 0.12);
+        ctx.lineTo(-metrics.faceWidth * 0.20, shoulderH * 0.45);
+        ctx.moveTo(metrics.faceWidth * 0.18, shoulderH * 0.12);
+        ctx.lineTo(metrics.faceWidth * 0.20, shoulderH * 0.45);
+        ctx.stroke();
+      } else {
+        const shirtGrad = ctx.createLinearGradient(0, 0, 0, shoulderH);
+        shirtGrad.addColorStop(0, '#b45309');
+        shirtGrad.addColorStop(1, '#78350f');
+        ctx.fillStyle = shirtGrad;
+        ctx.beginPath();
+        ctx.ellipse(0, shoulderH * 0.42, shoulderW * 0.5, shoulderH * 0.52, 0, Math.PI, Math.PI * 2);
+        ctx.fillRect(-shoulderW * 0.5, shoulderH * 0.42, shoulderW, shoulderH * 0.6);
+        ctx.fill();
+
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(-metrics.faceWidth * 0.28, 0);
+        ctx.lineTo(0, shoulderH * 0.52);
+        ctx.lineTo(metrics.faceWidth * 0.28, 0);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    _drawStudioHeadset(ctx, metrics) {
+      const earRadiusY = metrics.faceWidth * 0.22;
+      const earRadiusX = metrics.faceWidth * 0.10;
+      const headTopRadius = metrics.faceWidth * 0.56;
+
+      ctx.save();
+      ctx.translate(metrics.centerX, metrics.centerY);
+      ctx.rotate(metrics.rollAngle);
+
+      ctx.strokeStyle = '#18181b';
+      ctx.lineWidth = metrics.faceWidth * 0.085;
+      ctx.beginPath();
+      ctx.arc(0, -metrics.faceWidth * 0.05, headTopRadius, Math.PI * 1.05, Math.PI * 1.95);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#e879f9';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(0, -metrics.faceWidth * 0.05, headTopRadius + 2, Math.PI * 1.2, Math.PI * 1.8);
+      ctx.stroke();
+
+      [-headTopRadius, headTopRadius].forEach((offsetX, idx) => {
+        const cupGrad = ctx.createLinearGradient(offsetX - earRadiusX, -earRadiusY, offsetX + earRadiusX, earRadiusY);
+        cupGrad.addColorStop(0, '#3f3f46');
+        cupGrad.addColorStop(0.5, '#18181b');
+        cupGrad.addColorStop(1, '#09090b');
+
+        ctx.fillStyle = cupGrad;
+        ctx.beginPath();
+        ctx.ellipse(offsetX, 0, earRadiusX, earRadiusY, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#d946ef';
