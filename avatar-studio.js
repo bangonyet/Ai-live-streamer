@@ -61,9 +61,40 @@
       this.faceMesh = null;
       this.isModelsReady = false;
 
-      this.rafId = null;
-      this.clock = 0;
+            this.clock = 0;
+
+      // Pengaturan posisi host di belakang meja (bisa diatur dari slider)
+      this.posX = 0;
+      this.posY = -18;
+      this.scale = 0.85;
+      this.deskCutY = 0.72;
+
+      // Produk yang sedang diperagakan di tangan (Niche Jualan)
+      this.activeProductImg = null;
+      this.productScale = 1.0;
     }
+
+    setTransform(opts = {}) {
+      if (typeof opts.posX === 'number') this.posX = opts.posX;
+      if (typeof opts.posY === 'number') this.posY = opts.posY;
+      if (typeof opts.scale === 'number') this.scale = opts.scale;
+      if (typeof opts.deskCutY === 'number') this.deskCutY = opts.deskCutY;
+    }
+
+    setActiveProduct(imgSrc, sizeScale = 1.0) {
+      if (!imgSrc) {
+        this.activeProductImg = null;
+        return;
+      }
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        this.activeProductImg = img;
+        this.productScale = sizeScale;
+      };
+      img.src = imgSrc;
+    }
+
 
     async init(canvasSelector = '#avatarCanvas') {
       this.canvas = typeof canvasSelector === 'string'
@@ -297,7 +328,7 @@
       render();
     }
 
-    _renderFrame() {
+       _renderFrame() {
       const W = this.canvas.width;
       const H = this.canvas.height;
       const ctx = this.ctx;
@@ -312,16 +343,24 @@
       }
 
       const imgRatio = this.sourceImage.width / this.sourceImage.height;
-      const targetH = H * 0.86;
+      const targetH = H * 0.84 * this.scale;
       const targetW = targetH * imgRatio;
 
-      const breathY = Math.sin(this.clock * 2.1) * 4;
-      const swayX = Math.cos(this.clock * 1.2) * 2.5;
-      const idleTilt = Math.sin(this.clock * 1.4) * 0.012;
+      // Gerakan kepala & badan berbeda tiap niche
+      let breathY = Math.sin(this.clock * 2.1) * 3.5;
+      let swayX = Math.cos(this.clock * 1.2) * 2;
+      let idleTilt = Math.sin(this.clock * 1.4) * 0.012;
+
+      if (this.niche === 'HIBURAN') {
+        swayX = Math.sin(this.clock * 2.4) * 5;
+        idleTilt = Math.sin(this.clock * 2.4) * 0.025;
+      } else if (this.niche === 'JUALAN') {
+        breathY = Math.sin(this.clock * 3.0) * 4;
+      }
 
       const drawRect = {
-        x: (W - targetW) / 2 + swayX,
-        y: H - targetH + 18 + breathY,
+        x: (W - targetW) / 2 + this.posX + swayX,
+        y: (H * 0.14) + this.posY + breathY,
         w: targetW,
         h: targetH
       };
@@ -331,19 +370,116 @@
       this._drawRimLightAura(ctx, theme);
 
       ctx.save();
+      // Potong batas pinggang agar host rapi di belakang meja studio
+      const cutLineY = H * this.deskCutY;
+      ctx.beginPath();
+      ctx.rect(0, 0, W, cutLineY);
+      ctx.clip();
+
       ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
       ctx.rotate(idleTilt);
       ctx.translate(-metrics.neckBase.x, -metrics.neckBase.y);
 
+      // 1. Gambar tubuh & wajah asli hasil auto-cutout
       ctx.drawImage(this.personCanvas, 0, 0);
+
+      // 2. Gerakan tangan berbeda tiap niche
+      this._applyNicheHandGestures(ctx, drawRect, metrics);
+
+      // 3. Deformasi bibir & dagu foto asli saat bicara
       this._applyLipAndJawWarping(ctx, metrics);
-      this._drawRealisticWardrobe(ctx, metrics, theme);
+
+      // 4. Headset studio khusus Hiburan
       if (theme.showHeadset) this._drawStudioHeadset(ctx, metrics);
+
       ctx.restore();
+
+      // 5. Peragaan produk di tangan host (khusus JUALAN)
+      if (this.niche === 'JUALAN' && this.activeProductImg) {
+        this._drawHeldProduct(ctx, metrics, cutLineY);
+      }
 
       ctx.fillStyle = theme.ambientTint;
       ctx.fillRect(0, 0, W, H);
     }
+
+    _applyNicheHandGestures(ctx, drawRect, metrics) {
+      const shoulderY = metrics.neckBase.y + metrics.faceWidth * 0.25;
+      const armH = drawRect.h * 0.45;
+      const armW = drawRect.w * 0.28;
+      if (armW <= 8 || armH <= 8) return;
+
+      let leftAngle = 0;
+      let rightAngle = 0;
+
+      if (this.niche === 'EDUKASI') {
+        // Edukasi: Tangan kanan aktif menjelaskan/menunjuk, tangan kiri tenang
+        const amp = this.isSpeaking ? (0.05 + this.speechEnergy * 0.06) : 0.01;
+        leftAngle = Math.sin(this.clock * 1.5) * 0.01;
+        rightAngle = -Math.abs(Math.sin(this.clock * 3.4)) * amp;
+      } else if (this.niche === 'HIBURAN') {
+        // Hiburan: Kedua tangan mengayun santai mengikuti irama musik
+        const amp = this.isSpeaking ? 0.075 : 0.04;
+        leftAngle = Math.sin(this.clock * 3.0) * amp;
+        rightAngle = Math.sin(this.clock * 3.0) * amp;
+      } else {
+        // Jualan: Gerak antusias memperagakan produk & menunjuk keranjang
+        const amp = this.isSpeaking ? (0.06 + this.speechEnergy * 0.07) : 0.02;
+        leftAngle = Math.sin(this.clock * 4.2) * amp;
+        rightAngle = -Math.cos(this.clock * 4.2) * amp;
+      }
+
+      const leftPivotX = metrics.neckBase.x - metrics.faceWidth * 0.65;
+      ctx.save();
+      ctx.translate(leftPivotX, shoulderY);
+      ctx.rotate(leftAngle);
+      ctx.beginPath();
+      ctx.rect(-armW * 0.8, 0, armW * 1.1, armH);
+      ctx.clip();
+      ctx.drawImage(this.personCanvas, -leftPivotX, -shoulderY);
+      ctx.restore();
+
+      const rightPivotX = metrics.neckBase.x + metrics.faceWidth * 0.65;
+      ctx.save();
+      ctx.translate(rightPivotX, shoulderY);
+      ctx.rotate(rightAngle);
+      ctx.beginPath();
+      ctx.rect(-armW * 0.3, 0, armW * 1.1, armH);
+      ctx.clip();
+      ctx.drawImage(this.personCanvas, -rightPivotX, -shoulderY);
+      ctx.restore();
+    }
+
+    _drawHeldProduct(ctx, metrics, cutLineY) {
+      const boxSize = metrics.faceWidth * 0.95 * this.productScale;
+      const handX = metrics.neckBase.x + metrics.faceWidth * 0.85;
+      const floatY = Math.sin(this.clock * 3.2) * 5;
+      const handY = Math.min(cutLineY - boxSize * 0.6, metrics.neckBase.y + metrics.faceWidth * 0.65) + floatY;
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
+      ctx.shadowBlur = 12;
+      ctx.shadowOffsetY = 6;
+
+      // Bingkai kartu produk yang diangkat host
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.roundRect(handX - boxSize / 2 - 4, handY - boxSize / 2 - 4, boxSize + 8, boxSize + 8, 10);
+      ctx.fill();
+
+      ctx.drawImage(this.activeProductImg, handX - boxSize / 2, handY - boxSize / 2, boxSize, boxSize);
+
+      // Badge Promo kecil di sudut produk
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.roundRect(handX - boxSize / 2, handY - boxSize / 2 - 12, 46, 14, 4);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 8px sans-serif';
+      ctx.fillText('PROMO', handX - boxSize / 2 + 6, handY - boxSize / 2 - 2);
+      ctx.restore();
+    }
+
 
     _drawStudioBackground(ctx, W, H, theme) {
       if (this.bgImage) {
