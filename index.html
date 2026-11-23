@@ -259,11 +259,10 @@ async function startFaceScan() {
           sn.height = vid.videoHeight || 640;
           sn.getContext('2d').drawImage(vid, 0, 0, sn.width, sn.height);
                    const snapUrl = sn.toDataURL('image/jpeg', 0.92);
-          window.savedAvatarData = { src: snapUrl, box: det.box, w: sn.width, h: sn.height };
+                    const fBox = det[0].box;
+          window.savedAvatarData = { src: snapUrl, box: fBox, w: sn.width, h: sn.height };
           if (typeof window.setAvatarPhoto === 'function') {
-            window.setAvatarPhoto(snapUrl, det.box, sn.width, sn.height);
-          }
-
+            window.setAvatarPhoto(snapUrl, fBox, sn.width, sn.height);         
           if (camStream) camStream.getTracks().forEach(t => t.stop());
           st.style.color = '#34d399';
           st.innerText = '✅ Wajah Terverifikasi! Membuka Studio...';
@@ -302,9 +301,11 @@ async function verifyUpload(inp) {
   im.onload = async () => {
     const det = await faceapi.detectAllFaces(im, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }));
     if (det.length === 1) {
-           window.savedAvatarData = { src: im.src, box: det.box, w: im.naturalWidth, h: im.naturalHeight };
+           
+      const fBox = det[0].box;
+      window.savedAvatarData = { src: im.src, box: fBox, w: im.naturalWidth, h: im.naturalHeight };
       if (typeof window.setAvatarPhoto === 'function') {
-        window.setAvatarPhoto(im.src, det.box, im.naturalWidth, im.naturalHeight);
+        window.setAvatarPhoto(im.src, fBox, im.naturalWidth, im.naturalHeight);
       }
 
       clearInterval(scanInterval);
@@ -557,48 +558,35 @@ function uploadStudioBg(input) {
   }
 }
 
-function speakTextSafe(text, onDone) {
-  if (!text) { if (onDone) onDone(); return; }
-  if (!('speechSynthesis' in window)) {
-    alert('Browser HP Anda tidak mendukung suara AI. Gunakan Google Chrome terbaru.');
-    return;
+function syncLiveMateri() {
+  data.opening = document.getElementById('openingScriptInput')?.value.trim() || '';
+  data.title = document.getElementById('liveTitleInput')?.value.trim() || '';
+  data.script = document.getElementById('liveScriptInput')?.value.trim() || '';
+  const cap = document.getElementById('studioCaption');
+  if (cap) cap.innerText = data.title || ('Mode: ' + (data.niche || 'EDUKASI'));
+}
+
+function addProductRow() {
+  const no = data.products.length + 1;
+  data.products.push({ no, name: '', script: '' });
+  const container = document.getElementById('productListContainer');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.style.cssText = 'background:rgba(15,23,42,0.85);padding:8px;border-radius:8px;border:1px solid #334155';
+  row.innerHTML = `<div style="font-size:11px;color:#fbbf24;font-weight:bold;margin-bottom:4px">Etalase No. ${no}</div><input type="text" placeholder="Nama Produk" oninput="data.products[${no-1}].name=this.value; updateEtalasePreview(${no-1})" style="text-align:left;font-size:11px;padding:7px;margin-bottom:5px"><input type="text" placeholder="Deskripsi / Promo Singkat" oninput="data.products[${no-1}].script=this.value" style="text-align:left;font-size:11px;padding:7px;margin-bottom:0">`;
+  container.appendChild(row);
+}
+
+function updateEtalasePreview(idx) {
+  const ov = document.getElementById('studioEtalaseOverlay');
+  const p = data.products[idx];
+  if (ov && p) {
+    ov.style.display = 'block';
+    document.getElementById('etalaseBadgeTxt').innerText = `👇 Cek Keranjang • Etalase No. ${p.no}`;
+    document.getElementById('etalaseTitleTxt').innerText = p.name || 'Nama Produk';
   }
-
-  window.speechSynthesis.cancel();
-  setYoutubeVolume(15);
-
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'id-ID';
-  const voices = window.speechSynthesis.getVoices();
-  const idVoice = voices.find(v => v.lang.toLowerCase().includes('id'));
-  if (idVoice) utter.voice = idVoice;
-
-  utter.pitch = data.voice === 'female' ? 1.18 : 0.88;
-  utter.rate = 1.03;
-
-  utter.onstart = () => { avConfig.isSpeaking = true; };
-  utter.onend = () => {
-    avConfig.isSpeaking = false;
-    avConfig.mouthOpen = 0;
-    setYoutubeVolume(65);
-    if (onDone) onDone();
-  };
-  utter.onerror = () => {
-    avConfig.isSpeaking = false;
-    avConfig.mouthOpen = 0;
-    setYoutubeVolume(65);
-  };
-
-  window.speechSynthesis.speak(utter);
 }
 
-function stopAllSpeech() {
-  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-  avConfig.isSpeaking = false;
-  avConfig.mouthOpen = 0;
-  setYoutubeVolume(65);
-  if (isAutoLooping) toggleAutoLoopSim();
-}
 
 function testAIVoice() {
   syncLiveMateri();
