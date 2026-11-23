@@ -1,0 +1,194 @@
+(async function () {
+  window.avCfg = { zoom: 1.15, offY: 0, bright: 105, rimColor: '#38bdf8', blurBg: true };
+  let rawImg = null, segMask = null, segmenter = null, blinkVal = 0, lastBlink = Date.now();
+
+  // Geser ID slide lama (s3->s4 dst.) agar Slide 3 khusus Avatar Realistik
+  ['s6', 's5', 's4', 's3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.id = 's' + (parseInt(id.slice(1)) + 1);
+  });
+  const barSpan = document.querySelector('.bar span:last-child');
+  if (barSpan) barSpan.innerHTML = 'Tahap <b id="sNum">1</b> / 7';
+  const oldFinish = window.finishSlide3;
+  window.finishSlide3 = function () {
+    if (typeof oldFinish === 'function') oldFinish();
+    if (document.getElementById('s4')?.classList.contains('active')) window.go(5);
+  };
+
+  // Muat AI Penghapus Latar Belakang
+  const loadScript = src => new Promise(res => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = res;
+    document.head.appendChild(s);
+  });
+  await loadScript('https://jsdelivr.net');
+  if (window.SelfieSegmentation) {
+    segmenter = new SelfieSegmentation({
+      locateFile: f => `https://jsdelivr.net{f}`
+    });
+    segmenter.setOptions({ modelSelection: 1, selfieMode: false });
+    segmenter.onResults(res => { segMask = res.segmentationMask; });
+  }
+
+  // Tangkap foto dari Slide 2
+  const origSetPhoto = window.setAvatarPhoto;
+  window.setAvatarPhoto = function (src, box, w, h) {
+    if (typeof origSetPhoto === 'function') origSetPhoto(src, box, w, h);
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = async () => {
+      rawImg = im;
+      if (segmenter) await segmenter.send({ image: im });
+      autoSaveAvatarCloud();
+    };
+    im.src = src;
+  };
+
+  // Sisipkan UI Slide 3
+  const s3Html = `
+  <div id="s3" class="slide">
+    <h2>3. Studio Avatar AI Realistik</h2>
+    <p class="sub">Penghapus latar otomatis, pencahayaan studio, & kalibrasi ekspresi wajah</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;align-items:start">
+      <div class="card" style="cursor:default;padding:12px;background:#070b14;border-color:#2dd4bf">
+        <div style="font-size:11px;font-weight:bold;color:#2dd4bf;margin-bottom:6px">✨ Preview Host AI (Auto Cutout)</div>
+        <div style="position:relative;width:185px;aspect-ratio:3/4;margin:0 auto;border-radius:14px;overflow:hidden;border:2px solid #38bdf8;background:radial-gradient(circle at 50% 30%, #1e293b, #050811)">
+          <canvas id="avRealCvs" width="360" height="480" style="width:100%;height:100%"></canvas>
+          <button type="button" onclick="speakTextSafe('Halo semuanya! Selamat datang di live streaming hari ini!')" style="position:absolute;bottom:8px;left:8px;right:8px;padding:7px;border-radius:8px;border:none;background:#38bdf8;color:#0f172a;font-size:11px;font-weight:bold;cursor:pointer">🗣️ Tes Bicara & Ekspresi</button>
+        </div>
+        <div id="avCloudStat" style="font-size:10px;color:#34d399;margin-top:6px">● AI Cutout & Kedip Mata Aktif</div>
+      </div>
+      <div style="text-align:left;display:flex;flex-direction:column;gap:8px">
+        <div class="card" style="padding:10px;cursor:default;text-align:left">
+          <div style="font-size:11.5px;font-weight:bold;color:#38bdf8;margin-bottom:6px">📐 Proporsi & Posisi Tubuh</div>
+          <label style="font-size:10.5px;color:#94a3b8">Zoom Kamera</label>
+          <input type="range" id="avZoomIn" min="85" max="165" value="115" oninput="avCfg.zoom=this.value/100" style="width:100%;accent-color:#2dd4bf">
+          <label style="font-size:10.5px;color:#94a3b8">Posisi Atas / Bawah</label>
+          <input type="range" id="avOffYIn" min="-80" max="80" value="0" oninput="avCfg.offY=+this.value" style="width:100%;accent-color:#2dd4bf">
+        </div>
+        <div class="card" style="padding:10px;cursor:default;text-align:left">
+          <div style="font-size:11.5px;font-weight:bold;color:#c084fc;margin-bottom:6px">💡 Pencahayaan Studio & Rim Light</div>
+          <label style="font-size:10.5px;color:#94a3b8">Kecerahan Kulit</label>
+          <input type="range" id="avBrightIn" min="90" max="130" value="105" oninput="avCfg.bright=+this.value" style="width:100%;accent-color:#2dd4bf">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">
+            <button type="button" class="btn" style="padding:6px;font-size:10.5px;margin:0;border-color:#38bdf8" onclick="avCfg.rimColor='#38bdf8'">Cool Blue</button>
+            <button type="button" class="btn" style="padding:6px;font-size:10.5px;margin:0;border-color:#fbbf24" onclick="avCfg.rimColor='#fbbf24'">Warm Studio</button>
+            <button type="button" class="btn" style="padding:6px;font-size:10.5px;margin:0;border-color:#c084fc" onclick="avCfg.rimColor='#c084fc'">Neon Glow</button>
+          </div>
+        </div>
+        <div class="card" style="padding:10px;cursor:default;text-align:left">
+          <label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#e2e8f0;cursor:pointer">
+            <input type="checkbox" checked onchange="avCfg.blurBg=this.checked" style="accent-color:#10b981">
+            <span>Hapus Latar Asli (Transparan Studio)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button type="button" class="btn" style="flex:1;margin:0" onclick="go(2)">← Ganti Foto</button>
+      <button type="button" id="btnSaveAv" class="btn btn-green" style="flex:2;margin:0" onclick="saveAvatarAndNext()">Simpan Avatar & Masuk Studio →</button>
+    </div>
+  </div>`;
+  document.getElementById('s2')?.insertAdjacentHTML('afterend', s3Html);
+
+  // Auto-Sync Firebase
+  let fbAuth = null, fbDb = null, fbDoc = null, fbSetDoc = null;
+  try {
+    const d = String.fromCharCode(46);
+    const u = "https://www" + d + "gstatic" + d + "com/firebasejs/10" + d + "12" + d + "2/";
+    const { getApps } = await import(u + "firebase-app.js");
+    const { getAuth, onAuthStateChanged } = await import(u + "firebase-auth.js");
+    const { getFirestore, doc, getDoc, setDoc } = await import(u + "firebase-firestore.js");
+    const app = getApps();
+    if (app) {
+      fbAuth = getAuth(app); fbDb = getFirestore(app); fbDoc = doc; fbSetDoc = setDoc;
+      onAuthStateChanged(fbAuth, async user => {
+        if (!user) return;
+        const snap = await getDoc(doc(fbDb, 'creators', user.uid));
+        if (snap.exists()) {
+          const d = snap.data();
+          if (d.avatarConfig) {
+            Object.assign(avCfg, d.avatarConfig);
+            document.getElementById('avZoomIn').value = Math.round(avCfg.zoom * 100);
+            document.getElementById('avOffYIn').value = avCfg.offY;
+            document.getElementById('avBrightIn').value = avCfg.bright;
+          }
+          if (d.avatarPhotoData && !rawImg) {
+            window.setAvatarPhoto(d.avatarPhotoData, { x: 0.3, y: 0.2, width: 0.4, height: 0.4 }, 1, 1);
+            document.getElementById('avCloudStat').innerText = '☁️ Avatar Tersimpan Dimuat';
+          }
+        }
+      });
+    }
+  } catch (e) {}
+
+  async function autoSaveAvatarCloud() {
+    if (!fbAuth?.currentUser || !rawImg) return;
+    try {
+      const c = document.createElement('canvas');
+      c.width = 240; c.height = 320;
+      c.getContext('2d').drawImage(rawImg, 0, 0, 240, 320);
+      await fbSetDoc(fbDoc(fbDb, 'creators', fbAuth.currentUser.uid), {
+        avatarPhotoData: c.toDataURL('image/jpeg', 0.72),
+        avatarConfig: avCfg,
+        avatarUpdatedAt: Date.now()
+      }, { merge: true });
+      document.getElementById('avCloudStat').innerText = '☁️ Foto & Avatar Tersinkron';
+    } catch (e) {}
+  }
+
+  window.saveAvatarAndNext = async function () {
+    const btn = document.getElementById('btnSaveAv');
+    btn.innerText = '⏳ Menyimpan...';
+    await autoSaveAvatarCloud();
+    btn.innerText = 'Simpan Avatar & Masuk Studio →';
+    window.go(4);
+  };
+
+  // Engine Render Realistik
+  const offCvs = document.createElement('canvas');
+  function renderRealisticHost(targetCvs, isStudio) {
+    if (!targetCvs || !rawImg) return;
+    const ctx = targetCvs.getContext('2d');
+    const w = targetCvs.width, h = targetCvs.height;
+    offCvs.width = w; offCvs.height = h;
+    const octx = offCvs.getContext('2d');
+
+    const now = Date.now();
+    const breath = 1 + Math.sin(now / 700) * 0.008;
+    const swayX = Math.sin(now / 1200) * 2;
+    const swayY = Math.cos(now / 850) * 1.5;
+
+    if (now - lastBlink > 3800) { blinkVal = 1; lastBlink = now; }
+    if (blinkVal > 0) blinkVal = Math.max(0, blinkVal - 0.14);
+
+    const scale = Math.max(w / rawImg.width, h / rawImg.height) * avCfg.zoom * breath;
+    const dw = rawImg.width * scale, dh = rawImg.height * scale;
+    const dx = (w - dw) / 2 + swayX;
+    const dy = (h - dh) / 2 + avCfg.offY * (isStudio ? 0.65 : 1) + swayY;
+
+    octx.clearRect(0, 0, w, h);
+    octx.save();
+    octx.filter = `brightness(${avCfg.bright}%) contrast(105%) saturate(106%)`;
+    octx.drawImage(rawImg, dx, dy, dw, dh);
+    octx.filter = 'none';
+
+    if (blinkVal > 0.1) {
+      octx.fillStyle = `rgba(185, 140, 115, ${blinkVal * 0.85})`;
+      octx.beginPath();
+      octx.ellipse(w * 0.43 + swayX, h * 0.37 + swayY + avCfg.offY * 0.5, w * 0.035, h * 0.012 * blinkVal, 0, 0, Math.PI * 2);
+      octx.ellipse(w * 0.57 + swayX, h * 0.37 + swayY + avCfg.offY * 0.5, w * 0.035, h * 0.012 * blinkVal, 0, 0, Math.PI * 2);
+      octx.fill();
+    }
+
+    if (segMask && avCfg.blurBg) {
+      octx.globalCompositeOperation = 'destination-in';
+      octx.drawImage(segMask, dx, dy, dw, dh);
+      octx.globalCompositeOperation = 'source-over';
+    }
+    octx.restore();
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.save();
+    ctx.shadowColor = avCfg.rimColor;
+    ctx.shadowBlur = 14;
