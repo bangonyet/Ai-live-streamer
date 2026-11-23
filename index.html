@@ -82,7 +82,7 @@
   <!-- STICKY MINI-PREVIEW 9:16 -->
   <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
     <div style="display:flex; gap:10px; align-items:center; justify-content:center;">
-            <div id="studioFrame" style="position:relative; width:146px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; background-image:url('studio-edukasi.jpeg'); background-size:cover; background-position:center; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
+            <div id="studioFrame" style="position:relative; width:146px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; background-image:url('studio-edukasi.jpg'); background-size:cover; background-position:center; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
         <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; z-index:3;">
           <span style="background:#ef4444; color:#fff; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">● LIVE</span>
           <span id="studioNicheBadge" style="background:rgba(15,23,42,0.8); color:#38bdf8; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">EDUKASI</span>
@@ -133,14 +133,7 @@
           <input type="file" accept="image/*" onchange="uploadStudioBg(this)" style="display:none;">
         </label>
       </div>
-
-      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:6px;">🎭 Gaya Bingkai Host AI</div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;">
-        <button type="button" class="av-btn" onclick="setAvatarStyle('cyber', '#38bdf8', this)" style="padding:7px; border-radius:8px; border:1px solid #38bdf8; background:rgba(56,189,248,0.15); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Cyber Neon</button>
-        <button type="button" class="av-btn" onclick="setAvatarStyle('casual', '#c084fc', this)" style="padding:7px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#cbd5e1; font-size:11px; cursor:pointer;">Casual Glow</button>
-        <button type="button" class="av-btn" onclick="setAvatarStyle('pro', '#34d399', this)" style="padding:7px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#cbd5e1; font-size:11px; cursor:pointer;">Pro Clean</button>
-      </div>
-    </div>
+  </div>
   </div>
 
   <!-- TAB 2: MONOLOG OPENING & MATERI / ETALASE -->
@@ -150,9 +143,9 @@
       <textarea id="openingScriptInput" rows="2" oninput="syncLiveMateri()" placeholder="Contoh: Halo semuanya selamat datang di live akun kami! Jangan lupa tap-tap layar dan follow dulu ya..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px; margin-bottom:4px;"></textarea>
       <div style="font-size:10.5px; color:#94a3b8;">Dibacakan pertama kali saat Live dimulai sebelum masuk ke materi utama.</div>
     </div>
-<div id="boxMateriUmum" class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div id="materiBoxTitle" style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:8px">📚 Materi Edukasi & Poin Penjelasan</div><input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left;font-size:12px;padding:9px;margin-bottom:8px"><textarea id="liveScriptInput" rows="4" oninput="syncLiveMateri()" placeholder="Tulis poin materi (pisahkan baris baru agar dibaca bergantian)..." style="width:100%;padding:9px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;font-size:12px"></textarea></div><div id="boxMateriJualan" class="card" style="display:none;padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:bold;color:#34d399">🛍️ Daftar Produk Etalase</span><button type="button" onclick="addProductRow()" style="padding:4px 8px;border-radius:6px;border:none;background:#10b981;color:#064e3b;font-size:11px;font-weight:bold;cursor:pointer">+ Tambah Produk</button></div><div id="productListContainer" style="display:flex;flex-direction:column;gap:8px"></div></div></div><div id="tabAudio" class="s3-panel" style="display:none;text-align:left"><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#c084fc;margin-bottom:8px">🗣️ Karakter Suara & Jeda Loop</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><button type="button" onclick="data.voice='female';alert('Suara Wanita dipilih')" style="padding:8px;border-radius:8px;border:1px solid #c084fc;background:rgba(192,132,252,0.15);color:#fff;font-size:11.5px;cursor:pointer">👩 Suara Wanita</button><button type="button" onclick="data.voice='male';alert('Suara Pria dipilih')" style="padding:8px;border-radius:8px;border:1px solid #38bdf8;background:rgba(56,189,248,0.15);color:#fff;font-size:11.5px;cursor:pointer">👨 Suara Pria</button></div><label style="font-size:11px;color:#94a3b8">Jeda Antar Materi (Detik):</label><input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%;padding:8px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;margin-top:4px"></div><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#f87171;margin-bottom:6px">🎵 Backsound Musik YouTube (Auto-Ducking)</div><div style="display:flex;gap:6px;margin-bottom:6px"><input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be...)" style="text-align:left;font-size:11px;padding:8px;margin-bottom:0"><button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">Putar</button></div><div style="display:flex;justify-content:space-between;align-items:center"><span id="ytMusicStatus" style="font-size:10.5px;color:#94a3b8">Belum ada musik</span><button type="button" onclick="stopYoutubeMusic()" style="background:none;border:none;color:#f87171;font-size:10.5px;cursor:pointer">Stop Musik</button></div><div id="ytPlayer" style="display:none"></div></div></div><button type="button" class="btn btn-green" style="margin-top:8px" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button></div>
-
-<div id="s4" class="slide">
+<div id="boxMateriUmum" class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div id="materiBoxTitle" style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:8px">📚 Materi Edukasi & Poin Penjelasan</div><input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left;font-size:12px;padding:9px;margin-bottom:8px"><textarea id="liveScriptInput" rows="4" oninput="syncLiveMateri()" placeholder="Tulis poin materi (pisahkan baris baru agar dibaca bergantian)..." style="width:100%;padding:9px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;font-size:12px"></textarea></div><div id="boxMateriJualan" class="card" style="display:none;padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:bold;color:#34d399">🛍️ Daftar Produk Etalase</span><button type="button" onclick="addProductRow()" style="padding:4px 8px;border-radius:6px;border:none;background:#10b981;color:#064e3b;font-size:11px;font-weight:bold;cursor:pointer">+ Tambah Produk</button></div><div id="productListContainer" style="display:flex;flex-direction:column;gap:8px"></div></div></div>
+ <div id="tabAudio" class="s3-panel" style="display:none;text-align:left"><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#c084fc;margin-bottom:8px">🗣️ Pilih Karakter Suara Host</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px"><button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px;border-radius:8px;border:1.5px solid #c084fc;background:rgba(192,132,252,0.25);color:#fff;font-size:11px;font-weight:bold;cursor:pointer">👩 AI Wanita</button><button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">👨 AI Pria</button><button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">🎙️ Suara Asli</button></div><div id="voiceStatusTxt" style="font-size:11px;color:#34d399;margin-bottom:8px">● Aktif: Suara AI Wanita</div><div id="customVoiceBox" style="display:none;background:rgba(15,23,42,0.9);border:1px solid #10b981;border-radius:10px;padding:10px;margin-bottom:10px"><div style="font-size:11.5px;font-weight:bold;color:#34d399;margin-bottom:4px">🎙️ Rekam Contoh Suara Asli Anda</div><p style="font-size:10.5px;color:#94a3b8;margin-bottom:8px">Rekam suara Anda. Saat Live / Auto-Loop berjalan, rekaman ini akan diputar otomatis.</p><div style="display:flex;gap:6px;margin-bottom:8px"><button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1;padding:8px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">🔴 Mulai Rekam</button><button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1;padding:8px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#94a3b8;font-size:11px;font-weight:bold;cursor:pointer">⏹️ Selesai</button></div><div id="recTimerTxt" style="font-size:11px;color:#fbbf24;margin-bottom:6px">Siap merekam via mikrofon HP...</div><audio id="userCustomAudio" controls style="display:none;width:100%;height:34px"></audio></div><label style="font-size:11px;color:#94a3b8">Jeda Antar Materi (Detik):</label><input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%;padding:8px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;margin-top:4px"></div><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#f87171;margin-bottom:6px">🎵 Backsound Musik YouTube (Auto-Ducking)</div><div style="display:flex;gap:6px;margin-bottom:6px"><input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be...)" style="text-align:left;font-size:11px;padding:8px;margin-bottom:0"><button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">Putar</button></div><div style="display:flex;justify-content:space-between;align-items:center"><span id="ytMusicStatus" style="font-size:10.5px;color:#94a3b8">Belum ada musik</span><button type="button" onclick="stopYoutubeMusic()" style="background:none;border:none;color:#f87171;font-size:10.5px;cursor:pointer">Stop Musik</button></div><div id="ytPlayer" style="display:none"></div></div></div><button type="button" class="btn btn-green" style="margin-top:8px" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button></div>
+ <div id="s4" class="slide">
   <h2>4. Pilih Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
   <p class="sub">Klik karakter pembawa acara AI yang diinginkan</p>
   <div class="grid">
@@ -388,9 +381,9 @@ function selectNiche(el, niche) {
     boxJualan.style.display = 'none';
     if (etalaseOv) etalaseOv.style.display = 'none';
 
-    if (niche === 'EDUKASI') {
+       if (niche === 'EDUKASI') {
       frame.style.borderColor = '#38bdf8';
-      setStudioBg('image', 'studio-edukasi.jpeg');
+      setStudioBg('image', 'studio-edukasi.jpg');
       titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan';
       titleEl.style.color = '#38bdf8';
       inTitle.placeholder = 'Judul Materi (misal: Tips Belajar Bahasa Inggris)';
@@ -407,184 +400,132 @@ function selectNiche(el, niche) {
   syncLiveMateri();
 }
 
-function addProductRow() {
-  const idx = data.products.length;
-  data.products.push({ no: idx + 1, name: '', script: '', url: '' });
-  renderProductRows();
-}
-
-function removeProductRow(idx) {
-  data.products.splice(idx, 1);
-  data.products.forEach((p, i) => p.no = i + 1);
-  renderProductRows();
-}
-
-function renderProductRows() {
-  const wrap = document.getElementById('productListContainer');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  data.products.forEach((item, idx) => {
-    const row = document.createElement('div');
-    row.style.cssText = 'background:rgba(15,23,42,0.85); border:1px solid #334155; border-radius:8px; padding:8px;';
-    row.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span style="font-size:11px; font-weight:bold; color:#fbbf24;">Etalase No. ${item.no}</span>
-        ${data.products.length > 1 ? `<button type="button" onclick="removeProductRow(${idx})" style="background:none; border:none; color:#f87171; font-size:11px; cursor:pointer;">Hapus</button>` : ''}
-      </div>
-      <input type="text" value="${item.name}" oninput="updateProductData(${idx}, 'name', this.value)" placeholder="Nama Produk & Harga (misal: Serum Glowing - 49rb)" style="text-align:left; font-size:11.5px; padding:8px; margin-bottom:6px;">
-      <textarea rows="2" oninput="updateProductData(${idx}, 'script', this.value)" placeholder="Skrip promosi singkat yang dibaca AI..." style="width:100%; padding:8px; border-radius:8px; border:1px solid #2d354f; background:rgba(15,23,42,0.75); color:#fff; font-size:11.5px; margin-bottom:6px;">${item.script}</textarea>
-      <input type="text" value="${item.url}" oninput="updateProductData(${idx}, 'url', this.value)" placeholder="Link Produk Web / WA / Shopee (Opsional)" style="text-align:left; font-size:11px; padding:7px; margin-bottom:0; border-color:#10b981;">
-    `;
-    wrap.appendChild(row);
-  });
-}
-
-function updateProductData(idx, field, val) {
-  if (!data.products[idx]) return;
-  data.products[idx][field] = val.trim();
-  if (idx === 0) updateEtalasePreview(0);
-}
-
-function updateEtalasePreview(idx) {
-  const ov = document.getElementById('studioEtalaseOverlay');
-  if (!ov || data.niche !== 'JUALAN') return;
-  const item = data.products[idx];
-  if (!item) { ov.style.display = 'none'; return; }
-
-  ov.style.display = 'block';
-  document.getElementById('etalaseBadgeTxt').innerText = `👇 Cek Keranjang • Etalase No. ${item.no}`;
-  document.getElementById('etalaseTitleTxt').innerText = item.name || `Produk Etalase #${item.no}`;
-
-  const webBtn = document.getElementById('etalaseWebBtn');
-  if (item.url && item.url.startsWith('http')) {
-    webBtn.href = item.url;
-    webBtn.style.display = 'block';
-  } else {
-    webBtn.style.display = 'none';
-  }
-}
-
-function syncLiveMateri() {
-  const op = (document.getElementById('openingScriptInput')?.value || '').trim();
-  const jdl = (document.getElementById('liveTitleInput')?.value || '').trim();
-  const isi = (document.getElementById('liveScriptInput')?.value || '').trim();
-
-  data.opening = op;
-  if (data.niche === 'JUALAN') {
-    data.script = data.products.map(p => `Etalase nomor ${p.no}, ${p.name}. ${p.script}`).join('\n');
-  } else {
-    data.script = jdl ? `${jdl}. ${isi}` : isi;
-  }
-
-  const cap = document.getElementById('studioCaption');
-  const sub = document.getElementById('studioSubCaption');
-  if (!cap || !sub) return;
-
-  const defMode = { EDUKASI: 'Mode: Mentor Edukasi', HIBURAN: 'Mode: Host Hiburan', JUALAN: 'Mode: Live Shopping' };
-  cap.innerText = jdl || defMode[data.niche || 'EDUKASI'];
-  sub.innerText = op || isi || 'Siap dikonfigurasi...';
-}
-
-let avConfig = { style: 'cyber', color: '#38bdf8', isSpeaking: false, mouthOpen: 0, photoImg: null, faceBox: null };
-data.style = 'cyber';
+window.avConfig = window.avConfig || { isSpeaking: false, mouthOpen: 0 };
 data.voice = 'female';
+data.customAudioUrl = null;
+let mediaRec = null, audioChunks = [], recSec = 0, recTimerInt = null;
 
-function setAvatarPhoto(src, box, origW, origH) {
-  const img = new Image();
-  img.onload = () => {
-    avConfig.photoImg = img;
-    avConfig.faceBox = { x: box.x / origW, y: box.y / origH, w: box.width / origW, h: box.height / origH };
-  };
-  img.src = src;
-}
-
-function setAvatarStyle(style, color, btn) {
-  avConfig.style = style;
-  avConfig.color = color;
-  data.style = style;
-  document.querySelectorAll('.av-btn').forEach(b => {
-    b.style.borderColor = '#334155';
-    b.style.color = '#cbd5e1';
-    b.style.background = 'rgba(15,23,42,0.8)';
+function selectVoiceMode(mode, btn) {
+  data.voice = mode;
+  ['btnVoiceFemale', 'btnVoiceMale', 'btnVoiceCustom'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.borderColor = '#334155'; el.style.background = 'rgba(15,23,42,0.85)'; el.style.color = '#cbd5e1'; }
   });
-  btn.style.borderColor = color;
+  const col = mode === 'female' ? '#c084fc' : (mode === 'male' ? '#38bdf8' : '#10b981');
+  btn.style.borderColor = col;
+  btn.style.background = col + '33';
   btn.style.color = '#fff';
-  btn.style.background = color + '28';
+
+  const customBox = document.getElementById('customVoiceBox');
+  const st = document.getElementById('voiceStatusTxt');
+  const uname = data.user || '@creator';
+
+  if (mode === 'custom') {
+    if (customBox) customBox.style.display = 'block';
+    if (st) st.innerText = data.customAudioUrl ? '● Aktif: Rekaman Suara Asli Anda' : '⚠️ Silakan rekam suara Anda di bawah';
+  } else {
+    if (customBox) customBox.style.display = 'none';
+    const label = mode === 'female' ? 'Suara AI Wanita' : 'Suara AI Pria';
+    if (st) st.innerText = '● Aktif: ' + label;
+    speakTextSafe('Halo kak ' + uname + ', ini adalah contoh ' + label + ' untuk live Anda nanti.');
+  }
 }
 
-(function renderAvatarLoop() {
-  const cvs = document.getElementById('avatarCanvas');
-  if (cvs) {
-    const ctx = cvs.getContext('2d');
-    const w = cvs.width, h = cvs.height;
-    ctx.clearRect(0, 0, w, h);
+async function startUserVoiceRec() {
+  const st = document.getElementById('recTimerTxt');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRec = new MediaRecorder(stream);
+    mediaRec.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRec.onstop = () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      data.customAudioUrl = URL.createObjectURL(blob);
+      const aud = document.getElementById('userCustomAudio');
+      if (aud) { aud.src = data.customAudioUrl; aud.style.display = 'block'; }
+      if (st) st.innerText = '✅ Rekaman suara asli tersimpan! Siap digunakan.';
+      document.getElementById('voiceStatusTxt').innerText = '● Aktif: Rekaman Suara Asli Anda';
+      stream.getTracks().forEach(t => t.stop());
+    };
+    mediaRec.start();
+    recSec = 0;
+    document.getElementById('btnRecStart').disabled = true;
+    document.getElementById('btnRecStop').disabled = false;
+    document.getElementById('btnRecStop').style.color = '#fff';
+    recTimerInt = setInterval(() => {
+      recSec++;
+      if (st) st.innerText = '🔴 Merekam suara asli... ' + recSec + ' detik';
+    }, 1000);
+  } catch (e) {
+    if (st) st.innerText = '❌ Izin mikrofon ditolak browser!';
+  }
+}
 
-    const now = Date.now();
-    if (avConfig.isSpeaking) {
-      avConfig.mouthOpen = (Math.sin(now / 65) * 0.5 + 0.5) * 9 + Math.abs(Math.sin(now / 115)) * 4;
-    } else {
-      avConfig.mouthOpen *= 0.75;
-    }
-
-    if (avConfig.photoImg && avConfig.photoImg.complete) {
-      const img = avConfig.photoImg;
-      const targetH = h * 0.52;
-      const scaleBase = targetH / img.height;
-      const breathZoom = 1.02 + Math.sin(now / 650) * 0.012;
-      const swayX = Math.sin(now / 1100) * 3;
-      const swayY = Math.cos(now / 750) * 2;
-      const tilt = Math.sin(now / 1300) * 0.012;
-
-      const drawW = img.width * scaleBase * breathZoom;
-      const drawH = img.height * scaleBase * breathZoom;
-      const centerX = w / 2 + swayX;
-      const centerY = h * 0.62 + swayY;
-      const drawX = centerX - drawW / 2;
-      const drawY = centerY - drawH / 2;
-
-      ctx.save();
-      ctx.translate(centerX, centerY);
-      ctx.rotate(tilt);
-      ctx.translate(-centerX, -centerY);
-
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
-      ctx.clip();
-
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
-
-      if (avConfig.faceBox && avConfig.mouthOpen > 0.8) {
-        const fb = avConfig.faceBox;
-        const mouthX = drawX + (fb.x + fb.w * 0.5) * drawW;
-        const mouthY = drawY + (fb.y + fb.h * 0.77) * drawH;
-        const mouthW = Math.max(7, fb.w * drawW * 0.25);
-        const mouthH = Math.min(avConfig.mouthOpen * 0.7, fb.h * drawH * 0.13);
-
-        ctx.fillStyle = 'rgba(45, 10, 18, 0.88)';
-        ctx.beginPath();
-        ctx.ellipse(mouthX, mouthY, mouthW, mouthH, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-
-      ctx.save();
-      ctx.strokeStyle = avConfig.color + '99';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, Math.min(w * 0.36, drawW * 0.46), drawH * 0.46, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    } else {
-      ctx.fillStyle = 'rgba(15,23,42,0.75)';
-      ctx.fillRect(20, h * 0.42, w - 40, 44);
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Wajah Host dari Slide 2 Tampil di Sini', w / 2, h * 0.42 + 26);
+function stopUserVoiceRec() {
+  if (mediaRec && mediaRec.state !== 'inactive') mediaRec.stop();
+  clearInterval(recTimerInt);
+  document.getElementById('btnRecStart').disabled = false;
+  document.getElementById('btnRecStop').disabled = true;
+}
+function speakTextSafe(text, onDone) {
+  if (data.voice === 'custom' && data.customAudioUrl) {
+    const aud = document.getElementById('userCustomAudio');
+    if (aud) {
+      aud.pause();
+      aud.currentTime = 0;
+      setYoutubeVolume(15);
+      window.avConfig.isSpeaking = true;
+      aud.onended = () => {
+        window.avConfig.isSpeaking = false;
+        window.avConfig.mouthOpen = 0;
+        setYoutubeVolume(65);
+        if (onDone) onDone();
+      };
+      aud.play().catch(() => { window.avConfig.isSpeaking = false; });
+      return;
     }
   }
-  requestAnimationFrame(renderAvatarLoop);
-  })();
+  if (!text) { if (onDone) onDone(); return; }
+  if (!('speechSynthesis' in window)) return;
+
+  window.speechSynthesis.cancel();
+  setYoutubeVolume(15);
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'id-ID';
+  const voices = window.speechSynthesis.getVoices();
+  const idVoice = voices.find(v => v.lang.toLowerCase().includes('id'));
+  if (idVoice) utter.voice = idVoice;
+
+  utter.pitch = data.voice === 'female' ? 1.18 : 0.85;
+  utter.rate = 1.03;
+
+  utter.onstart = () => { window.avConfig.isSpeaking = true; };
+  utter.onend = () => {
+    window.avConfig.isSpeaking = false;
+    window.avConfig.mouthOpen = 0;
+    setYoutubeVolume(65);
+    if (onDone) onDone();
+  };
+  utter.onerror = () => {
+    window.avConfig.isSpeaking = false;
+    window.avConfig.mouthOpen = 0;
+    setYoutubeVolume(65);
+  };
+
+  window.speechSynthesis.speak(utter);
+}
+
+function stopAllSpeech() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  const aud = document.getElementById('userCustomAudio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+  window.avConfig.isSpeaking = false;
+  window.avConfig.mouthOpen = 0;
+  setYoutubeVolume(65);
+  if (isAutoLooping) toggleAutoLoopSim();
+}
+
 
 function setStudioBg(type, val) {
   const frame = document.getElementById('studioFrame');
