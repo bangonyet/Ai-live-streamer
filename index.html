@@ -114,28 +114,32 @@
         </div>
         <canvas id="avatarCanvas" width="540" height="960" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
 
-        <div id="studioKaraokeMini" style="display:none; position:relative; z-index:3; margin:auto 6px 4px; background:rgba(24,24,27,0.92); border:1px solid #e879f9; border-radius:8px; padding:4px 6px; text-align:left;">
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:7.5px; color:#f0abfc; font-weight:bold; margin-bottom:2px;">
-            <span>🎤 KARAOKE LIVE</span><span style="color:#34d399;">● ON</span>
+              <div style="position:relative; z-index:3; margin-top:auto; display:flex; flex-direction:column; gap:3px;">
+          <div id="studioQnaOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #38bdf8; border-radius:7px; padding:4px 6px; text-align:left;">
+            <div id="qnaAskUser" style="font-size:7px; font-weight:bold; color:#38bdf8;">💬 Q&A Penonton</div>
+            <div id="qnaAskText" style="font-size:8px; color:#fff; line-height:1.2; max-height:22px; overflow:hidden;">Pertanyaan penonton tampil di sini</div>
           </div>
-          <div id="karaokeEqBar" style="height:18px; border-radius:4px; background:linear-gradient(90deg,#701a75,#3b0764); display:flex; align-items:center; justify-content:center; font-size:8px; color:#fff; overflow:hidden; padding:0 4px;">
-            <marquee id="karaokeLyricScroll" scrollamount="3" style="font-size:8px; color:#fde047; font-weight:bold;">♪ Masukkan lirik lagu karaoke di Tab 2 Materi... ♪</marquee>
-          </div>
- </div>
-       <div id="studioQnaOverlay" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(15,23,42,0.94); border:1px solid #38bdf8; border-radius:8px; padding:5px 6px; text-align:left;">
-          <div id="qnaAskUser" style="font-size:7.5px; font-weight:bold; color:#38bdf8;">💬 Q&A Penonton</div>
-          <div id="qnaAskText" style="font-size:8.5px; color:#fff; line-height:1.25; max-height:24px; overflow:hidden;">Pertanyaan penonton tampil di sini</div>
-        </div>
 
-        <div id="studioEtalaseOverlay" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(15,23,42,0.94); border:1px solid #fbbf24; border-radius:8px; padding:5px 6px; text-align:left;">
-          <div style="display:flex; gap:5px; align-items:center;">
-            <img id="etalaseProdImg" src="" style="display:none; width:28px; height:28px; object-fit:cover; border-radius:5px; border:1px solid #fbbf24; flex-shrink:0;">
-            <div style="min-width:0; flex:1;">
-              <div id="etalaseBadgeTxt" style="font-size:7.5px; font-weight:bold; color:#fbbf24;">👇 Cek Keranjang • Etalase No. 1</div>
-              <div id="etalaseTitleTxt" style="font-size:9px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Nama Produk</div>
+          <div id="studioEtalaseOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #fbbf24; border-radius:7px; padding:4px 6px; text-align:left;">
+            <div style="display:flex; gap:5px; align-items:center;">
+              <img id="etalaseProdImg" src="" style="display:none; width:24px; height:24px; object-fit:cover; border-radius:4px; border:1px solid #fbbf24; flex-shrink:0;">
+              <div style="min-width:0; flex:1;">
+                <div id="etalaseBadgeTxt" style="font-size:7px; font-weight:bold; color:#fbbf24;">👇 Cek Keranjang • Etalase No. 1</div>
+                <div id="etalaseTitleTxt" style="font-size:8.5px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Nama Produk</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="studioKaraokeMini" style="display:none; margin:0 6px; background:rgba(24,24,27,0.94); border:1px solid #e879f9; border-radius:6px; padding:3px 5px; text-align:left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:7px; color:#f0abfc; font-weight:bold; margin-bottom:1px;">
+              <span>🎤 KARAOKE</span><span style="color:#34d399;">● ON</span>
+            </div>
+            <div id="karaokeEqBar" style="height:14px; border-radius:3px; background:linear-gradient(90deg,#701a75,#3b0764); display:flex; align-items:center; overflow:hidden; padding:0 3px;">
+              <marquee id="karaokeLyricScroll" scrollamount="3" style="font-size:7.5px; color:#fde047; font-weight:bold;">♪ Musik Karaoke Diputar... ♪</marquee>
             </div>
           </div>
         </div>
+
 
         <div style="position:relative; z-index:3; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 100%); text-align:left;">
           <div id="studioCaption" style="font-size:9px; font-weight:bold; color:#f8fafc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mode: Mentor Edukasi</div>
@@ -227,11 +231,19 @@
       <textarea id="karaokeLyricsIn" rows="3" oninput="updateKaraokeLyrics()" placeholder="Tempel lirik lagu di sini untuk ditampilkan berjalan di layar live..." style="width:100%; padding:8px; border-radius:8px; border:1px solid #c084fc; background:rgba(15,23,42,0.85); color:#fff; font-size:11.5px; margin-bottom:6px;"></textarea>
       <div style="font-size:10px; color:#cbd5e1;">💡 Gunakan input YouTube Musik di Tab 3 untuk memutar instrumen karaoke.</div>
     </div>
-    <div id="boxMateriUmum" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
-      <div id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">📚 Materi Edukasi & Poin Penjelasan</div>
+     <div id="boxMateriUmum" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
+        <span id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8;">📚 Materi Edukasi & Poin Penjelasan</span>
+        <label style="font-size:10px; background:#0284c7; color:#fff; padding:4px 8px; border-radius:6px; font-weight:bold; cursor:pointer; flex-shrink:0;">
+          📄 Upload .TXT
+          <input type="file" accept=".txt,text/plain" onchange="if(window.NicheEdukasi)NicheEdukasi.loadTxtFile(this)" style="display:none;">
+        </label>
+      </div>
       <input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left; font-size:12px; padding:9px; margin-bottom:8px;">
-      <textarea id="liveScriptInput" rows="4" oninput="syncLiveMateri()" placeholder="Tulis poin materi (pisahkan baris baru agar dibaca bergantian)..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px;"></textarea>
+      <textarea id="liveScriptInput" rows="5" oninput="syncLiveMateri(); if(window.NicheEdukasi)NicheEdukasi.updateStats()" placeholder="Tulis atau tempel materi panjang di sini (bisa berjam-jam)..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px;"></textarea>
+      <div id="eduMateriStats" style="font-size:10.5px; color:#34d399; margin-top:6px;">📊 Mendukung materi panjang hingga puluhan ribu kata (anti-macet)</div>
     </div>
+
 
     <div id="boxMateriJualan" class="card" style="display:none; padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -1379,5 +1391,120 @@ function showBox(id) {
   };
 })();
 </script>
+<script src="niche-edukasi.js"></script>
+<script src="niche-hiburan.js"></script>
+<script src="niche-jualan.js"></script>
+<script>
+(function () {
+  window.selectNiche = function (el, niche) {
+    document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
+    if (el) el.classList.add('sel');
+    data.niche = niche;
+
+    const badge = document.getElementById('studioNicheBadge');
+    if (badge) badge.innerText = niche;
+
+    if (window.AvatarStudio && window.AvatarStudio.applyNichePreset) {
+      const preset = window.AvatarStudio.applyNichePreset(niche);
+      if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
+      if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = preset.defaultPosY;
+      if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = Math.round(preset.defaultScale * 100);
+      if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = Math.round(preset.defaultDeskCut * 100);
+      if (document.getElementById('chkGlassDesk')) document.getElementById('chkGlassDesk').checked = (niche === 'HIBURAN');
+    }
+
+    if (niche === 'EDUKASI' && window.NicheEdukasi) window.NicheEdukasi.activate();
+    else if (niche === 'HIBURAN' && window.NicheHiburan) window.NicheHiburan.activate();
+    else if (niche === 'JUALAN' && window.NicheJualan) window.NicheJualan.activate();
+
+    if (typeof syncLiveMateri === 'function') syncLiveMateri();
+  };
+
+  window.addProductRow = function () {
+    if (window.NicheJualan) window.NicheJualan.addProductRow();
+  };
+
+  window.triggerQnaAnswer = function () {
+    const user = document.getElementById('qnaUserIn')?.value || '@penonton';
+    const q = document.getElementById('qnaQuestionIn')?.value || '';
+    if (!q.trim()) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
+    if (window.NicheEdukasi) window.NicheEdukasi.handleQna(user, q);
+  };
+
+  const _origSpeak = window.speakTextSafe;
+  window.speakTextSafe = function (text, onDone) {
+    if (_origSpeak) _origSpeak(text, onDone);
+    if ('speechSynthesis' in window && window.AvatarStudio) {
+      setTimeout(() => {
+        const pollWord = setInterval(() => {
+          if (!window.speechSynthesis.speaking) {
+            clearInterval(pollWord);
+            return;
+          }
+          window.AvatarStudio.pulseSpeechWord();
+        }, 160);
+      }, 60);
+    }
+  };
+
+  window.scheduleNextLoop = function () {
+    if (!isAutoLooping) return;
+    autoLoopTimer = setTimeout(() => {
+      if (!isAutoLooping) return;
+      let nextText = '';
+      if (data.niche === 'JUALAN' && window.NicheJualan) {
+        nextText = window.NicheJualan.getNextPitch();
+      } else if (data.niche === 'EDUKASI' && window.NicheEdukasi) {
+        nextText = window.NicheEdukasi.getNextChunk();
+      } else {
+        const lines = (document.getElementById('liveScriptInput')?.value || '')
+          .split('\n').map(s => s.trim()).filter(Boolean);
+        nextText = lines.length
+          ? lines[loopIndex++ % lines.length]
+          : 'Terima kasih yang sudah bergabung, tulis pertanyaan kalian di kolom komentar ya!';
+      }
+      document.getElementById('studioSubCaption').innerText = nextText;
+      window.speakTextSafe(nextText, () => window.scheduleNextLoop());
+    }, data.loopDelay || 4000);
+  };
+
+  const _origLoadYt = window.loadYoutubeMusic;
+  window.loadYoutubeMusic = function () {
+    if (_origLoadYt) _origLoadYt();
+    if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(true);
+  };
+
+  const _origStopYt = window.stopYoutubeMusic;
+  window.stopYoutubeMusic = function () {
+    if (_origStopYt) _origStopYt();
+    if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(false);
+  };
+
+  window.handleIncomingComment = async function (customUser, customMsg) {
+    const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
+    const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
+    if (!msg) return;
+
+    if (data.niche === 'JUALAN' && window.NicheJualan) {
+      window.NicheJualan.handleSpillComment(user, msg);
+      return;
+    }
+    if (data.niche === 'HIBURAN' && window.NicheHiburan && window.NicheHiburan.handleRequest(user, msg)) {
+      return;
+    }
+    if (window.NicheEdukasi) {
+      await window.NicheEdukasi.handleQna(user, msg);
+    }
+  };
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const firstNiche = document.querySelector('.niche-btn.sel');
+      if (firstNiche) window.selectNiche(firstNiche, 'EDUKASI');
+    }, 300);
+  });
+})();
+</script>
 </body>
 </html>
+
