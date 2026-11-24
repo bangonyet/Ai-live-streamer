@@ -64,10 +64,11 @@
             this.clock = 0;
 
       // Pengaturan posisi host di belakang meja (bisa diatur dari slider)
-      this.posX = 0;
-      this.posY = -18;
-      this.scale = 0.85;
-      this.deskCutY = 0.72;
+           this.posX = 0;
+      this.posY = 12;
+      this.scale = 0.92;
+      this.deskCutY = 0.82;
+
 
       // Produk yang sedang diperagakan di tangan (Niche Jualan)
       this.activeProductImg = null;
@@ -393,6 +394,13 @@
       if (theme.showHeadset) this._drawStudioHeadset(ctx, metrics);
 
       ctx.restore();
+      // 4b. Bayangan halus di atas meja (Contact Shadow) agar menyatu alami
+      const deskShadow = ctx.createLinearGradient(0, cutLineY - 26, 0, cutLineY + 14);
+      deskShadow.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      deskShadow.addColorStop(0.75, 'rgba(0, 0, 0, 0.52)');
+      deskShadow.addColorStop(1, 'rgba(0, 0, 0, 0.85)');
+      ctx.fillStyle = deskShadow;
+      ctx.fillRect(0, cutLineY - 26, W, 40);
 
       // 5. Peragaan produk di tangan host (khusus JUALAN)
       if (this.niche === 'JUALAN' && this.activeProductImg) {
@@ -479,22 +487,36 @@
       ctx.fillText('PROMO', handX - boxSize / 2 + 6, handY - boxSize / 2 - 2);
       ctx.restore();
     }
-
-
     _drawStudioBackground(ctx, W, H, theme) {
       if (this.bgImage) {
         const bgRatio = this.bgImage.width / this.bgImage.height;
         const canvasRatio = W / H;
-        let bw, bh, bx, by;
+
+        // 1. Lapisan belakang: otomatis isi ruang kosong 9:16 dengan blur studio
+        ctx.save();
+        ctx.filter = 'blur(16px) brightness(0.6)';
+        let cw, ch, cx, cy;
         if (bgRatio > canvasRatio) {
-          bh = H; bw = H * bgRatio; bx = (W - bw) / 2; by = 0;
+          ch = H; cw = H * bgRatio; cx = (W - cw) / 2; cy = 0;
         } else {
-          bw = W; bh = W / bgRatio; bx = 0; by = (H - bh) / 2;
+          cw = W; ch = W / bgRatio; cx = 0; cy = (H - ch) / 2;
         }
-        ctx.drawImage(this.bgImage, bx, by, bw, bh);
-        const grad = ctx.createRadialGradient(W / 2, H / 2, W * 0.2, W / 2, H / 2, H * 0.75);
-        grad.addColorStop(0, 'rgba(0,0,0,0.05)');
-        grad.addColorStop(1, 'rgba(0,0,0,0.55)');
+        ctx.drawImage(this.bgImage, cx, cy, cw, ch);
+        ctx.restore();
+
+        // 2. Lapisan utama: otomatis ratakan meja studio di bagian bawah tanpa terpotong
+        const isLandscape = bgRatio > 0.8;
+        const drawH = isLandscape ? H * 0.72 : H;
+        const drawW = drawH * bgRatio;
+        const drawX = (W - drawW) / 2;
+        const drawY = H - drawH;
+
+        ctx.drawImage(this.bgImage, drawX, drawY, drawW, drawH);
+
+        // 3. Vignette gelap di pinggir layar agar fokus ke tengah
+        const grad = ctx.createRadialGradient(W / 2, H * 0.45, W * 0.15, W / 2, H / 2, H * 0.8);
+        grad.addColorStop(0, 'rgba(0,0,0,0.02)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.68)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
       } else {
@@ -504,15 +526,6 @@
         grad.addColorStop(1, theme.bgGradient[2]);
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
-
-        ctx.save();
-        ctx.fillStyle = theme.rimColor;
-        ctx.globalAlpha = 0.14;
-        ctx.beginPath();
-        ctx.arc(W * 0.2, H * 0.25, 90, 0, Math.PI * 2);
-        ctx.arc(W * 0.82, H * 0.35, 120, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
       }
     }
 
@@ -523,13 +536,24 @@
 
       pCtx.clearRect(0, 0, W, H);
       pCtx.save();
+      pCtx.filter = 'contrast(1.04) saturate(1.06)';
       if (this.segmentationMask) {
         pCtx.drawImage(this.segmentationMask, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
         pCtx.globalCompositeOperation = 'source-in';
       }
       pCtx.drawImage(this.sourceImage, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+
+      // Penyatuan pencahayaan studio otomatis (Auto-Relighting)
+      pCtx.globalCompositeOperation = 'source-atop';
+      const relightGrad = pCtx.createLinearGradient(0, drawRect.y, 0, drawRect.y + drawRect.h);
+      relightGrad.addColorStop(0, theme.ambientTint);
+      relightGrad.addColorStop(0.65, 'rgba(0, 0, 0, 0.12)');
+      relightGrad.addColorStop(1, 'rgba(0, 0, 0, 0.48)');
+      pCtx.fillStyle = relightGrad;
+      pCtx.fillRect(0, 0, W, H);
       pCtx.restore();
 
+      // Rim light tipis realistis
       const rCtx = this.rimCtx;
       rCtx.clearRect(0, 0, W, H);
       rCtx.save();
@@ -542,12 +566,15 @@
 
     _drawRimLightAura(ctx, theme) {
       ctx.save();
-      ctx.filter = 'blur(10px)';
-      ctx.globalAlpha = 0.78;
-      ctx.drawImage(this.rimCanvas, -6, -4);
-      ctx.drawImage(this.rimCanvas, 6, -4);
+      ctx.filter = 'blur(5px)';
+      ctx.globalAlpha = 0.28;
+      ctx.globalCompositeOperation = 'screen';
+      ctx.drawImage(this.rimCanvas, -2.5, -1);
+      ctx.drawImage(this.rimCanvas, 2.5, -1);
       ctx.restore();
     }
+
+    
 
     _applyLipAndJawWarping(ctx, metrics) {
       if (this.speechEnergy < 0.02) return;
