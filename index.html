@@ -23,8 +23,8 @@
   .card:hover{border-color:#2dd4bf}
   .card.sel{border:2px solid #34d399;background:rgba(16,185,129,.18)}
 </style>
-</head>
-<body>
+ </head>
+ <body>
 <canvas id="galaxy"></canvas>
 <div class="bar"><b style="color:#2dd4bf">● AI Live Streamer</b><span id="uLabel">@creatortiktok</span><span>Tahap <b id="sNum">1</b> / 6</span></div>
 <div id="s1" class="slide active">
@@ -38,14 +38,14 @@
   </div>
   <div id="emailBox" style="display:none;margin-top:8px">
     <input type="email" id="emailIn" placeholder="Alamat Email (contoh: nama@gmail.com)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #2dd4bf;background:rgba(15,23,42,.85);color:#fff;margin-bottom:8px">
-      <div style="position:relative;margin-bottom:12px">
-  <input type="password" id="passIn" placeholder="Password (min. 6 karakter)" style="padding-right:42px;margin-bottom:0">
-  <span onclick="passIn.type = passIn.type === 'password' ? 'text' : 'password'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px">👁️</span>
- </div> 
-   <button class="btn btn-green" onclick="if(window.loginEmail){loginEmail()}else{authMsg.style.color='#f87171';authMsg.innerText='Fungsi loginEmail belum aktif!'}">Masuk / Daftar Email</button>
- <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
+    <div style="position:relative;margin-bottom:12px">
+      <input type="password" id="passIn" placeholder="Password (min. 6 karakter)" style="padding-right:42px;margin-bottom:0">
+      <span onclick="passIn.type = passIn.type === 'password' ? 'text' : 'password'" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px">👁️</span>
+    </div>
+    <button class="btn btn-green" onclick="if(window.loginEmail){loginEmail()}else{authMsg.style.color='#f87171';authMsg.innerText='Fungsi loginEmail belum aktif!'}">Masuk / Daftar Email</button>
+    <button class="btn" style="font-size:12px;padding:8px" onclick="showBox('authMenu')">← Pilih Metode Lain</button>
   </div>
-  <div id="phoneBox" style="display:none;margin-top:8px">
+ <div id="phoneBox" style="display:none;margin-top:8px">
     <input type="tel" id="phIn" placeholder="Nomor HP (contoh: 08123456789)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #34d399;background:rgba(15,23,42,.85);color:#fff;margin-bottom:8px">
     <div id="recaptcha-box" style="display:flex;justify-content:center;margin-bottom:8px"></div>
     <button class="btn btn-green" onclick="sendOTP()">Kirim Kode OTP SMS</button>
@@ -57,13 +57,40 @@
   </div>
   <p id="authMsg" style="font-size:12px;color:#34d399;margin-top:8px"></p>
 </div>
-<div id="s2" class="slide"><h2>2. Verifikasi & Scan Wajah Wajib</h2><p class="sub">Wajah wajib dipindai agar AI Avatar aktif & lolos moderasi</p><div style="background:rgba(56,189,248,0.12);border:1px solid #38bdf8;border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:11px;color:#e0f2fe;text-align:left;line-height:1.4">📱 <b>Info Kamera HP:</b> Pastikan <b>Izin Kamera (Allow)</b> di browser HP sudah aktif & halaman dibuka lewat link <b>HTTPS</b>. Jika terblokir, klik ikon <b>Gembok / Setelan Situs</b> di atas browser lalu izinkan Kamera.</div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px"><div class="card" style="text-align:center"><p style="font-weight:bold;margin-bottom:8px">📷 Kamera Deteksi Live</p><div id="camBox" style="width:140px;height:140px;margin:0 auto 10px;background:#0f172a;border:2px solid #334155;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center"><video id="camVid" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:none"></video><span id="camPlaceholder" style="font-size:11px;color:#64748b">Kamera Siap</span></div><button id="btnScan" type="button" class="btn btn-green" onclick="startFaceScan()">🔍 Mulai Scan Wajah</button></div><div class="card" style="text-align:center;display:flex;flex-direction:column;justify-content:center"><p style="font-weight:bold;margin-bottom:6px">🖼️ Alternatif Upload / Selfie</p><p style="font-size:11px;color:#94a3b8;margin-bottom:10px">Ambil foto selfie atau pilih dari galeri (wajah menghadap depan)</p><input type="file" id="faceFileIn" accept="image/*" onchange="verifyUpload(this)" style="font-size:12px;margin:0 auto;max-width:200px"><img id="previewImg" style="display:none;width:80px;height:80px;object-fit:cover;border-radius:8px;margin:10px auto 0;border:1px solid #38bdf8"></div></div><div style="margin-top:14px;text-align:left;background:rgba(15,23,42,0.6);padding:10px 12px;border-radius:8px;border:1px solid #334155"><label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:pointer;line-height:1.4"><input type="checkbox" id="agreeFace" style="margin-top:3px;accent-color:#10b981" onchange="if(this.checked&&document.getElementById('faceFileIn').files.length){verifyUpload(document.getElementById('faceFileIn'))}"><span>Saya menyatakan wajah ini adalah <b>wajah saya sendiri</b> dan bersedia mengaktifkan <b>label Konten AI</b> saat live.</span></label></div><p id="scanStat" style="margin-top:12px;font-size:12.5px;font-weight:bold;color:#fbbf24">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p></div>
- 
-<div id="s3" class="slide">
+  <div id="s2" class="slide">
+  <h2>2. Verifikasi & Scan Wajah Wajib</h2>
+  <p class="sub">Wajah wajib dipindai agar AI Avatar aktif & lolos moderasi</p>
+  <div style="background:rgba(56,189,248,0.12);border:1px solid #38bdf8;border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:11px;color:#e0f2fe;text-align:left;line-height:1.4">
+    📱 <b>Info Kamera HP:</b> Pastikan <b>Izin Kamera (Allow)</b> di browser HP sudah aktif & halaman dibuka lewat link <b>HTTPS</b>. Jika terblokir, klik ikon <b>Gembok / Setelan Situs</b> di atas browser lalu izinkan Kamera.
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+    <div class="card" style="text-align:center">
+      <p style="font-weight:bold;margin-bottom:8px">📷 Kamera Deteksi Live</p>
+      <div id="camBox" style="width:140px;height:140px;margin:0 auto 10px;background:#0f172a;border:2px solid #334155;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <video id="camVid" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:none"></video>
+        <span id="camPlaceholder" style="font-size:11px;color:#64748b">Kamera Siap</span>
+      </div>
+      <button id="btnScan" type="button" class="btn btn-green" onclick="startFaceScan()">🔍 Mulai Scan Wajah</button>
+    </div>
+   <div class="card" style="text-align:center;display:flex;flex-direction:column;justify-content:center">
+      <p style="font-weight:bold;margin-bottom:6px">🖼️ Alternatif Upload / Selfie</p>
+      <p style="font-size:11px;color:#94a3b8;margin-bottom:10px">Ambil foto selfie atau pilih dari galeri (wajah menghadap depan)</p>
+      <input type="file" id="faceFileIn" accept="image/*" onchange="verifyUpload(this)" style="font-size:12px;margin:0 auto;max-width:200px">
+      <img id="previewImg" style="display:none;width:80px;height:80px;object-fit:cover;border-radius:8px;margin:10px auto 0;border:1px solid #38bdf8">
+    </div>
+  </div>
+  <div style="margin-top:14px;text-align:left;background:rgba(15,23,42,0.6);padding:10px 12px;border-radius:8px;border:1px solid #334155">
+    <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:pointer;line-height:1.4">
+      <input type="checkbox" id="agreeFace" style="margin-top:3px;accent-color:#10b981" onchange="if(this.checked&&document.getElementById('faceFileIn').files.length){verifyUpload(document.getElementById('faceFileIn'))}">
+      <span>Saya menyatakan wajah ini adalah <b>wajah saya sendiri</b> dan bersedia mengaktifkan <b>label Konten AI</b> saat live.</span>
+    </label>
+  </div>
+  <p id="scanStat" style="margin-top:12px;font-size:12.5px;font-weight:bold;color:#fbbf24">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p>
+</div>
+  <div id="s3" class="slide">
   <h2>3. Studio Live AI</h2>
   <p class="sub">Atur studio, host AI, dan materi siaran Anda</p>
 
-  <!-- Pilihan Niche (3 Kolom Rapi) -->
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px;">
     <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
       <div style="font-size:18px;">🎓</div>
@@ -77,18 +104,16 @@
       <div style="font-size:18px;">🛍️</div>
       <div style="font-size:11.5px; font-weight:bold; margin-top:3px;">JUALAN</div>
     </div>
-  </div>
-
-  <!-- STICKY MINI-PREVIEW 9:16 -->
-  <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
-    <div style="display:flex; gap:10px; align-items:center; justify-content:center;">
-            <div id="studioFrame" style="position:relative; width:146px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; background-image:url('studio-edukasi.jpg'); background-size:cover; background-position:center; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
+ </div>
+ <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
+    <div style="display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap;">
+      <div id="studioFrame" style="position:relative; width:168px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
         <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; z-index:3;">
           <span style="background:#ef4444; color:#fff; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">● LIVE</span>
           <span id="studioNicheBadge" style="background:rgba(15,23,42,0.8); color:#38bdf8; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">EDUKASI</span>
         </div>
-        <canvas id="avatarCanvas" width="270" height="480" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
-                     <!-- Layar Mini Karaoke (Khusus Niche HIBURAN) -->
+        <canvas id="avatarCanvas" width="540" height="960" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
+
         <div id="studioKaraokeMini" style="display:none; position:relative; z-index:3; margin:auto 6px 4px; background:rgba(24,24,27,0.92); border:1px solid #e879f9; border-radius:8px; padding:4px 6px; text-align:left;">
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:7.5px; color:#f0abfc; font-weight:bold; margin-bottom:2px;">
             <span>🎤 KARAOKE LIVE</span><span style="color:#34d399;">● ON</span>
@@ -96,15 +121,12 @@
           <div id="karaokeEqBar" style="height:18px; border-radius:4px; background:linear-gradient(90deg,#701a75,#3b0764); display:flex; align-items:center; justify-content:center; font-size:8px; color:#fff; overflow:hidden; padding:0 4px;">
             <marquee id="karaokeLyricScroll" scrollamount="3" style="font-size:8px; color:#fde047; font-weight:bold;">♪ Masukkan lirik lagu karaoke di Tab 2 Materi... ♪</marquee>
           </div>
-        </div>
-
-        <!-- Kartu Q&A Penonton (Khusus Niche EDUKASI) -->
-        <div id="studioQnaOverlay" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(15,23,42,0.94); border:1px solid #38bdf8; border-radius:8px; padding:5px 6px; text-align:left;">
+ </div>
+       <div id="studioQnaOverlay" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(15,23,42,0.94); border:1px solid #38bdf8; border-radius:8px; padding:5px 6px; text-align:left;">
           <div id="qnaAskUser" style="font-size:7.5px; font-weight:bold; color:#38bdf8;">💬 Q&A Penonton</div>
           <div id="qnaAskText" style="font-size:8.5px; color:#fff; line-height:1.25; max-height:24px; overflow:hidden;">Pertanyaan penonton tampil di sini</div>
         </div>
 
-        <!-- Kartu Etalase dengan Foto Produk (Khusus Niche JUALAN) -->
         <div id="studioEtalaseOverlay" style="display:none; position:relative; z-index:3; margin:0 6px 4px; background:rgba(15,23,42,0.94); border:1px solid #fbbf24; border-radius:8px; padding:5px 6px; text-align:left;">
           <div style="display:flex; gap:5px; align-items:center;">
             <img id="etalaseProdImg" src="" style="display:none; width:28px; height:28px; object-fit:cover; border-radius:5px; border:1px solid #fbbf24; flex-shrink:0;">
@@ -115,48 +137,48 @@
           </div>
         </div>
 
-            
-
         <div style="position:relative; z-index:3; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 100%); text-align:left;">
           <div id="studioCaption" style="font-size:9px; font-weight:bold; color:#f8fafc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mode: Mentor Edukasi</div>
           <div id="studioSubCaption" style="font-size:8px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Siap dikonfigurasi...</div>
         </div>
       </div>
 
-      <div style="flex:1; display:flex; flex-direction:column; gap:6px; text-align:left;">
+      <div style="flex:1; min-width:160px; display:flex; flex-direction:column; gap:6px; text-align:left;">
         <div style="font-size:11px; color:#cbd5e1; font-weight:bold;">⚡ Kontrol Cepat Live</div>
         <button type="button" onclick="testAIVoice()" style="padding:8px; border-radius:8px; border:1px solid #38bdf8; background:rgba(56,189,248,0.15); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔊 Tes Suara & Opening</button>
         <button type="button" id="btnAutoLoop" onclick="toggleAutoLoopSim()" style="padding:8px; border-radius:8px; border:1px solid #10b981; background:rgba(16,185,129,0.15); color:#34d399; font-size:11px; font-weight:bold; cursor:pointer;">🔁 Simulasi Auto-Loop</button>
         <button type="button" onclick="stopAllSpeech()" style="padding:6px; border-radius:8px; border:1px solid #475569; background:rgba(30,41,59,0.8); color:#94a3b8; font-size:10.5px; cursor:pointer;">⏹️ Hentikan Suara</button>
       </div>
     </div>
-  </div>
-
-  <!-- TAB MENU MINI -->
-  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
+ </div>
+ <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
     <button type="button" class="s3-tab sel" onclick="switchS3Tab(this, 'tabStudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🎨 1. Studio</button>
     <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabMateri')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">📝 2. Materi</button>
     <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabAudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ 3. Audio/Loop</button>
   </div>
 
-  <!-- TAB 1: STUDIO & GAYA HOST -->
   <div id="tabStudio" class="s3-panel" style="text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
-      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🖼️ Pilih Background Studio 3D / Upload</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:12px; font-weight:bold; color:#38bdf8;">🖼️ Background Studio & Rasio Layar</span>
+        <div style="display:flex; gap:4px;">
+          <button type="button" id="btnRatio916" onclick="setStudioAspectRatio('9:16')" style="font-size:10px; padding:3px 7px; border-radius:5px; border:1px solid #38bdf8; background:rgba(56,189,248,0.25); color:#fff; cursor:pointer;">9:16</button>
+          <button type="button" id="btnRatio169" onclick="setStudioAspectRatio('16:9')" style="font-size:10px; padding:3px 7px; border-radius:5px; border:1px solid #475569; background:#1e293b; color:#94a3b8; cursor:pointer;">16:9</button>
+        </div>
+      </div>
+
       <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px;">
-                 <button type="button" onclick="setStudioBg('image', 'studio-edukasi.jpg')" style="height:48px; border-radius:8px; border:1px solid #38bdf8; background:url('studio-edukasi.jpg') center/cover; color:#fff; text-shadow:0 1px 4px #000; font-size:10px; font-weight:bold; cursor:pointer;">Edukasi</button>
+        <button type="button" onclick="setStudioBg('image', 'studio-edukasi.jpg')" style="height:48px; border-radius:8px; border:1px solid #38bdf8; background:url('studio-edukasi.jpg') center/cover; color:#fff; text-shadow:0 1px 4px #000; font-size:10px; font-weight:bold; cursor:pointer;">Edukasi</button>
         <button type="button" onclick="setStudioBg('image', 'studio-hiburan.jpeg')" style="height:48px; border-radius:8px; border:1px solid #c084fc; background:url('studio-hiburan.jpeg') center/cover; color:#fff; text-shadow:0 1px 4px #000; font-size:10px; font-weight:bold; cursor:pointer;">Hiburan</button>
         <button type="button" onclick="setStudioBg('image', 'studio-jualan.jpeg')" style="height:48px; border-radius:8px; border:1px solid #fbbf24; background:url('studio-jualan.jpeg') center/cover; color:#fff; text-shadow:0 1px 4px #000; font-size:10px; font-weight:bold; cursor:pointer;">Jualan</button>
-
-
         <label style="height:48px; border-radius:8px; border:1px dashed #fbbf24; background:rgba(251,191,36,0.1); color:#fbbf24; font-size:10px; font-weight:bold; display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer;">
           + Upload BG
           <input type="file" accept="image/*" onchange="uploadStudioBg(this)" style="display:none;">
         </label>
       </div>
-            <div style="border-top:1px solid #334155; padding-top:10px; margin-top:4px;">
+      <div style="border-top:1px solid #334155; padding-top:10px; margin-top:4px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-size:11.5px; font-weight:bold; color:#38bdf8;">🧍 Posisi Host & Batas Meja Studio</span>
+          <span style="font-size:11.5px; font-weight:bold; color:#38bdf8;">🧍 Posisi Host & Meja Studio</span>
           <button type="button" onclick="resetHostTransform()" style="background:#1e293b; border:1px solid #475569; color:#cbd5e1; font-size:10px; padding:3px 7px; border-radius:5px; cursor:pointer;">Reset</button>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:10.5px;">
@@ -166,62 +188,59 @@
           </div>
           <div>
             <span>↕️ Naik / Turun</span>
-            <input type="range" id="rngHostY" min="-100" max="100" value="-18" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;">
+            <input type="range" id="rngHostY" min="-100" max="100" value="0" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;">
           </div>
           <div>
             <span>🔍 Ukuran Host</span>
-            <input type="range" id="rngHostScale" min="50" max="125" value="85" oninput="updateHostTransform()" style="width:100%; accent-color:#34d399;">
+            <input type="range" id="rngHostScale" min="40" max="130" value="78" oninput="updateHostTransform()" style="width:100%; accent-color:#34d399;">
           </div>
           <div>
             <span>🪑 Batas Tinggi Meja</span>
-            <input type="range" id="rngDeskCut" min="50" max="100" value="72" oninput="updateHostTransform()" style="width:100%; accent-color:#fbbf24;">
+            <input type="range" id="rngDeskCut" min="45" max="95" value="62" oninput="updateHostTransform()" style="width:100%; accent-color:#fbbf24;">
           </div>
         </div>
+        <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:#cbd5e1; margin-top:8px; cursor:pointer;">
+          <input type="checkbox" id="chkGlassDesk" onchange="updateHostTransform()" style="accent-color:#c084fc;">
+          <span>Efek Meja Kaca Transparan (cocok untuk meja DJ Hiburan)</span>
+        </label>
       </div>
-
-
+    </div>
   </div>
-  </div>
-
-  <!-- TAB 2: MONOLOG OPENING & MATERI / ETALASE -->
   <div id="tabMateri" class="s3-panel" style="display:none; text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="font-size:12px; font-weight:bold; color:#fbbf24; margin-bottom:6px;">👋 Monolog Perkenalan Akun (Opening Live)</div>
       <textarea id="openingScriptInput" rows="2" oninput="syncLiveMateri()" placeholder="Contoh: Halo semuanya selamat datang di live akun kami! Jangan lupa tap-tap layar dan follow dulu ya..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px; margin-bottom:4px;"></textarea>
       <div style="font-size:10.5px; color:#94a3b8;">Dibacakan pertama kali saat Live dimulai sebelum masuk ke materi utama.</div>
-         <div id="boxFiturEdukasi" class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left;border-color:#38bdf8">
-      <div style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:6px">💬 Simulasi & Jawab Q&A Penonton</div>
-      <div style="display:flex;gap:6px;margin-bottom:6px">
-        <input type="text" id="qnaUserIn" placeholder="@penonton" value="@belajar_yuk" style="width:34%;text-align:left;font-size:11px;padding:7px;margin-bottom:0">
-        <input type="text" id="qnaQuestionIn" placeholder="Tulis pertanyaan penonton..." style="flex:1;text-align:left;font-size:11px;padding:7px;margin-bottom:0">
-      </div>
-      <button type="button" onclick="triggerQnaAnswer()" style="width:100%;padding:8px;border-radius:8px;border:none;background:#0284c7;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">🎙️ Tampilkan Pertanyaan & Jawab Otomatis</button>
     </div>
 
-    <div id="boxFiturHiburan" class="card" style="display:none;padding:12px;margin-bottom:10px;cursor:default;text-align:left;border-color:#e879f9">
-      <div style="font-size:12px;font-weight:bold;color:#e879f9;margin-bottom:6px">🎤 Lirik Lagu Karaoke (Layar Mini & Teks Berjalan)</div>
-      <textarea id="karaokeLyricsIn" rows="3" oninput="updateKaraokeLyrics()" placeholder="Tempel lirik lagu di sini untuk ditampilkan berjalan di layar live..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #c084fc;background:rgba(15,23,42,0.85);color:#fff;font-size:11.5px;margin-bottom:6px"></textarea>
-      <div style="font-size:10px;color:#cbd5e1">💡 Gunakan input YouTube Musik di Tab 3 untuk memutar instrumen karaoke.</div>
+    <div id="boxFiturEdukasi" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#38bdf8;">
+      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:6px;">💬 Simulasi & Jawab Q&A Penonton</div>
+      <div style="display:flex; gap:6px; margin-bottom:6px;">
+        <input type="text" id="qnaUserIn" placeholder="@penonton" value="@belajar_yuk" style="width:34%; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
+        <input type="text" id="qnaQuestionIn" placeholder="Tulis pertanyaan penonton..." style="flex:1; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
+      </div>
+      <button type="button" onclick="triggerQnaAnswer()" style="width:100%; padding:8px; border-radius:8px; border:none; background:#0284c7; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ Tampilkan Pertanyaan & Jawab Otomatis</button>
     </div>
 
+    <div id="boxFiturHiburan" class="card" style="display:none; padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#e879f9;">
+      <div style="font-size:12px; font-weight:bold; color:#e879f9; margin-bottom:6px;">🎤 Lirik Lagu Karaoke (Layar Mini & Teks Berjalan)</div>
+      <textarea id="karaokeLyricsIn" rows="3" oninput="updateKaraokeLyrics()" placeholder="Tempel lirik lagu di sini untuk ditampilkan berjalan di layar live..." style="width:100%; padding:8px; border-radius:8px; border:1px solid #c084fc; background:rgba(15,23,42,0.85); color:#fff; font-size:11.5px; margin-bottom:6px;"></textarea>
+      <div style="font-size:10px; color:#cbd5e1;">💡 Gunakan input YouTube Musik di Tab 3 untuk memutar instrumen karaoke.</div>
     </div>
-<div id="boxMateriUmum" class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div id="materiBoxTitle" style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:8px">📚 Materi Edukasi & Poin Penjelasan</div><input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left;font-size:12px;padding:9px;margin-bottom:8px"><textarea id="liveScriptInput" rows="4" oninput="syncLiveMateri()" placeholder="Tulis poin materi (pisahkan baris baru agar dibaca bergantian)..." style="width:100%;padding:9px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;font-size:12px"></textarea></div><div id="boxMateriJualan" class="card" style="display:none;padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:bold;color:#34d399">🛍️ Daftar Produk Etalase</span><button type="button" onclick="addProductRow()" style="padding:4px 8px;border-radius:6px;border:none;background:#10b981;color:#064e3b;font-size:11px;font-weight:bold;cursor:pointer">+ Tambah Produk</button></div><div id="productListContainer" style="display:flex;flex-direction:column;gap:8px"></div></div></div>
-     <div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left;border-color:#2dd4bf">
-      <div style="font-size:12px;font-weight:bold;color:#2dd4bf;margin-bottom:8px">🎚️ Mixer Volume Audio Studio</div>
-      <div style="margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
-          <span>🎙️ Volume Suara Host (AI / Asli)</span><b id="lblHostVol" style="color:#34d399">100%</b>
-        </div>
-        <input type="range" id="rngHostVol" min="0" max="100" value="100" oninput="updateAudioMixer()" style="width:100%;accent-color:#34d399">
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
-          <span>🎵 Volume Musik Backsound</span><b id="lblMusicVol" style="color:#38bdf8">65%</b>
-        </div>
-        <input type="range" id="rngMusicVol" min="0" max="100" value="65" oninput="updateAudioMixer()" style="width:100%;accent-color:#38bdf8">
-      </div>
+    <div id="boxMateriUmum" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">📚 Materi Edukasi & Poin Penjelasan</div>
+      <input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left; font-size:12px; padding:9px; margin-bottom:8px;">
+      <textarea id="liveScriptInput" rows="4" oninput="syncLiveMateri()" placeholder="Tulis poin materi (pisahkan baris baru agar dibaca bergantian)..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px;"></textarea>
     </div>
-    <!-- PANEL AUTOPILOT KOMENTAR REAL-TIME & ANTREAN (100% GRATIS) -->
+
+    <div id="boxMateriJualan" class="card" style="display:none; padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:12px; font-weight:bold; color:#34d399;">🛍️ Daftar Produk Etalase</span>
+        <button type="button" onclick="addProductRow()" style="padding:4px 8px; border-radius:6px; border:none; background:#10b981; color:#064e3b; font-size:11px; font-weight:bold; cursor:pointer;">+ Tambah Produk</button>
+      </div>
+      <div id="productListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#a855f7;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
         <span style="font-size:12px; font-weight:bold; color:#c084fc;">🤖 Autopilot Komentar Penonton (Anti-Pelanggaran)</span>
@@ -229,16 +248,71 @@
       </div>
       <div style="display:flex; gap:6px; margin-bottom:6px;">
         <input type="text" id="liveChatUser" placeholder="@penonton" value="@kak_sari" style="width:32%; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
-        <input type="text" id="liveChatMsg" placeholder="Komen: req lagu Gereja Tua / spill no 1 / apa itu..." style="flex:1; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
+        <input type="text" id="liveChatMsg" placeholder="Komen: req lagu / spill no 1 / apa itu..." style="flex:1; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
       </div>
       <button type="button" onclick="handleIncomingComment()" style="width:100%; padding:8px; border-radius:8px; border:none; background:#7e22ce; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">⚡ Proses Komentar Otomatis (Autopilot)</button>
       <div id="karaokeQueueBox" style="display:none; margin-top:8px; padding-top:6px; border-top:1px dashed #475569; font-size:10.5px; color:#f0abfc;">
         🎶 <b>Antrean Karaoke:</b> <span id="karaokeQueueTxt">Belum ada antrean</span>
       </div>
     </div>
+  </div>
+  <div id="tabAudio" class="s3-panel" style="display:none; text-align:left;">
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#c084fc; margin-bottom:8px;">🗣️ Pilih Karakter Suara Host</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
+        <button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px; border-radius:8px; border:1.5px solid #c084fc; background:rgba(192,132,252,0.25); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">👩 AI Wanita</button>
+        <button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">👨 AI Pria</button>
+        <button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ Suara Asli</button>
+      </div>
+      <div id="voiceStatusTxt" style="font-size:11px; color:#34d399; margin-bottom:8px;">● Aktif: Suara AI Wanita</div>
 
- <div id="tabAudio" class="s3-panel" style="display:none;text-align:left"><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#c084fc;margin-bottom:8px">🗣️ Pilih Karakter Suara Host</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px"><button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px;border-radius:8px;border:1.5px solid #c084fc;background:rgba(192,132,252,0.25);color:#fff;font-size:11px;font-weight:bold;cursor:pointer">👩 AI Wanita</button><button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">👨 AI Pria</button><button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px;border-radius:8px;border:1px solid #334155;background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11px;font-weight:bold;cursor:pointer">🎙️ Suara Asli</button></div><div id="voiceStatusTxt" style="font-size:11px;color:#34d399;margin-bottom:8px">● Aktif: Suara AI Wanita</div><div id="customVoiceBox" style="display:none;background:rgba(15,23,42,0.9);border:1px solid #10b981;border-radius:10px;padding:10px;margin-bottom:10px"><div style="font-size:11.5px;font-weight:bold;color:#34d399;margin-bottom:4px">🎙️ Rekam Contoh Suara Asli Anda</div><p style="font-size:10.5px;color:#94a3b8;margin-bottom:8px">Rekam suara Anda. Saat Live / Auto-Loop berjalan, rekaman ini akan diputar otomatis.</p><div style="display:flex;gap:6px;margin-bottom:8px"><button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1;padding:8px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">🔴 Mulai Rekam</button><button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1;padding:8px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#94a3b8;font-size:11px;font-weight:bold;cursor:pointer">⏹️ Selesai</button></div><div id="recTimerTxt" style="font-size:11px;color:#fbbf24;margin-bottom:6px">Siap merekam via mikrofon HP...</div><audio id="userCustomAudio" controls style="display:none;width:100%;height:34px"></audio></div><label style="font-size:11px;color:#94a3b8">Jeda Antar Materi (Detik):</label><input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%;padding:8px;border-radius:8px;border:1px solid #475569;background:rgba(15,23,42,0.85);color:#fff;margin-top:4px"></div><div class="card" style="padding:12px;margin-bottom:10px;cursor:default;text-align:left"><div style="font-size:12px;font-weight:bold;color:#f87171;margin-bottom:6px">🎵 Backsound Musik YouTube (Auto-Ducking)</div><div style="display:flex;gap:6px;margin-bottom:6px"><input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be...)" style="text-align:left;font-size:11px;padding:8px;margin-bottom:0"><button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:11px;font-weight:bold;cursor:pointer">Putar</button></div><div style="display:flex;justify-content:space-between;align-items:center"><span id="ytMusicStatus" style="font-size:10.5px;color:#94a3b8">Belum ada musik</span><button type="button" onclick="stopYoutubeMusic()" style="background:none;border:none;color:#f87171;font-size:10.5px;cursor:pointer">Stop Musik</button></div><div id="ytPlayer" style="display:none"></div></div></div><button type="button" class="btn btn-green" style="margin-top:8px" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button></div>
- <div id="s4" class="slide">
+      <div id="customVoiceBox" style="display:none; background:rgba(15,23,42,0.9); border:1px solid #10b981; border-radius:10px; padding:10px; margin-bottom:10px;">
+        <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:4px;">🎙️ Rekam Contoh Suara Asli Anda</div>
+        <p style="font-size:10.5px; color:#94a3b8; margin-bottom:8px;">Rekam suara Anda. Saat Live / Auto-Loop berjalan, rekaman ini akan diputar otomatis.</p>
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1; padding:8px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔴 Mulai Rekam</button>
+          <button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1; padding:8px; border-radius:8px; border:1px solid #475569; background:#1e293b; color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">⏹️ Selesai</button>
+        </div>
+        <div id="recTimerTxt" style="font-size:11px; color:#fbbf24; margin-bottom:6px;">Siap merekam via mikrofon HP...</div>
+        <audio id="userCustomAudio" controls style="display:none; width:100%; height:34px;"></audio>
+      </div>
+
+      <label style="font-size:11px; color:#94a3b8;">Jeda Antar Materi (Detik):</label>
+      <input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%; padding:8px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; margin-top:4px;">
+    </div>
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#2dd4bf;">
+      <div style="font-size:12px; font-weight:bold; color:#2dd4bf; margin-bottom:8px;">🎚️ Mixer Volume Audio Studio</div>
+      <div style="margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
+          <span>🎙️ Volume Suara Host (AI / Asli)</span><b id="lblHostVol" style="color:#34d399;">100%</b>
+        </div>
+        <input type="range" id="rngHostVol" min="0" max="100" value="100" oninput="updateAudioMixer()" style="width:100%; accent-color:#34d399;">
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
+          <span>🎵 Volume Musik Backsound</span><b id="lblMusicVol" style="color:#38bdf8;">65%</b>
+        </div>
+        <input type="range" id="rngMusicVol" min="0" max="100" value="65" oninput="updateAudioMixer()" style="width:100%; accent-color:#38bdf8;">
+      </div>
+    </div>
+
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#f87171; margin-bottom:6px;">🎵 Backsound Musik YouTube (Auto-Ducking)</div>
+      <div style="display:flex; gap:6px; margin-bottom:6px;">
+        <input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be/...)" style="text-align:left; font-size:11px; padding:8px; margin-bottom:0;">
+        <button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Putar</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span id="ytMusicStatus" style="font-size:10.5px; color:#94a3b8;">Belum ada musik</span>
+        <button type="button" onclick="stopYoutubeMusic()" style="background:none; border:none; color:#f87171; font-size:10.5px; cursor:pointer;">Stop Musik</button>
+      </div>
+      <div id="ytPlayer" style="display:none;"></div>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-green" style="margin-top:8px;" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button>
+  </div>
+  <div id="s4" class="slide">
   <h2>4. Pilih Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
   <p class="sub">Klik karakter pembawa acara AI yang diinginkan</p>
   <div class="grid">
@@ -247,6 +321,7 @@
     <div class="card" onclick="chooseStyle(this,'Dosen / Ahli')"><h1>🎓</h1><h3>Dosen / Ahli</h3><p style="font-size:12px;color:#94a3b8">Formal & berbobot</p></div>
   </div>
 </div>
+
 <div id="s5" class="slide">
   <h2>5. Control Center & Preview</h2>
   <p class="sub">Periksa pengaturan studio AI sebelum aktivasi</p>
@@ -277,26 +352,19 @@
     <div class="card">
       <p style="font-size:13px;margin-bottom:6px"><b>Pembayaran via QRIS</b></p>
       <p id="pkgLbl" style="font-size:11px;color:#2dd4bf;margin-bottom:8px">Paket 2 Jam - Rp 5.500</p>
-     <img id="qrisImg" style="background:#fff;padding:6px;border-radius:8px;width:150px;height:150px">
-<script>
-const dQr=String.fromCharCode(46);
-document.getElementById('qrisImg').src='https://api'+dQr+'qrserver'+dQr+'com/v1/create-qr-code/?size=150x150&data=AILiveStreamer';
-</script>
-
+      <img id="qrisImg" style="background:#fff;padding:6px;border-radius:8px;width:150px;height:150px" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AILiveStreamer">
     </div>
   </div>
   <button class="btn btn-green" style="margin-top:14px" onclick="startLive()">🚀 MULAI LIVE (OBS / RTMP)</button>
 </div>
-<div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px"><span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span></div>
-<script>
-const d2=String.fromCharCode(46),s=document.createElement('script');
-s.src='https://unpkg'+d2+'c'+'om/face-api'+d2+'js@0'+d2+'22'+d2+'2/dist/face-api'+d2+'min'+d2+'js';
-document.head.appendChild(s);
-</script>
+
+<div class="bar" style="justify-content:center;gap:8px;color:#94a3b8;font-size:12px">
+  <span>🔒 Alur Terkunci Berurutan • Selesaikan tiap tahap untuk lanjut</span>
+</div>
+<script src="https://unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <script>
 let camStream = null, modelsLoaded = false, scanInterval = null;
-const dM = String.fromCharCode(46);
-const MODEL_URL = 'https://justadudewhohacks' + dM + 'github' + dM + 'io/face-api' + dM + 'js/models';
+const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
 
 async function loadFaceModels() {
   const st = document.getElementById('scanStat');
@@ -335,7 +403,7 @@ async function startFaceScan() {
     btn.innerText = '🔄 Coba Lagi';
     return;
   }
-  st.style.color = '#38bdf8';
+ st.style.color = '#38bdf8';
   st.innerText = '📷 Meminta izin kamera HP... Klik "Izinkan / Allow".';
   try {
     camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
@@ -352,12 +420,10 @@ async function startFaceScan() {
           sn.width = vid.videoWidth || 480;
           sn.height = vid.videoHeight || 640;
           sn.getContext('2d').drawImage(vid, 0, 0, sn.width, sn.height);
-                   const snapUrl = sn.toDataURL('image/jpeg', 0.92);
-                    const fBox = det[0].box;
+          const snapUrl = sn.toDataURL('image/jpeg', 0.92);
+          const fBox = det[0].box;
           window.savedAvatarData = { src: snapUrl, box: fBox, w: sn.width, h: sn.height };
-          if (typeof window.setAvatarPhoto === 'function') {
-            window.setAvatarPhoto(snapUrl, fBox, sn.width, sn.height);   
-         }
+          if (typeof window.setAvatarPhoto === 'function') window.setAvatarPhoto(snapUrl, fBox, sn.width, sn.height);
           if (camStream) camStream.getTracks().forEach(t => t.stop());
           st.style.color = '#34d399';
           st.innerText = '✅ Wajah Terverifikasi! Membuka Studio...';
@@ -396,13 +462,9 @@ async function verifyUpload(inp) {
   im.onload = async () => {
     const det = await faceapi.detectAllFaces(im, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }));
     if (det.length === 1) {
-           
       const fBox = det[0].box;
       window.savedAvatarData = { src: im.src, box: fBox, w: im.naturalWidth, h: im.naturalHeight };
-      if (typeof window.setAvatarPhoto === 'function') {
-        window.setAvatarPhoto(im.src, fBox, im.naturalWidth, im.naturalHeight);
-      }
-
+      if (typeof window.setAvatarPhoto === 'function') window.setAvatarPhoto(im.src, fBox, im.naturalWidth, im.naturalHeight);
       clearInterval(scanInterval);
       if (camStream) camStream.getTracks().forEach(t => t.stop());
       st.style.color = '#34d399';
@@ -417,11 +479,22 @@ async function verifyUpload(inp) {
     }
   };
 }
-
 </script>
- <script>
- window.onerror = (msg, src, line) => { document.getElementById('authMsg').innerText = 'Error JS Baris ' + line + ': ' + msg; };
-window.data = window.data || { user: '@creatortiktok', niche: 'EDUKASI', style: 'cyber', voice: 'female', products: [], loopDelay: 10000, opening: '' };
+<script>
+window.onerror = (msg, src, line) => {
+  const el = document.getElementById('authMsg');
+  if (el) el.innerText = 'Error JS Baris ' + line + ': ' + msg;
+};
+window.data = window.data || {
+  user: '@creatortiktok',
+  niche: 'EDUKASI',
+  style: 'Mentor Edukasi',
+  voice: 'female',
+  products: [],
+  loopDelay: 10000,
+  opening: '',
+  pkg: 'Paket 2 Jam - Rp 5.500'
+};
 window.go = function(n) {
   document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
   const target = document.getElementById('s' + n);
@@ -430,14 +503,13 @@ window.go = function(n) {
   if (num) num.innerText = n;
 };
 
-
 let ytPlayerObj = null;
 let autoLoopTimer = null;
 let loopIndex = 0;
 let isAutoLooping = false;
-data.products = [];
-data.loopDelay = 10000;
-data.opening = '';
+window.avConfig = window.avConfig || { isSpeaking: false, mouthOpen: 0 };
+window.mixerState = { hostVol: 1.0, musicVol: 65 };
+let mediaRec = null, audioChunks = [], recSec = 0, recTimerInt = null;
 
 function switchS3Tab(btn, panelId) {
   document.querySelectorAll('.s3-tab').forEach(t => {
@@ -448,15 +520,14 @@ function switchS3Tab(btn, panelId) {
   btn.style.borderColor = '#2dd4bf';
   btn.style.background = 'rgba(45,212,191,0.2)';
   btn.style.color = '#fff';
-
   document.querySelectorAll('.s3-panel').forEach(p => p.style.display = 'none');
   document.getElementById(panelId).style.display = 'block';
 }
-
-function selectNiche(el, niche) {
+ function selectNiche(el, niche) {
   document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
   data.niche = niche;
+  if (window.AvatarStudio) window.AvatarStudio.setNiche(niche);
 
   const frame = document.getElementById('studioFrame');
   const badge = document.getElementById('studioNicheBadge');
@@ -466,10 +537,23 @@ function selectNiche(el, niche) {
   const inTitle = document.getElementById('liveTitleInput');
   const inScript = document.getElementById('liveScriptInput');
   const etalaseOv = document.getElementById('studioEtalaseOverlay');
+  const fEdu = document.getElementById('boxFiturEdukasi');
+  const fHib = document.getElementById('boxFiturHiburan');
+  const ovQna = document.getElementById('studioQnaOverlay');
+  const ovKar = document.getElementById('studioKaraokeMini');
+  const chkGlass = document.getElementById('chkGlassDesk');
 
   if (badge) badge.innerText = niche;
+  if (fEdu) fEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
+  if (fHib) fHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
+  if (ovQna) ovQna.style.display = 'none';
+  if (ovKar) ovKar.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
+  if (chkGlass) {
+    chkGlass.checked = (niche === 'HIBURAN');
+    if (typeof window.updateHostTransform === 'function') window.updateHostTransform();
+  }
 
-   if (niche === 'JUALAN') {
+  if (niche === 'JUALAN') {
     frame.style.borderColor = '#34d399';
     setStudioBg('image', 'studio-jualan.jpeg');
     boxUmum.style.display = 'none';
@@ -480,8 +564,7 @@ function selectNiche(el, niche) {
     boxUmum.style.display = 'block';
     boxJualan.style.display = 'none';
     if (etalaseOv) etalaseOv.style.display = 'none';
-
-       if (niche === 'EDUKASI') {
+    if (niche === 'EDUKASI') {
       frame.style.borderColor = '#38bdf8';
       setStudioBg('image', 'studio-edukasi.jpg');
       titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan';
@@ -498,14 +581,8 @@ function selectNiche(el, niche) {
     }
   }
   syncLiveMateri();
-}
-
-window.avConfig = window.avConfig || { isSpeaking: false, mouthOpen: 0 };
-data.voice = 'female';
-data.customAudioUrl = null;
-let mediaRec = null, audioChunks = [], recSec = 0, recTimerInt = null;
-
-function selectVoiceMode(mode, btn) {
+ }
+ function selectVoiceMode(mode, btn) {
   data.voice = mode;
   ['btnVoiceFemale', 'btnVoiceMale', 'btnVoiceCustom'].forEach(id => {
     const el = document.getElementById(id);
@@ -566,19 +643,23 @@ function stopUserVoiceRec() {
   clearInterval(recTimerInt);
   document.getElementById('btnRecStart').disabled = false;
   document.getElementById('btnRecStop').disabled = true;
-}
-function speakTextSafe(text, onDone) {
+ }
+ function speakTextSafe(text, onDone) {
+  const mVol = window.mixerState ? window.mixerState.musicVol : 65;
+  const hVol = window.mixerState ? window.mixerState.hostVol : 1.0;
+
   if (data.voice === 'custom' && data.customAudioUrl) {
     const aud = document.getElementById('userCustomAudio');
     if (aud) {
       aud.pause();
       aud.currentTime = 0;
-      setYoutubeVolume(15);
+      aud.volume = hVol;
+      setYoutubeVolume(Math.min(15, mVol));
       window.avConfig.isSpeaking = true;
       aud.onended = () => {
         window.avConfig.isSpeaking = false;
         window.avConfig.mouthOpen = 0;
-        setYoutubeVolume(65);
+        setYoutubeVolume(mVol);
         if (onDone) onDone();
       };
       aud.play().catch(() => { window.avConfig.isSpeaking = false; });
@@ -589,11 +670,12 @@ function speakTextSafe(text, onDone) {
   if (!('speechSynthesis' in window)) return;
 
   window.speechSynthesis.cancel();
-  setYoutubeVolume(15);
+  setYoutubeVolume(Math.min(15, mVol));
 
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'id-ID';
-    const voices = window.speechSynthesis.getVoices();
+  utter.volume = hVol;
+  const voices = window.speechSynthesis.getVoices();
   const idVoices = voices.filter(v => v.lang.toLowerCase().includes('id') || v.lang.toLowerCase().includes('ms'));
   if (data.voice === 'male') {
     const maleV = idVoices.find(v => /male|pria|laki|ardi|osman|david|daniel/i.test(v.name));
@@ -609,20 +691,18 @@ function speakTextSafe(text, onDone) {
     utter.rate = 1.04;
   }
 
-
   utter.onstart = () => { window.avConfig.isSpeaking = true; };
   utter.onend = () => {
     window.avConfig.isSpeaking = false;
     window.avConfig.mouthOpen = 0;
-    setYoutubeVolume(65);
+    setYoutubeVolume(mVol);
     if (onDone) onDone();
   };
   utter.onerror = () => {
     window.avConfig.isSpeaking = false;
     window.avConfig.mouthOpen = 0;
-    setYoutubeVolume(65);
+    setYoutubeVolume(mVol);
   };
-
   window.speechSynthesis.speak(utter);
 }
 
@@ -632,18 +712,20 @@ function stopAllSpeech() {
   if (aud) { aud.pause(); aud.currentTime = 0; }
   window.avConfig.isSpeaking = false;
   window.avConfig.mouthOpen = 0;
-  setYoutubeVolume(65);
+  setYoutubeVolume(window.mixerState ? window.mixerState.musicVol : 65);
   if (isAutoLooping) toggleAutoLoopSim();
-}
-
-
-function setStudioBg(type, val) {
+ }
+ function setStudioBg(type, val) {
   const frame = document.getElementById('studioFrame');
-  if (!frame) return;
-  frame.style.backgroundImage = (type === 'grad') ? val : `url('${val}')`;
-  frame.style.backgroundSize = 'cover';
-  frame.style.backgroundPosition = 'center';
+  if (frame) {
+    frame.style.backgroundImage = (type === 'grad') ? val : `url('${val}')`;
+    frame.style.backgroundSize = 'cover';
+    frame.style.backgroundPosition = 'center';
+  }
   data.studioBg = val;
+  if (window.AvatarStudio) {
+    window.AvatarStudio.setBackground(type === 'image' ? val : null);
+  }
 }
 
 function uploadStudioBg(input) {
@@ -660,28 +742,6 @@ function syncLiveMateri() {
   const cap = document.getElementById('studioCaption');
   if (cap) cap.innerText = data.title || ('Mode: ' + (data.niche || 'EDUKASI'));
 }
-
-function addProductRow() {
-  const no = data.products.length + 1;
-  data.products.push({ no, name: '', script: '' });
-  const container = document.getElementById('productListContainer');
-  if (!container) return;
-  const row = document.createElement('div');
-  row.style.cssText = 'background:rgba(15,23,42,0.85);padding:8px;border-radius:8px;border:1px solid #334155';
-  row.innerHTML = `<div style="font-size:11px;color:#fbbf24;font-weight:bold;margin-bottom:4px">Etalase No. ${no}</div><input type="text" placeholder="Nama Produk" oninput="data.products[${no-1}].name=this.value; updateEtalasePreview(${no-1})" style="text-align:left;font-size:11px;padding:7px;margin-bottom:5px"><input type="text" placeholder="Deskripsi / Promo Singkat" oninput="data.products[${no-1}].script=this.value" style="text-align:left;font-size:11px;padding:7px;margin-bottom:0">`;
-  container.appendChild(row);
-}
-
-function updateEtalasePreview(idx) {
-  const ov = document.getElementById('studioEtalaseOverlay');
-  const p = data.products[idx];
-  if (ov && p) {
-    ov.style.display = 'block';
-    document.getElementById('etalaseBadgeTxt').innerText = `👇 Cek Keranjang • Etalase No. ${p.no}`;
-    document.getElementById('etalaseTitleTxt').innerText = p.name || 'Nama Produk';
-  }
-}
-
 
 function testAIVoice() {
   syncLiveMateri();
@@ -704,7 +764,6 @@ function toggleAutoLoopSim() {
     btn.style.background = 'rgba(16,185,129,0.15)';
     return;
   }
-
   syncLiveMateri();
   isAutoLooping = true;
   loopIndex = 0;
@@ -721,7 +780,6 @@ function scheduleNextLoop() {
   autoLoopTimer = setTimeout(() => {
     if (!isAutoLooping) return;
     let nextText = '';
-
     if (data.niche === 'JUALAN' && data.products.length > 0) {
       const idx = loopIndex % data.products.length;
       const p = data.products[idx];
@@ -738,13 +796,11 @@ function scheduleNextLoop() {
         nextText = 'Terima kasih yang sudah bergabung, tulis pertanyaan kalian di kolom komentar ya!';
       }
     }
-
     document.getElementById('studioSubCaption').innerText = nextText;
     speakTextSafe(nextText, () => scheduleNextLoop());
   }, data.loopDelay || 10000);
-}
-
-function extractYouTubeID(url) {
+ }
+ function extractYouTubeID(url) {
   const reg = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
   const match = url.match(reg);
   return match ? match[1] : null;
@@ -759,14 +815,11 @@ function loadYoutubeMusic() {
     stat.innerText = 'Link YouTube tidak valid!';
     return;
   }
-
   stat.style.color = '#38bdf8';
   stat.innerText = 'Memuat audio YouTube...';
-
   if (!window.YT) {
     const tag = document.createElement('script');
-    const dYt = String.fromCharCode(46);
-    tag.src = 'https://www' + dYt + 'youtube' + dYt + 'com/iframe_api';
+    tag.src = 'https://www.youtube.com/iframe_api';
     document.head.appendChild(tag);
     window.onYouTubeIframeAPIReady = () => createYTPlayer(vidId);
   } else {
@@ -776,9 +829,10 @@ function loadYoutubeMusic() {
 
 function createYTPlayer(vidId) {
   const stat = document.getElementById('ytMusicStatus');
+  const mVol = window.mixerState ? window.mixerState.musicVol : 65;
   if (ytPlayerObj && ytPlayerObj.loadVideoById) {
     ytPlayerObj.loadVideoById(vidId);
-    ytPlayerObj.setVolume(65);
+    ytPlayerObj.setVolume(mVol);
     stat.style.color = '#34d399';
     stat.innerText = '🎵 Musik YouTube aktif (Auto-Ducking siap)';
     return;
@@ -788,7 +842,7 @@ function createYTPlayer(vidId) {
     playerVars: { autoplay: 1, loop: 1, playlist: vidId },
     events: {
       onReady: (e) => {
-        e.target.setVolume(65);
+        e.target.setVolume(mVol);
         e.target.playVideo();
         stat.style.color = '#34d399';
         stat.innerText = '🎵 Musik YouTube aktif (Auto-Ducking siap)';
@@ -798,15 +852,11 @@ function createYTPlayer(vidId) {
 }
 
 function setYoutubeVolume(vol) {
-  if (ytPlayerObj && typeof ytPlayerObj.setVolume === 'function') {
-    ytPlayerObj.setVolume(vol);
-  }
+  if (ytPlayerObj && typeof ytPlayerObj.setVolume === 'function') ytPlayerObj.setVolume(vol);
 }
 
 function stopYoutubeMusic() {
-  if (ytPlayerObj && typeof ytPlayerObj.stopVideo === 'function') {
-    ytPlayerObj.stopVideo();
-  }
+  if (ytPlayerObj && typeof ytPlayerObj.stopVideo === 'function') ytPlayerObj.stopVideo();
   const stat = document.getElementById('ytMusicStatus');
   if (stat) { stat.style.color = '#94a3b8'; stat.innerText = 'Musik dihentikan'; }
 }
@@ -814,7 +864,6 @@ function stopYoutubeMusic() {
 function finishSlide3() {
   syncLiveMateri();
   stopAllSpeech();
-
   if (data.niche === 'JUALAN') {
     const validProd = data.products.some(p => p.name.trim() !== '');
     if (!validProd) {
@@ -830,185 +879,246 @@ function finishSlide3() {
       return;
     }
   }
-
   const nlbl = document.getElementById('nLbl');
   if (nlbl) nlbl.innerText = data.niche || 'EDUKASI';
   go(4);
 }
 
+function chooseStyle(el, t) {
+  el.parentElement.querySelectorAll('.card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  data.style = t;
+  if (window.AvatarStudio) window.AvatarStudio.setHostStyle(t);
+  summaryTxt.innerText = `${data.niche} • ${t}`;
+  setTimeout(() => go(5), 400);
+}
 
-function chooseStyle(el,t){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.style=t;summaryTxt.innerText=`${data.niche} • ${t}`;setTimeout(()=>go(5),400);}
-function pickPkg(el,txt){el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');data.pkg=txt;pkgLbl.innerText=txt;}
-function startLive(){alert(`🔴 LIVE DIMULAI!\nAkun: ${data.user}\nNiche: ${data.niche} (${data.style})\nPaket: ${data.pkg}`);}
+function pickPkg(el, txt) {
+  el.parentElement.querySelectorAll('.card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  data.pkg = txt;
+  pkgLbl.innerText = txt;
+}
+
+function startLive() {
+  alert(`🔴 LIVE DIMULAI!\nAkun: ${data.user}\nNiche: ${data.niche} (${data.style})\nPaket: ${data.pkg}`);
+}
 </script>
-
-
  <script>
-const c=galaxy,x=c.getContext('2d');let w,h,st=[],mt=[];
-function rs(){w=c.width=innerWidth;h=c.height=innerHeight;st=Array.from({length:450},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.3+.4,c:['#fff','#fde68a','#67e8f9','#f0abfc','#fdba74'][Math.floor(Math.random()*5)],a:Math.random()*6.28}))}
-addEventListener('resize',rs);rs();
-function drawGalaxy(){x.fillStyle='#050712';x.fillRect(0,0,w,h);const cx=w*.52,cy=h*.48,maxR=Math.max(w,h)*.75;[{ang:.3,c1:'rgba(168,85,247,.48)',c2:'rgba(236,72,153,.18)'},{ang:2.4,c1:'rgba(251,191,36,.42)',c2:'rgba(249,115,22,.16)'},{ang:4.5,c1:'rgba(45,212,191,.4)',c2:'rgba(59,130,246,.18)'}].forEach(arm=>{for(let i=0;i<18;i++){let t=i/18,d=t*maxR,a=arm.ang+t*2.9,px=cx+Math.cos(a)*d*.85,py=cy+Math.sin(a)*d*.95,r=maxR*(.16+t*.22),g=x.createRadialGradient(px,py,0,px,py,r);g.addColorStop(0,arm.c1);g.addColorStop(.5,arm.c2);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,w,h);}});let core=x.createRadialGradient(cx,cy,5,cx,cy,maxR*.35);core.addColorStop(0,'rgba(254,240,138,.45)');core.addColorStop(.4,'rgba(192,132,252,.25)');core.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=core;x.fillRect(0,0,w,h);}
-function addM(){const p=[{h:'#fff',m:'#a855f7',t:'rgba(168,85,247,0)'},{h:'#fff',m:'#38bdf8',t:'rgba(56,189,248,0)'},{h:'#fef08a',m:'#f97316',t:'rgba(249,115,22,0)'}][Math.floor(Math.random()*3)];mt.push({x:Math.random()*w*1.3,y:-40,l:Math.random()*130+90,v:Math.random()*5+4,p});}
-for(let i=0;i<9;i++){addM();mt[i].y=Math.random()*h;mt[i].x=Math.random()*w;}
-(function loop(){drawGalaxy();st.forEach(s=>{s.a+=.03;x.globalAlpha=.45+Math.abs(Math.sin(s.a))*.55;x.fillStyle=s.c;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});x.globalAlpha=1;if(Math.random()<.06&&mt.length<12)addM();mt.forEach((m,i)=>{let ex=m.x+m.l*.65,ey=m.y-m.l*.75,g=x.createLinearGradient(m.x,m.y,ex,ey);g.addColorStop(0,m.p.h);g.addColorStop(.25,m.p.m);g.addColorStop(1,m.p.t);x.strokeStyle=g;x.lineWidth=4;x.lineCap='round';x.beginPath();x.moveTo(m.x,m.y);x.lineTo(ex,ey);x.stroke();let gw=x.createRadialGradient(m.x,m.y,0,m.x,m.y,9);gw.addColorStop(0,'#fff');gw.addColorStop(.4,m.p.m);gw.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gw;x.beginPath();x.arc(m.x,m.y,9,0,7);x.fill();m.x-=m.v*.65;m.y+=m.v*.75;if(m.y>h+120||m.x<-120)mt.splice(i,1)});requestAnimationFrame(loop);})();
-</script>
-<script>
-  function showBox(id) {
-    authMenu.style.display = (id === 'authMenu') ? 'block' : 'none';
-    emailBox.style.display = (id === 'emailBox') ? 'block' : 'none';
-    phoneBox.style.display = (id === 'phoneBox') ? 'block' : 'none';
-    authMsg.innerText = '';
-  }
-</script>
- <script type="module">
-  window.onerror = (msg, url, line) => { 
-   authMsg.style.color = '#f87171';
-   authMsg.innerText = "ERR Baris " + line + ": " + msg; 
-  };
-  (async function() {
-try {
-const d = String.fromCharCode(46);
- const u = "https://" + "www" + d + "gstatic" + d + "com/firebasejs/10" + d + "12" + d + "2/";
-    const { initializeApp } = await import(u + "firebase-app.js");
-    const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(u + "firebase-auth.js");
-    const { getFirestore, doc, setDoc } = await import(u + "firebase-firestore.js");
-const firebaseConfig = {
-  apiKey: "AIzaSyDzDzyylDX2fPNsIpkvXpyIwWUpRKasBKg",
-  authDomain: "ai-live-streamer-73674.firebaseapp.com",
-  projectId: "ai-live-streamer-73674",
-  storageBucket: "ai-live-streamer-73674.firebasestorage.app",
-  messagingSenderId: "449611002764",
-  appId: "1:449611002764:web:69af03041370b3c53cdca9",
-  measurementId: "G-F48NNBYE9F"
-};
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  let confRes = null;
+const c = document.getElementById('galaxy'), x = c.getContext('2d');
+let w, h, st = [], mt = [];
+function rs() {
+  w = c.width = innerWidth;
+  h = c.height = innerHeight;
+  st = Array.from({ length: 450 }, () => ({
+    x: Math.random() * w, y: Math.random() * h,
+    r: Math.random() * 2.3 + .4,
+    c: ['#fff', '#fde68a', '#67e8f9', '#f0abfc', '#fdba74'][Math.floor(Math.random() * 5)],
+    a: Math.random() * 6.28
+  }));
+}
+addEventListener('resize', rs);
+rs();
 
-  function saveUser(u, via, info) {
-  window.data = window.data || { user: '@creatortiktok', niche: 'EDUKASI', style: 'cyber', voice: 'female', products: [], loopDelay: 10000, opening: '' };
-  window.go = window.go || function(n) {
-    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById('s' + n);
-    if (target) target.classList.add('active');
-    const num = document.getElementById('sNum');
-    if (num) num.innerText = n;
-  };
-
-  const uInEl = document.getElementById('uIn');
-  let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
-  if (!nama.startsWith('@')) nama = '@' + nama;
-  if (uInEl) uInEl.value = nama;
-  document.getElementById('uLabel').innerText = nama;
-
-  window.data.user = nama;
-  authMsg.style.color = '#34d399';
-  authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
-
-  setTimeout(() => window.go(2), 400);
-  setDoc(doc(db, 'creators', u.uid), { username: nama, via: via, contact: info, time: Date.now() }).catch(() => {});
+function drawGalaxy() {
+  x.fillStyle = '#050712';
+  x.fillRect(0, 0, w, h);
+  const cx = w * .52, cy = h * .48, maxR = Math.max(w, h) * .75;
+  [
+    { ang: .3, c1: 'rgba(168,85,247,.48)', c2: 'rgba(236,72,153,.18)' },
+    { ang: 2.4, c1: 'rgba(251,191,36,.42)', c2: 'rgba(249,115,22,.16)' },
+    { ang: 4.5, c1: 'rgba(45,212,191,.4)', c2: 'rgba(59,130,246,.18)' }
+  ].forEach(arm => {
+    for (let i = 0; i < 18; i++) {
+      let t = i / 18, d = t * maxR, a = arm.ang + t * 2.9;
+      let px = cx + Math.cos(a) * d * .85, py = cy + Math.sin(a) * d * .95;
+      let r = maxR * (.16 + t * .22), g = x.createRadialGradient(px, py, 0, px, py, r);
+      g.addColorStop(0, arm.c1); g.addColorStop(.5, arm.c2); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = g; x.fillRect(0, 0, w, h);
+    }
+  });
+  let core = x.createRadialGradient(cx, cy, 5, cx, cy, maxR * .35);
+  core.addColorStop(0, 'rgba(254,240,138,.45)');
+  core.addColorStop(.4, 'rgba(192,132,252,.25)');
+  core.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = core; x.fillRect(0, 0, w, h);
 }
 
-
-window.loginEmail = async function() {
-  const em = document.getElementById('emailIn').value.trim().toLowerCase();
-  const pw = document.getElementById('passIn').value;
-  if (!em || pw.length < 6) {
-    authMsg.style.color = '#fbbf24';
-    authMsg.innerText = 'Isi email & password min 6 huruf!';
-    return;
-  }
-  authMsg.style.color = '#60a5fa';
-  authMsg.innerText = 'Memproses Email...';
-  try {
-    const r = await signInWithEmailAndPassword(auth, em, pw);
-    saveUser(r.user, 'Email', em);
-  } catch (e) {
-    if (e.code !== 'auth/user-not-found' && e.code !== 'auth/invalid-credential') {
-      authMsg.style.color = '#f87171';
-     authMsg.innerText = 'Error Asli: ' + e.message;
-
-      return;
-    }
-    try {
-      const r2 = await createUserWithEmailAndPassword(auth, em, pw);
-      saveUser(r2.user, 'Email Baru', em);
-    } catch (e2) {
-      authMsg.style.color = '#f87171';
-      authMsg.innerText = 'Error Login: ' + e.code + ' | Daftar: ' + e2.code;
-    }
-  }
-};
-
-
-  window.loginTikTokGoogle = async function() {
-      if (!document.getElementById('uIn')?.value.trim()) {    authMsg.style.color = '#fbbf24';
-      authMsg.innerText = 'Ketik Username TikTok di atas dulu!';
-      return;
-    }
-    authMsg.style.color = '#60a5fa';
-    authMsg.innerText = 'Membuka verifikasi akun...';
-    try {
-      const r = await signInWithPopup(auth, new GoogleAuthProvider());
-      saveUser(r.user, 'TikTok-Google', r.user.email);
-    } catch (e) {
-      authMsg.style.color = '#f87171';
-      authMsg.innerText = 'Gagal: ' + e.message;
-    }
-  };
-
-  window.sendOTP = async function() {
-    let ph = phIn.value.trim();
-    if (ph.startsWith('08')) ph = '+62' + ph.slice(1);
-    if (!ph.startsWith('+')) {
-      authMsg.style.color = '#fbbf24';
-      authMsg.innerText = 'Awali nomor dengan 08 atau +62';
-      return;
-    }
-    authMsg.style.color = '#60a5fa';
-    authMsg.innerText = 'Mengirim OTP...';
-    try {
-      if (!window.rVer) window.rVer = new RecaptchaVerifier(auth, 'recaptcha-box', { size: 'invisible' });
-
-      confRes = await signInWithPhoneNumber(auth, ph, window.rVer);
-      otpStep.style.display = 'block';
-      authMsg.style.color = '#34d399';
-      authMsg.innerText = 'Kode OTP terkirim ke SMS!';
-    } catch (e) {
-      authMsg.style.color = '#f87171';
-      authMsg.innerText = 'Gagal OTP: ' + e.message;
-    }
-  };
-
-  window.verifyOTP = async function() {
-    let cd = otpIn.value.trim();
-    if (!confRes || cd.length < 6) {
-      authMsg.style.color = '#fbbf24';
-      authMsg.innerText = 'Masukkan 6 digit kode OTP!';
-      return;
-    }
-    try {
-      const r = await confRes.confirm(cd);
-      saveUser(r.user, 'Nomor HP', r.user.phoneNumber);
-    } catch (e) {
-      authMsg.style.color = '#f87171';
-      authMsg.innerText = 'Kode OTP salah!';
-    }
-  };
-   } catch (err) {
-  authMsg.style.color = '#f87171';
-  authMsg.innerText = 'Error Script: ' + err.message;
+function addM() {
+  const p = [
+    { h: '#fff', m: '#a855f7', t: 'rgba(168,85,247,0)' },
+    { h: '#fff', m: '#38bdf8', t: 'rgba(56,189,248,0)' },
+    { h: '#fef08a', m: '#f97316', t: 'rgba(249,115,22,0)' }
+  ][Math.floor(Math.random() * 3)];
+  mt.push({ x: Math.random() * w * 1.3, y: -40, l: Math.random() * 130 + 90, v: Math.random() * 5 + 4, p });
 }
+for (let i = 0; i < 9; i++) { addM(); mt[i].y = Math.random() * h; mt[i].x = Math.random() * w; }
+
+(function loop() {
+  drawGalaxy();
+  st.forEach(s => {
+    s.a += .03;
+    x.globalAlpha = .45 + Math.abs(Math.sin(s.a)) * .55;
+    x.fillStyle = s.c; x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill();
+  });
+  x.globalAlpha = 1;
+  if (Math.random() < .06 && mt.length < 12) addM();
+  mt.forEach((m, i) => {
+    let ex = m.x + m.l * .65, ey = m.y - m.l * .75, g = x.createLinearGradient(m.x, m.y, ex, ey);
+    g.addColorStop(0, m.p.h); g.addColorStop(.25, m.p.m); g.addColorStop(1, m.p.t);
+    x.strokeStyle = g; x.lineWidth = 4; x.lineCap = 'round';
+    x.beginPath(); x.moveTo(m.x, m.y); x.lineTo(ex, ey); x.stroke();
+    let gw = x.createRadialGradient(m.x, m.y, 0, m.x, m.y, 9);
+    gw.addColorStop(0, '#fff'); gw.addColorStop(.4, m.p.m); gw.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = gw; x.beginPath(); x.arc(m.x, m.y, 9, 0, 7); x.fill();
+    m.x -= m.v * .65; m.y += m.v * .75;
+    if (m.y > h + 120 || m.x < -120) mt.splice(i, 1);
+  });
+  requestAnimationFrame(loop);
 })();
+
+function showBox(id) {
+  document.getElementById('authMenu').style.display = (id === 'authMenu') ? 'block' : 'none';
+  document.getElementById('emailBox').style.display = (id === 'emailBox') ? 'block' : 'none';
+  document.getElementById('phoneBox').style.display = (id === 'phoneBox') ? 'block' : 'none';
+  document.getElementById('authMsg').innerText = '';
+}
+ </script>
+ <script type="module">
+  (async function() {
+    const authMsg = document.getElementById('authMsg');
+    try {
+      const u = "https://www.gstatic.com/firebasejs/10.12.2/";
+      const { initializeApp } = await import(u + "firebase-app.js");
+      const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import(u + "firebase-auth.js");
+      const { getFirestore, doc, setDoc } = await import(u + "firebase-firestore.js");
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDzDzyylDX2fPNsIpkvXpyIwWUpRKasBKg",
+        authDomain: "ai-live-streamer-73674.firebaseapp.com",
+        projectId: "ai-live-streamer-73674",
+        storageBucket: "ai-live-streamer-73674.firebasestorage.app",
+        messagingSenderId: "449611002764",
+        appId: "1:449611002764:web:69af03041370b3c53cdca9",
+        measurementId: "G-F48NNBYE9F"
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      let confRes = null;
+
+      function saveUser(uObj, via, info) {
+        const uInEl = document.getElementById('uIn');
+        let nama = (uInEl ? uInEl.value.trim() : '') || '@creator';
+        if (!nama.startsWith('@')) nama = '@' + nama;
+        if (uInEl) uInEl.value = nama;
+        document.getElementById('uLabel').innerText = nama;
+
+        window.data.user = nama;
+        authMsg.style.color = '#34d399';
+        authMsg.innerText = 'Berhasil masuk (' + via + ')! Membuka Slide 2...';
+
+        setTimeout(() => window.go(2), 400);
+        setDoc(doc(db, 'creators', uObj.uid), { username: nama, via: via, contact: info, time: Date.now() }).catch(() => {});
+      }
+     window.loginEmail = async function() {
+        const em = document.getElementById('emailIn').value.trim().toLowerCase();
+        const pw = document.getElementById('passIn').value;
+        if (!em || pw.length < 6) {
+          authMsg.style.color = '#fbbf24';
+          authMsg.innerText = 'Isi email & password min 6 huruf!';
+          return;
+        }
+        authMsg.style.color = '#60a5fa';
+        authMsg.innerText = 'Memproses Email...';
+        try {
+          const r = await signInWithEmailAndPassword(auth, em, pw);
+          saveUser(r.user, 'Email', em);
+        } catch (e) {
+          if (e.code !== 'auth/user-not-found' && e.code !== 'auth/invalid-credential') {
+            authMsg.style.color = '#f87171';
+            authMsg.innerText = 'Error Asli: ' + e.message;
+            return;
+          }
+          try {
+            const r2 = await createUserWithEmailAndPassword(auth, em, pw);
+            saveUser(r2.user, 'Email Baru', em);
+          } catch (e2) {
+            authMsg.style.color = '#f87171';
+            authMsg.innerText = 'Error Login: ' + e.code + ' | Daftar: ' + e2.code;
+          }
+        }
+      };
+
+      window.loginTikTokGoogle = async function() {
+        if (!document.getElementById('uIn')?.value.trim()) {
+          authMsg.style.color = '#fbbf24';
+          authMsg.innerText = 'Ketik Username TikTok di atas dulu!';
+          return;
+        }
+        authMsg.style.color = '#60a5fa';
+        authMsg.innerText = 'Membuka verifikasi akun...';
+        try {
+          const r = await signInWithPopup(auth, new GoogleAuthProvider());
+          saveUser(r.user, 'TikTok-Google', r.user.email);
+        } catch (e) {
+          authMsg.style.color = '#f87171';
+          authMsg.innerText = 'Gagal: ' + e.message;
+        }
+      };
+  window.sendOTP = async function() {
+        let ph = document.getElementById('phIn').value.trim();
+        if (ph.startsWith('08')) ph = '+62' + ph.slice(1);
+        if (!ph.startsWith('+')) {
+          authMsg.style.color = '#fbbf24';
+          authMsg.innerText = 'Awali nomor dengan 08 atau +62';
+          return;
+        }
+        authMsg.style.color = '#60a5fa';
+        authMsg.innerText = 'Mengirim OTP...';
+        try {
+          if (!window.rVer) window.rVer = new RecaptchaVerifier(auth, 'recaptcha-box', { size: 'invisible' });
+          confRes = await signInWithPhoneNumber(auth, ph, window.rVer);
+          document.getElementById('otpStep').style.display = 'block';
+          authMsg.style.color = '#34d399';
+          authMsg.innerText = 'Kode OTP terkirim ke SMS!';
+        } catch (e) {
+          authMsg.style.color = '#f87171';
+          authMsg.innerText = 'Gagal OTP: ' + e.message;
+        }
+      };
+
+      window.verifyOTP = async function() {
+        let cd = document.getElementById('otpIn').value.trim();
+        if (!confRes || cd.length < 6) {
+          authMsg.style.color = '#fbbf24';
+          authMsg.innerText = 'Masukkan 6 digit kode OTP!';
+          return;
+        }
+        try {
+          const r = await confRes.confirm(cd);
+          saveUser(r.user, 'Nomor HP', r.user.phoneNumber);
+        } catch (e) {
+          authMsg.style.color = '#f87171';
+          authMsg.innerText = 'Kode OTP salah!';
+        }
+      };
+    } catch (err) {
+      if (authMsg) {
+        authMsg.style.color = '#f87171';
+        authMsg.innerText = 'Error Script: ' + err.message;
+      }
+    }
+  })();
 </script>
- <script src="avatar-studio.js"></script>
- <script>
+<script src="avatar-studio.js"></script>
+<script>
 (function () {
   window.addEventListener('DOMContentLoaded', async () => {
     if (window.AvatarStudio) {
       await window.AvatarStudio.init('#avatarCanvas');
-           window.AvatarStudio.setBackground('studio-edukasi.jpg');
+      window.AvatarStudio.setBackground('studio-edukasi.jpg');
+      window.updateHostTransform();
       const customAud = document.getElementById('userCustomAudio');
       if (customAud) window.AvatarStudio.bindAudioElement(customAud);
       if (window.savedAvatarData && window.savedAvatarData.src) {
@@ -1035,35 +1145,24 @@ window.loginEmail = async function() {
     });
   }
 
-  const origSelectNiche = window.selectNiche;
-  window.selectNiche = function (el, niche) {
-    if (origSelectNiche) origSelectNiche(el, niche);
-    if (window.AvatarStudio) window.AvatarStudio.setNiche(niche);
-
-    const fEdu = document.getElementById('boxFiturEdukasi');
-    const fHib = document.getElementById('boxFiturHiburan');
-    const ovQna = document.getElementById('studioQnaOverlay');
-    const ovKar = document.getElementById('studioKaraokeMini');
-
-    if (fEdu) fEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
-    if (fHib) fHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
-    if (ovQna) ovQna.style.display = 'none';
-    if (ovKar) ovKar.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
+  window.setStudioAspectRatio = function (ratio) {
+    const frame = document.getElementById('studioFrame');
+    const b916 = document.getElementById('btnRatio916');
+    const b169 = document.getElementById('btnRatio169');
+    if (ratio === '16:9') {
+      if (frame) { frame.style.width = '100%'; frame.style.maxWidth = '320px'; frame.style.aspectRatio = '16/9'; }
+      if (b169) { b169.style.borderColor = '#38bdf8'; b169.style.background = 'rgba(56,189,248,0.25)'; b169.style.color = '#fff'; }
+      if (b916) { b916.style.borderColor = '#475569'; b916.style.background = '#1e293b'; b916.style.color = '#94a3b8'; }
+    } else {
+      if (frame) { frame.style.width = '168px'; frame.style.maxWidth = ''; frame.style.aspectRatio = '9/16'; }
+      if (b916) { b916.style.borderColor = '#38bdf8'; b916.style.background = 'rgba(56,189,248,0.25)'; b916.style.color = '#fff'; }
+      if (b169) { b169.style.borderColor = '#475569'; b169.style.background = '#1e293b'; b169.style.color = '#94a3b8'; }
+    }
+    if (window.AvatarStudio && window.AvatarStudio.setAspectRatio) {
+      window.AvatarStudio.setAspectRatio(ratio);
+    }
   };
-
-  const origSetStudioBg = window.setStudioBg;
-  window.setStudioBg = function (type, val) {
-    if (origSetStudioBg) origSetStudioBg(type, val);
-    if (window.AvatarStudio) window.AvatarStudio.setBackground(type === 'image' ? val : null);
-  };
-
-  const origChooseStyle = window.chooseStyle;
-  window.chooseStyle = function (el, t) {
-    if (window.AvatarStudio) window.AvatarStudio.setHostStyle(t);
-    if (origChooseStyle) origChooseStyle(el, t);
-  };
-
-  window.addProductRow = function () {
+ window.addProductRow = function () {
     const no = data.products.length + 1;
     data.products.push({ no, name: '', script: '', imgUrl: '' });
     const container = document.getElementById('productListContainer');
@@ -1085,7 +1184,7 @@ window.loginEmail = async function() {
   window.setProductPhoto = function (idx, inp) {
     if (inp.files && inp.files[0] && data.products[idx]) {
       data.products[idx].imgUrl = URL.createObjectURL(inp.files[0]);
-      updateEtalasePreview(idx);
+      window.updateEtalasePreview(idx);
     }
   };
 
@@ -1101,6 +1200,9 @@ window.loginEmail = async function() {
         if (p.imgUrl) { imgEl.src = p.imgUrl; imgEl.style.display = 'block'; }
         else { imgEl.style.display = 'none'; }
       }
+      if (window.AvatarStudio && window.AvatarStudio.setActiveProduct) {
+        window.AvatarStudio.setActiveProduct(p.imgUrl || null, 1.0);
+      }
     }
   };
 
@@ -1108,7 +1210,6 @@ window.loginEmail = async function() {
     const user = (document.getElementById('qnaUserIn')?.value || '@penonton').trim();
     const q = (document.getElementById('qnaQuestionIn')?.value || '').trim();
     if (!q) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
-
     const ov = document.getElementById('studioQnaOverlay');
     if (ov) {
       ov.style.display = 'block';
@@ -1128,52 +1229,40 @@ window.loginEmail = async function() {
     }
   };
 
-  window.mixerState = { hostVol: 1.0, musicVol: 65 };
   window.updateAudioMixer = function () {
     const hVal = Number(document.getElementById('rngHostVol')?.value ?? 100);
     const mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
     window.mixerState.hostVol = hVal / 100;
     window.mixerState.musicVol = mVal;
-
     const lblH = document.getElementById('lblHostVol');
     const lblM = document.getElementById('lblMusicVol');
     if (lblH) lblH.innerText = hVal + '%';
     if (lblM) lblM.innerText = mVal + '%';
-
     const aud = document.getElementById('userCustomAudio');
     if (aud) aud.volume = window.mixerState.hostVol;
     if (typeof setYoutubeVolume === 'function' && !window.avConfig?.isSpeaking) {
       setYoutubeVolume(mVal);
     }
   };
-   window.updateHostTransform = function () {
+ window.updateHostTransform = function () {
     if (!window.AvatarStudio || !window.AvatarStudio.setTransform) return;
     window.AvatarStudio.setTransform({
       posX: Number(document.getElementById('rngHostX')?.value ?? 0),
-      posY: Number(document.getElementById('rngHostY')?.value ?? -18),
-      scale: Number(document.getElementById('rngHostScale')?.value ?? 85) / 100,
-      deskCutY: Number(document.getElementById('rngDeskCut')?.value ?? 72) / 100
+      posY: Number(document.getElementById('rngHostY')?.value ?? 0),
+      scale: Number(document.getElementById('rngHostScale')?.value ?? 78) / 100,
+      deskCutY: Number(document.getElementById('rngDeskCut')?.value ?? 62) / 100,
+      glassDesk: Boolean(document.getElementById('chkGlassDesk')?.checked)
     });
   };
 
   window.resetHostTransform = function () {
     if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
-    if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = -18;
-    if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 85;
-    if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 72;
+    if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = 0;
+    if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 78;
+    if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 62;
     window.updateHostTransform();
   };
-  // === OTAK AUTOPILOT GRATIS (PERAGAAN PRODUK + WIKIPEDIA + POLICY GUARD + ANTREAN KARAOKE) ===
-  const origUpdateEtalase = window.updateEtalasePreview;
-  window.updateEtalasePreview = function (idx) {
-    if (origUpdateEtalase) origUpdateEtalase(idx);
-    const p = data.products[idx];
-    if (window.AvatarStudio && window.AvatarStudio.setActiveProduct) {
-      window.AvatarStudio.setActiveProduct(p && p.imgUrl ? p.imgUrl : null, 1.0);
-    }
-  };
 
-  // Daftar antrean lagu karaoke otomatis
   window.karaokeQueue = [];
 
   function checkPolicyGuard(text) {
@@ -1185,7 +1274,7 @@ window.loginEmail = async function() {
   async function fetchWikiFreeSummary(query) {
     try {
       const cleanQ = encodeURIComponent(query.replace(/[?!.]/g, '').trim());
-      const url = 'https:' + '//id.wikipedia.org/api/rest_v1/page/summary/' + cleanQ;
+      const url = 'https://id.wikipedia.org/api/rest_v1/page/summary/' + cleanQ;
       const res = await fetch(url);
       if (!res.ok) return null;
       const json = await res.json();
@@ -1194,9 +1283,8 @@ window.loginEmail = async function() {
       }
     } catch (e) {}
     return null;
-  }
-
-  window.handleIncomingComment = async function (customUser, customMsg) {
+ }
+ window.handleIncomingComment = async function (customUser, customMsg) {
     const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
     const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
     if (!msg) return;
@@ -1204,7 +1292,6 @@ window.loginEmail = async function() {
     const cleanName = user.replace('@', '');
     const lowMsg = msg.toLowerCase();
 
-    // 1. Perisai Anti-Pelanggaran Platform (TikTok / Live Community Guard)
     if (checkPolicyGuard(lowMsg)) {
       const safeReply = 'Terima kasih sudah mampir kak ' + cleanName + '! Biar live kita tetap aman dan nyaman sesuai aturan komunitas, kita ngobrol seru di sini aja ya. Jangan lupa tap-tap layar dan follow akun ini!';
       document.getElementById('studioSubCaption').innerText = safeReply;
@@ -1212,7 +1299,6 @@ window.loginEmail = async function() {
       return;
     }
 
-    // 2. Niche JUALAN -> Peragakan produk di tangan host otomatis
     if (data.niche === 'JUALAN') {
       const numMatch = lowMsg.match(/(?:no|nomor|etalase)\s*(\d+)/);
       let idx = numMatch ? (parseInt(numMatch[1], 10) - 1) : 0;
@@ -1232,27 +1318,20 @@ window.loginEmail = async function() {
       return;
     }
 
-    // 3. Niche HIBURAN -> Deteksi Request Lagu & Masukkan ke Antrean Otomatis
     if (data.niche === 'HIBURAN') {
       const reqMatch = lowMsg.match(/(?:req|request|nyanyi|lagu)\s+(.+)/i);
       if (reqMatch && reqMatch[1]) {
         const songTitle = reqMatch[1].trim();
         window.karaokeQueue.push({ user: user, title: songTitle });
         updateQueueDisplay();
-
         const reply = 'Siap kak ' + cleanName + '! Request lagu ' + songTitle + ' sudah masuk antrean nomor ' + window.karaokeQueue.length + ' ya, ditunggu sebentar!';
         document.getElementById('studioSubCaption').innerText = reply;
         if (typeof speakTextSafe === 'function') speakTextSafe(reply);
-
-        if (window.karaokeQueue.length === 1) {
-          playNextKaraokeQueue();
-        }
+        if (window.karaokeQueue.length === 1) playNextKaraokeQueue();
         return;
       }
-    }
-
-    // 4. Niche EDUKASI (atau Umum) -> Cek Materi User dulu, lalu Wikipedia Gratis
-    const ov = document.getElementById('studioQnaOverlay');
+ }
+  const ov = document.getElementById('studioQnaOverlay');
     if (ov) {
       ov.style.display = 'block';
       document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + user;
@@ -1288,7 +1367,6 @@ window.loginEmail = async function() {
     if (!window.karaokeQueue.length) return;
     const current = window.karaokeQueue.shift();
     updateQueueDisplay();
-
     const scrollEl = document.getElementById('karaokeLyricScroll');
     if (scrollEl) {
       scrollEl.innerText = '♪ Sedang Diputar: ' + current.title + ' (Request dari ' + current.user + ') • Selamat Bernyanyi! ♪';
@@ -1299,8 +1377,7 @@ window.loginEmail = async function() {
       stat.innerText = '🎤 Antrean Aktif: ' + current.title + ' (' + current.user + ')';
     }
   };
-
 })();
- </script>
+</script>
 </body>
 </html>
