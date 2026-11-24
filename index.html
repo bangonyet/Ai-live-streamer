@@ -1008,6 +1008,7 @@ window.loginEmail = async function() {
   window.addEventListener('DOMContentLoaded', async () => {
     if (window.AvatarStudio) {
       await window.AvatarStudio.init('#avatarCanvas');
+           window.AvatarStudio.setBackground('studio-edukasi.jpg');
       const customAud = document.getElementById('userCustomAudio');
       if (customAud) window.AvatarStudio.bindAudioElement(customAud);
       if (window.savedAvatarData && window.savedAvatarData.src) {
