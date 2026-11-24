@@ -1,7 +1,7 @@
 (function (global) {
   'use strict';
 
-  const CDN_BASE = 'https:' + '//cdn.jsdelivr.net/npm/@mediapipe/';
+  const CDN_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/';
   const MEDIAPIPE_CDN = {
     segmentation: CDN_BASE + 'selfie_segmentation',
     faceMesh: CDN_BASE + 'face_mesh'
@@ -9,35 +9,33 @@
 
   const NICHE_THEMES = {
     EDUKASI: {
-      rimColor: 'rgba(56, 189, 248, 0.85)',
-      ambientTint: 'rgba(14, 165, 233, 0.08)',
+      rimColor: 'rgba(56, 189, 248, 0.75)',
+      ambientTint: 'rgba(14, 165, 233, 0.06)',
       bgGradient: ['#0f172a', '#1e293b', '#0284c7'],
-      outfitType: 'blazer_formal',
       showHeadset: false
     },
     HIBURAN: {
-      rimColor: 'rgba(232, 121, 249, 0.9)',
-      ambientTint: 'rgba(192, 38, 211, 0.10)',
+      rimColor: 'rgba(192, 132, 252, 0.80)',
+      ambientTint: 'rgba(168, 85, 247, 0.07)',
       bgGradient: ['#18181b', '#2e1065', '#701a75'],
-      outfitType: 'casual_hoodie',
-      showHeadset: true
+      showHeadset: false
     },
     JUALAN: {
-      rimColor: 'rgba(251, 191, 36, 0.88)',
-      ambientTint: 'rgba(245, 158, 11, 0.08)',
+      rimColor: 'rgba(251, 191, 36, 0.78)',
+      ambientTint: 'rgba(245, 158, 11, 0.06)',
       bgGradient: ['#1c1917', '#451a03', '#b45309'],
-      outfitType: 'smart_casual_host',
       showHeadset: false
     }
-  };
-
-  class AvatarStudioEngine {
+  };class AvatarStudioEngine {
     constructor() {
       this.canvas = null;
       this.ctx = null;
 
       this.personCanvas = document.createElement('canvas');
       this.personCtx = this.personCanvas.getContext('2d');
+
+      this.maskCanvas = document.createElement('canvas');
+      this.maskCtx = this.maskCanvas.getContext('2d');
 
       this.rimCanvas = document.createElement('canvas');
       this.rimCtx = this.rimCanvas.getContext('2d');
@@ -60,26 +58,34 @@
       this.selfieSegmentation = null;
       this.faceMesh = null;
       this.isModelsReady = false;
+      this.clock = 0;
 
-            this.clock = 0;
+      this.posX = 0;
+      this.posY = 0;
+      this.scale = 0.78;
+      this.deskCutY = 0.62;
+      this.glassDesk = false;
 
-      // Pengaturan posisi host di belakang meja (bisa diatur dari slider)
-           this.posX = 0;
-      this.posY = 12;
-      this.scale = 0.92;
-      this.deskCutY = 0.82;
-
-
-      // Produk yang sedang diperagakan di tangan (Niche Jualan)
       this.activeProductImg = null;
       this.productScale = 1.0;
-    }
-
-    setTransform(opts = {}) {
+    }setTransform(opts = {}) {
       if (typeof opts.posX === 'number') this.posX = opts.posX;
       if (typeof opts.posY === 'number') this.posY = opts.posY;
       if (typeof opts.scale === 'number') this.scale = opts.scale;
       if (typeof opts.deskCutY === 'number') this.deskCutY = opts.deskCutY;
+      if (typeof opts.glassDesk === 'boolean') this.glassDesk = opts.glassDesk;
+    }
+
+    setAspectRatio(ratio) {
+      if (!this.canvas) return;
+      if (ratio === '16:9') {
+        this.canvas.width = 960;
+        this.canvas.height = 540;
+      } else {
+        this.canvas.width = 540;
+        this.canvas.height = 960;
+      }
+      this._syncBufferSizes();
     }
 
     setActiveProduct(imgSrc, sizeScale = 1.0) {
@@ -96,7 +102,6 @@
       img.src = imgSrc;
     }
 
-
     async init(canvasSelector = '#avatarCanvas') {
       this.canvas = typeof canvasSelector === 'string'
         ? document.querySelector(canvasSelector)
@@ -104,27 +109,27 @@
 
       if (!this.canvas) {
         this.canvas = document.createElement('canvas');
-        this.canvas.width = 720;
-        this.canvas.height = 1280;
+        this.canvas.width = 540;
+        this.canvas.height = 960;
       }
 
       this.ctx = this.canvas.getContext('2d');
       this._syncBufferSizes();
-      await this._loadMediaPipeDependencies();
       this._startRenderLoop();
+      await this._loadMediaPipeDependencies();
       return true;
     }
 
     _syncBufferSizes() {
-      const w = this.canvas.width || 720;
-      const h = this.canvas.height || 1280;
+      const w = this.canvas.width || 540;
+      const h = this.canvas.height || 960;
       this.personCanvas.width = w;
       this.personCanvas.height = h;
+      this.maskCanvas.width = w;
+      this.maskCanvas.height = h;
       this.rimCanvas.width = w;
       this.rimCanvas.height = h;
-    }
-
-    async _loadMediaPipeDependencies() {
+    }async _loadMediaPipeDependencies() {
       const loadScript = (src) => new Promise((resolve, reject) => {
         if (document.querySelector('script[src="' + src + '"]')) return resolve();
         const s = document.createElement('script');
@@ -167,17 +172,21 @@
         });
 
         this.isModelsReady = true;
+        if (this.sourceImage) {
+          await this._processFaceAnalysis();
+        }
       } catch (err) {
         console.error('[AvatarStudio] Gagal memuat MediaPipe:', err);
       }
-    }
-    async setFaceImage(imageSource) {
+                                }async setFaceImage(imageSource) {
       return new Promise((resolve, reject) => {
         if (typeof imageSource === 'string') {
           const img = new Image();
           img.crossOrigin = 'anonymous';
           img.onload = async () => {
             this.sourceImage = img;
+            this.segmentationMask = null;
+            this.faceLandmarks = null;
             await this._processFaceAnalysis();
             resolve(true);
           };
@@ -185,6 +194,8 @@
           img.src = imageSource;
         } else {
           this.sourceImage = imageSource;
+          this.segmentationMask = null;
+          this.faceLandmarks = null;
           this._processFaceAnalysis().then(() => resolve(true));
         }
       });
@@ -220,16 +231,12 @@
       img.src = bgUrl;
     }
 
-    startSpeaking() {
-      this.isSpeaking = true;
-    }
+    startSpeaking() { this.isSpeaking = true; }
 
     stopSpeaking() {
       this.isSpeaking = false;
       this.targetSpeechEnergy = 0;
-    }
-
-    bindAudioElement(audioEl) {
+            }bindAudioElement(audioEl) {
       if (!audioEl) return;
       try {
         if (!this.audioCtx) {
@@ -266,23 +273,23 @@
         const avg = sum / 22;
         this.targetSpeechEnergy = Math.min(1, Math.max(0, (avg - 25) / 110));
       } else {
-        const wave = Math.sin(this.clock * 16) * 0.45 + Math.sin(this.clock * 27) * 0.35 + Math.cos(this.clock * 9) * 0.20;
+        const wave = Math.sin(this.clock * 16) * 0.45
+          + Math.sin(this.clock * 27) * 0.35
+          + Math.cos(this.clock * 9) * 0.20;
         this.targetSpeechEnergy = Math.max(0.08, Math.min(1, 0.45 + wave));
       }
       this.speechEnergy += (this.targetSpeechEnergy - this.speechEnergy) * 0.38;
-    }
-
-    _getHeadMetrics(drawRect) {
+                                  }_getHeadMetrics(drawRect) {
       if (!this.faceLandmarks) {
         return {
           centerX: drawRect.x + drawRect.w * 0.5,
           centerY: drawRect.y + drawRect.h * 0.38,
           rollAngle: 0,
-          faceWidth: drawRect.w * 0.42,
-          mouthCenter: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.48 },
-          mouthWidth: drawRect.w * 0.14,
-          chinBottom: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.58 },
-          neckBase: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.65 }
+          faceWidth: drawRect.w * 0.32,
+          mouthCenter: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.46 },
+          mouthWidth: drawRect.w * 0.11,
+          chinBottom: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.55 },
+          neckBase: { x: drawRect.x + drawRect.w * 0.5, y: drawRect.y + drawRect.h * 0.62 }
         };
       }
       const lm = this.faceLandmarks;
@@ -317,8 +324,7 @@
           y: chin.y + Math.cos(rollAngle) * (faceWidth * 0.28)
         }
       };
-    }
-    _startRenderLoop() {
+    }_startRenderLoop() {
       const render = () => {
         this.clock += 0.016;
         this._updateSpeechEnergy();
@@ -329,7 +335,7 @@
       render();
     }
 
-       _renderFrame() {
+    _renderFrame() {
       const W = this.canvas.width;
       const H = this.canvas.height;
       const ctx = this.ctx;
@@ -344,122 +350,82 @@
       }
 
       const imgRatio = this.sourceImage.width / this.sourceImage.height;
-      const targetH = H * 0.84 * this.scale;
+      const targetH = H * 0.85 * this.scale;
       const targetW = targetH * imgRatio;
 
-      // Gerakan kepala & badan berbeda tiap niche
-      let breathY = Math.sin(this.clock * 2.1) * 3.5;
-      let swayX = Math.cos(this.clock * 1.2) * 2;
-      let idleTilt = Math.sin(this.clock * 1.4) * 0.012;
+      let breathY = Math.sin(this.clock * 2.0) * (H * 0.004);
+      let swayX = Math.cos(this.clock * 1.1) * (W * 0.002);
+      let idleTilt = Math.sin(this.clock * 1.3) * 0.010;
 
       if (this.niche === 'HIBURAN') {
-        swayX = Math.sin(this.clock * 2.4) * 5;
-        idleTilt = Math.sin(this.clock * 2.4) * 0.025;
+        swayX = Math.sin(this.clock * 2.1) * (W * 0.004);
+        idleTilt = Math.sin(this.clock * 2.1) * 0.016;
       } else if (this.niche === 'JUALAN') {
-        breathY = Math.sin(this.clock * 3.0) * 4;
+        breathY = Math.sin(this.clock * 2.8) * (H * 0.005);
       }
 
+      const offsetX = (this.posX / 100) * (W * 0.35);
+      const offsetY = (this.posY / 100) * (H * 0.35);
+
       const drawRect = {
-        x: (W - targetW) / 2 + this.posX + swayX,
-        y: (H * 0.14) + this.posY + breathY,
+        x: (W - targetW) / 2 + offsetX + swayX,
+        y: (H * 0.18) + offsetY + breathY,
         w: targetW,
         h: targetH
       };
 
       const metrics = this._getHeadMetrics(drawRect);
       this._prepareCutoutPerson(drawRect, theme);
-      this._drawRimLightAura(ctx, theme);
+      const cutLineY = H * this.deskCutY;if (this.glassDesk) {
+        const tableTopThickness = H * 0.055;
+        const glassStartY = cutLineY + tableTopThickness;
+        const glassEndY = H * 0.89;
+        if (glassEndY > glassStartY) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, glassStartY, W, glassEndY - glassStartY);
+          ctx.clip();
+
+          ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
+          ctx.rotate(idleTilt);
+          ctx.translate(-metrics.neckBase.x, -metrics.neckBase.y);
+
+          ctx.globalAlpha = 0.28;
+          ctx.filter = 'brightness(0.75)';
+          ctx.drawImage(this.personCanvas, 0, 0);
+          ctx.restore();
+        }
+      }
 
       ctx.save();
-      // Potong batas pinggang agar host rapi di belakang meja studio
-      const cutLineY = H * this.deskCutY;
       ctx.beginPath();
       ctx.rect(0, 0, W, cutLineY);
       ctx.clip();
+      this._drawRimLightAura(ctx, theme, metrics, idleTilt);
 
       ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
       ctx.rotate(idleTilt);
       ctx.translate(-metrics.neckBase.x, -metrics.neckBase.y);
 
-      // 1. Gambar tubuh & wajah asli hasil auto-cutout
       ctx.drawImage(this.personCanvas, 0, 0);
-
-      // 2. Gerakan tangan berbeda tiap niche
-      this._applyNicheHandGestures(ctx, drawRect, metrics);
-
-      // 3. Deformasi bibir & dagu foto asli saat bicara
       this._applyLipAndJawWarping(ctx, metrics);
 
-      // 4. Headset studio khusus Hiburan
-      if (theme.showHeadset) this._drawStudioHeadset(ctx, metrics);
-
+      ctx.globalCompositeOperation = 'source-atop';
+      const contactGrad = ctx.createLinearGradient(0, cutLineY - 22, 0, cutLineY);
+      contactGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      contactGrad.addColorStop(1, 'rgba(0, 0, 0, 0.55)');
+      ctx.fillStyle = contactGrad;
+      ctx.fillRect(drawRect.x - 20, cutLineY - 22, drawRect.w + 40, 24);
       ctx.restore();
-      // 4b. Bayangan halus di atas meja (Contact Shadow) agar menyatu alami
-      const deskShadow = ctx.createLinearGradient(0, cutLineY - 26, 0, cutLineY + 14);
-      deskShadow.addColorStop(0, 'rgba(0, 0, 0, 0)');
-      deskShadow.addColorStop(0.75, 'rgba(0, 0, 0, 0.52)');
-      deskShadow.addColorStop(1, 'rgba(0, 0, 0, 0.85)');
-      ctx.fillStyle = deskShadow;
-      ctx.fillRect(0, cutLineY - 26, W, 40);
 
-      // 5. Peragaan produk di tangan host (khusus JUALAN)
       if (this.niche === 'JUALAN' && this.activeProductImg) {
         this._drawHeldProduct(ctx, metrics, cutLineY);
       }
 
       ctx.fillStyle = theme.ambientTint;
       ctx.fillRect(0, 0, W, H);
-    }
-
-    _applyNicheHandGestures(ctx, drawRect, metrics) {
-      const shoulderY = metrics.neckBase.y + metrics.faceWidth * 0.25;
-      const armH = drawRect.h * 0.45;
-      const armW = drawRect.w * 0.28;
-      if (armW <= 8 || armH <= 8) return;
-
-      let leftAngle = 0;
-      let rightAngle = 0;
-
-      if (this.niche === 'EDUKASI') {
-        // Edukasi: Tangan kanan aktif menjelaskan/menunjuk, tangan kiri tenang
-        const amp = this.isSpeaking ? (0.05 + this.speechEnergy * 0.06) : 0.01;
-        leftAngle = Math.sin(this.clock * 1.5) * 0.01;
-        rightAngle = -Math.abs(Math.sin(this.clock * 3.4)) * amp;
-      } else if (this.niche === 'HIBURAN') {
-        // Hiburan: Kedua tangan mengayun santai mengikuti irama musik
-        const amp = this.isSpeaking ? 0.075 : 0.04;
-        leftAngle = Math.sin(this.clock * 3.0) * amp;
-        rightAngle = Math.sin(this.clock * 3.0) * amp;
-      } else {
-        // Jualan: Gerak antusias memperagakan produk & menunjuk keranjang
-        const amp = this.isSpeaking ? (0.06 + this.speechEnergy * 0.07) : 0.02;
-        leftAngle = Math.sin(this.clock * 4.2) * amp;
-        rightAngle = -Math.cos(this.clock * 4.2) * amp;
-      }
-
-      const leftPivotX = metrics.neckBase.x - metrics.faceWidth * 0.65;
-      ctx.save();
-      ctx.translate(leftPivotX, shoulderY);
-      ctx.rotate(leftAngle);
-      ctx.beginPath();
-      ctx.rect(-armW * 0.8, 0, armW * 1.1, armH);
-      ctx.clip();
-      ctx.drawImage(this.personCanvas, -leftPivotX, -shoulderY);
-      ctx.restore();
-
-      const rightPivotX = metrics.neckBase.x + metrics.faceWidth * 0.65;
-      ctx.save();
-      ctx.translate(rightPivotX, shoulderY);
-      ctx.rotate(rightAngle);
-      ctx.beginPath();
-      ctx.rect(-armW * 0.3, 0, armW * 1.1, armH);
-      ctx.clip();
-      ctx.drawImage(this.personCanvas, -rightPivotX, -shoulderY);
-      ctx.restore();
-    }
-
-    _drawHeldProduct(ctx, metrics, cutLineY) {
-      const boxSize = metrics.faceWidth * 0.95 * this.productScale;
+    }_drawHeldProduct(ctx, metrics, cutLineY) {
+      const boxSize = Math.max(42, metrics.faceWidth * 0.95 * this.productScale);
       const handX = metrics.neckBase.x + metrics.faceWidth * 0.85;
       const floatY = Math.sin(this.clock * 3.2) * 5;
       const handY = Math.min(cutLineY - boxSize * 0.6, metrics.neckBase.y + metrics.faceWidth * 0.65) + floatY;
@@ -469,7 +435,6 @@
       ctx.shadowBlur = 12;
       ctx.shadowOffsetY = 6;
 
-      // Bingkai kartu produk yang diangkat host
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.roundRect(handX - boxSize / 2 - 4, handY - boxSize / 2 - 4, boxSize + 8, boxSize + 8, 10);
@@ -477,24 +442,20 @@
 
       ctx.drawImage(this.activeProductImg, handX - boxSize / 2, handY - boxSize / 2, boxSize, boxSize);
 
-      // Badge Promo kecil di sudut produk
       ctx.fillStyle = '#ef4444';
       ctx.beginPath();
-      ctx.roundRect(handX - boxSize / 2, handY - boxSize / 2 - 12, 46, 14, 4);
+      ctx.roundRect(handX - boxSize / 2, handY - boxSize / 2 - 14, 46, 14, 4);
       ctx.fill();
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 8px sans-serif';
-      ctx.fillText('PROMO', handX - boxSize / 2 + 6, handY - boxSize / 2 - 2);
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText('PROMO', handX - boxSize / 2 + 6, handY - boxSize / 2 - 4);
       ctx.restore();
     }
+
     _drawStudioBackground(ctx, W, H, theme) {
       if (this.bgImage) {
         const bgRatio = this.bgImage.width / this.bgImage.height;
         const canvasRatio = W / H;
-
-        // 1. Lapisan belakang: otomatis isi ruang kosong 9:16 dengan blur studio
-        ctx.save();
-        ctx.filter = 'blur(16px) brightness(0.6)';
         let cw, ch, cx, cy;
         if (bgRatio > canvasRatio) {
           ch = H; cw = H * bgRatio; cx = (W - cw) / 2; cy = 0;
@@ -502,21 +463,10 @@
           cw = W; ch = W / bgRatio; cx = 0; cy = (H - ch) / 2;
         }
         ctx.drawImage(this.bgImage, cx, cy, cw, ch);
-        ctx.restore();
 
-        // 2. Lapisan utama: otomatis ratakan meja studio di bagian bawah tanpa terpotong
-        const isLandscape = bgRatio > 0.8;
-        const drawH = isLandscape ? H * 0.72 : H;
-        const drawW = drawH * bgRatio;
-        const drawX = (W - drawW) / 2;
-        const drawY = H - drawH;
-
-        ctx.drawImage(this.bgImage, drawX, drawY, drawW, drawH);
-
-        // 3. Vignette gelap di pinggir layar agar fokus ke tengah
-        const grad = ctx.createRadialGradient(W / 2, H * 0.45, W * 0.15, W / 2, H / 2, H * 0.8);
-        grad.addColorStop(0, 'rgba(0,0,0,0.02)');
-        grad.addColorStop(1, 'rgba(0,0,0,0.68)');
+        const grad = ctx.createRadialGradient(W / 2, H * 0.45, W * 0.25, W / 2, H / 2, Math.max(W, H) * 0.78);
+        grad.addColorStop(0, 'rgba(0,0,0,0)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.42)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
       } else {
@@ -527,33 +477,39 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
       }
-    }
-
-    _prepareCutoutPerson(drawRect, theme) {
+                   }_prepareCutoutPerson(drawRect, theme) {
       const pCtx = this.personCtx;
+      const mCtx = this.maskCtx;
       const W = this.personCanvas.width;
       const H = this.personCanvas.height;
 
       pCtx.clearRect(0, 0, W, H);
       pCtx.save();
-      pCtx.filter = 'contrast(1.04) saturate(1.06)';
+
       if (this.segmentationMask) {
-        pCtx.drawImage(this.segmentationMask, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+        mCtx.clearRect(0, 0, W, H);
+        mCtx.save();
+        mCtx.filter = 'blur(1.8px)';
+        mCtx.drawImage(this.segmentationMask, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+        mCtx.restore();
+
+        pCtx.drawImage(this.maskCanvas, 0, 0);
         pCtx.globalCompositeOperation = 'source-in';
       }
+
+      pCtx.filter = 'contrast(1.03) saturate(1.04)';
       pCtx.drawImage(this.sourceImage, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
 
-      // Penyatuan pencahayaan studio otomatis (Auto-Relighting)
       pCtx.globalCompositeOperation = 'source-atop';
+      pCtx.filter = 'none';
       const relightGrad = pCtx.createLinearGradient(0, drawRect.y, 0, drawRect.y + drawRect.h);
       relightGrad.addColorStop(0, theme.ambientTint);
-      relightGrad.addColorStop(0.65, 'rgba(0, 0, 0, 0.12)');
-      relightGrad.addColorStop(1, 'rgba(0, 0, 0, 0.48)');
+      relightGrad.addColorStop(0.6, 'rgba(0, 0, 0, 0.05)');
+      relightGrad.addColorStop(1, 'rgba(0, 0, 0, 0.25)');
       pCtx.fillStyle = relightGrad;
       pCtx.fillRect(0, 0, W, H);
       pCtx.restore();
 
-      // Rim light tipis realistis
       const rCtx = this.rimCtx;
       rCtx.clearRect(0, 0, W, H);
       rCtx.save();
@@ -564,24 +520,30 @@
       rCtx.restore();
     }
 
-    _drawRimLightAura(ctx, theme) {
+    _drawRimLightAura(ctx, theme, metrics, idleTilt) {
       ctx.save();
+      ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
+      ctx.rotate(idleTilt);
+      ctx.translate(-metrics.neckBase.x, -metrics.neckBase.y);
+
       ctx.filter = 'blur(5px)';
-      ctx.globalAlpha = 0.28;
+      ctx.globalAlpha = 0.25;
       ctx.globalCompositeOperation = 'screen';
       ctx.drawImage(this.rimCanvas, -2.5, -1);
       ctx.drawImage(this.rimCanvas, 2.5, -1);
       ctx.restore();
-    }
-
-    
-
-    _applyLipAndJawWarping(ctx, metrics) {
+    }_applyLipAndJawWarping(ctx, metrics) {
       if (this.speechEnergy < 0.02) return;
       const jawDrop = this.speechEnergy * (metrics.faceWidth * 0.095);
       const patchW = metrics.mouthWidth * 1.45;
       const patchH = (metrics.chinBottom.y - metrics.mouthCenter.y) * 1.25;
       if (patchW <= 4 || patchH <= 4) return;
+
+      const sx = Math.max(0, metrics.mouthCenter.x - patchW);
+      const sy = Math.max(0, metrics.mouthCenter.y - 2);
+      const sw = Math.min(this.personCanvas.width - sx, patchW * 2);
+      const sh = Math.min(this.personCanvas.height - sy, patchH * 1.5);
+      if (sw <= 2 || sh <= 2) return;
 
       ctx.save();
       ctx.translate(metrics.mouthCenter.x, metrics.mouthCenter.y);
@@ -589,7 +551,7 @@
 
       const innerMouthH = jawDrop * 0.85;
       const innerMouthW = metrics.mouthWidth * 0.72;
-      const grad = ctx.createRadialGradient(0, innerMouthH * 0.3, 1, 0, innerMouthH * 0.3, innerMouthW * 0.6);
+      const grad = ctx.createRadialGradient(0, innerMouthH * 0.3, 1, 0, innerMouthH * 0.3, Math.max(2, innerMouthW * 0.6));
       grad.addColorStop(0, '#2a080d');
       grad.addColorStop(0.75, '#4c111a');
       grad.addColorStop(1, 'rgba(76, 17, 26, 0)');
@@ -609,152 +571,13 @@
       const shiftX = -Math.sin(metrics.rollAngle) * jawDrop;
       const shiftY = Math.cos(metrics.rollAngle) * jawDrop;
 
-      ctx.drawImage(
-        this.personCanvas,
-        metrics.mouthCenter.x - patchW,
-        metrics.mouthCenter.y - 2,
-        patchW * 2,
-        patchH * 1.5,
-        metrics.mouthCenter.x - patchW + shiftX,
-        metrics.mouthCenter.y - 2 + shiftY,
-        patchW * 2,
-        patchH * 1.5 + jawDrop * 0.25
-      );
-      ctx.restore();
-    }
-
-    _drawRealisticWardrobe(ctx, metrics, theme) {
-      const shoulderW = metrics.faceWidth * 2.35;
-      const shoulderH = metrics.faceWidth * 1.35;
-
-      ctx.save();
-      ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
-      ctx.rotate(metrics.rollAngle * 0.45);
-
-      if (theme.outfitType === 'blazer_formal') {
-        const blazerGrad = ctx.createLinearGradient(0, 0, 0, shoulderH);
-        blazerGrad.addColorStop(0, '#1e293b');
-        blazerGrad.addColorStop(1, '#0f172a');
-        ctx.fillStyle = blazerGrad;
-        ctx.beginPath();
-        ctx.ellipse(0, shoulderH * 0.42, shoulderW * 0.5, shoulderH * 0.52, 0, Math.PI, Math.PI * 2);
-        ctx.fillRect(-shoulderW * 0.5, shoulderH * 0.42, shoulderW, shoulderH * 0.6);
-        ctx.fill();
-
-        ctx.fillStyle = '#f8fafc';
-        ctx.beginPath();
-        ctx.moveTo(-metrics.faceWidth * 0.32, 0);
-        ctx.lineTo(0, shoulderH * 0.48);
-        ctx.lineTo(metrics.faceWidth * 0.32, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-      } else if (theme.outfitType === 'casual_hoodie') {
-        const hoodieGrad = ctx.createLinearGradient(-shoulderW * 0.5, 0, shoulderW * 0.5, shoulderH);
-        hoodieGrad.addColorStop(0, '#27272a');
-        hoodieGrad.addColorStop(0.5, '#18181b');
-        hoodieGrad.addColorStop(1, '#3b0764');
-        ctx.fillStyle = hoodieGrad;
-        ctx.beginPath();
-        ctx.ellipse(0, shoulderH * 0.44, shoulderW * 0.52, shoulderH * 0.52, 0, Math.PI, Math.PI * 2);
-        ctx.fillRect(-shoulderW * 0.52, shoulderH * 0.44, shoulderW * 1.04, shoulderH * 0.6);
-        ctx.fill();
-
-        ctx.strokeStyle = '#e879f9';
-        ctx.lineWidth = 3.5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(-metrics.faceWidth * 0.18, shoulderH * 0.12);
-        ctx.lineTo(-metrics.faceWidth * 0.20, shoulderH * 0.45);
-        ctx.moveTo(metrics.faceWidth * 0.18, shoulderH * 0.12);
-        ctx.lineTo(metrics.faceWidth * 0.20, shoulderH * 0.45);
-        ctx.stroke();
-      } else {
-        const shirtGrad = ctx.createLinearGradient(0, 0, 0, shoulderH);
-        shirtGrad.addColorStop(0, '#b45309');
-        shirtGrad.addColorStop(1, '#78350f');
-        ctx.fillStyle = shirtGrad;
-        ctx.beginPath();
-        ctx.ellipse(0, shoulderH * 0.42, shoulderW * 0.5, shoulderH * 0.52, 0, Math.PI, Math.PI * 2);
-        ctx.fillRect(-shoulderW * 0.5, shoulderH * 0.42, shoulderW, shoulderH * 0.6);
-        ctx.fill();
-
-        ctx.strokeStyle = '#fbbf24';
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(-metrics.faceWidth * 0.28, 0);
-        ctx.lineTo(0, shoulderH * 0.52);
-        ctx.lineTo(metrics.faceWidth * 0.28, 0);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    _drawStudioHeadset(ctx, metrics) {
-      const earRadiusY = metrics.faceWidth * 0.22;
-      const earRadiusX = metrics.faceWidth * 0.10;
-      const headTopRadius = metrics.faceWidth * 0.56;
-
-      ctx.save();
-      ctx.translate(metrics.centerX, metrics.centerY);
-      ctx.rotate(metrics.rollAngle);
-
-      ctx.strokeStyle = '#18181b';
-      ctx.lineWidth = metrics.faceWidth * 0.085;
-      ctx.beginPath();
-      ctx.arc(0, -metrics.faceWidth * 0.05, headTopRadius, Math.PI * 1.05, Math.PI * 1.95);
-      ctx.stroke();
-
-      ctx.strokeStyle = '#e879f9';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.arc(0, -metrics.faceWidth * 0.05, headTopRadius + 2, Math.PI * 1.2, Math.PI * 1.8);
-      ctx.stroke();
-
-      [-headTopRadius, headTopRadius].forEach((offsetX, idx) => {
-        const cupGrad = ctx.createLinearGradient(offsetX - earRadiusX, -earRadiusY, offsetX + earRadiusX, earRadiusY);
-        cupGrad.addColorStop(0, '#3f3f46');
-        cupGrad.addColorStop(0.5, '#18181b');
-        cupGrad.addColorStop(1, '#09090b');
-
-        ctx.fillStyle = cupGrad;
-        ctx.beginPath();
-        ctx.ellipse(offsetX, 0, earRadiusX, earRadiusY, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = '#d946ef';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.ellipse(offsetX, 0, earRadiusX * 0.65, earRadiusY * 0.65, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        if (idx === 0) {
-          ctx.strokeStyle = '#27272a';
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.moveTo(offsetX, earRadiusY * 0.5);
-          ctx.quadraticCurveTo(
-            offsetX * 0.7,
-            metrics.faceWidth * 0.45,
-            -metrics.mouthWidth * 0.65,
-            metrics.faceWidth * 0.36
-          );
-          ctx.stroke();
-
-          ctx.fillStyle = '#09090b';
-          ctx.beginPath();
-          ctx.ellipse(-metrics.mouthWidth * 0.65, metrics.faceWidth * 0.36, 9, 6, 0.2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
+      ctx.drawImage(this.personCanvas, sx, sy, sw, sh, sx + shiftX, sy + shiftY, sw, sh + jawDrop * 0.25);
       ctx.restore();
     }
 
     _drawPlaceholderGuide(ctx, W, H) {
       ctx.save();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
       ctx.font = '600 22px system-ui, -apple-system, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('Menunggu Scan / Foto Wajah di Tahap 2...', W / 2, H / 2);
