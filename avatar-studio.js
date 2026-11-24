@@ -497,12 +497,21 @@
       ctx.fillRect(drawRect.x - 30, cutLineY - 28, drawRect.w + 60, 30);
       ctx.restore();
 
-      if (this.niche === 'JUALAN' && this.activeProductImg) {
+          if (this.niche === 'JUALAN' && this.activeProductImg) {
         this._drawHeldProduct(ctx, metrics, cutLineY);
+      }
+
+      if (this.niche === 'HIBURAN' && global.StudioDecor && global.StudioDecor.activeItems.hibHeadphone) {
+        this._drawHeadphoneOnHead(ctx, metrics, headTilt, headNodY);
+      }
+
+      if (global.StudioDecor && global.StudioDecor.renderOverlay) {
+        global.StudioDecor.renderOverlay(ctx, W, H, this);
       }
 
       ctx.fillStyle = theme.ambientTint;
       ctx.fillRect(0, 0, W, H);
+
     }
 
     _drawAnimatedHandsGesture(ctx, drawRect, metrics, cutLineY) {
@@ -698,6 +707,44 @@
       ctx.restore();
     }
   }
+    _drawHeadphoneOnHead(ctx, metrics, headTilt, headNodY) {
+      const earOffset = metrics.faceWidth * 0.56;
+      const cupW = metrics.faceWidth * 0.16;
+      const cupH = metrics.faceWidth * 0.30;
+      const headTopY = metrics.centerY - metrics.faceWidth * 0.68;
+
+      ctx.save();
+      ctx.translate(metrics.neckBase.x, metrics.neckBase.y + headNodY);
+      ctx.rotate(headTilt);
+      ctx.translate(-metrics.neckBase.x, -metrics.neckBase.y);
+
+      ctx.translate(metrics.centerX, metrics.centerY);
+      ctx.rotate(metrics.rollAngle);
+
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = Math.max(5, metrics.faceWidth * 0.075);
+      ctx.beginPath();
+      ctx.arc(0, 0, earOffset, Math.PI * 1.08, Math.PI * 1.92);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#e879f9';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, earOffset + 2, Math.PI * 1.15, Math.PI * 1.85);
+      ctx.stroke();
+
+      [-earOffset, earOffset].forEach((sideX) => {
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(sideX - cupW / 2, -cupH / 2, cupW, cupH, 6);
+        ctx.fill();
+        ctx.stroke();
+      });
+
+      ctx.restore();
+    }
 
   global.AvatarStudio = new AvatarStudioEngine();
 })(window);
