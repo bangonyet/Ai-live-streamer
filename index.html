@@ -307,32 +307,56 @@
         <input type="range" id="rngMusicVol" min="0" max="100" value="65" oninput="updateAudioMixer()" style="width:100%; accent-color:#38bdf8;">
       </div>
     </div>
+    <div id="boxMusicEdukasi" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#38bdf8;">
+      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:6px;">🎼 Instrumen Latar Edukasi (Auto-Ducking)</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:6px;">
+        <button type="button" class="edu-inst-btn" onclick="selectEduInstrument(this,'none')" style="padding:7px 4px; border-radius:7px; border:1px solid #38bdf8; background:rgba(56,189,248,0.25); color:#fff; font-size:10px; font-weight:bold; cursor:pointer;">🔇 Off</button>
+        <button type="button" class="edu-inst-btn" onclick="selectEduInstrument(this,'lofi')" style="padding:7px 4px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; font-weight:bold; cursor:pointer;">🎧 Lo-Fi</button>
+        <button type="button" class="edu-inst-btn" onclick="selectEduInstrument(this,'piano')" style="padding:7px 4px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; font-weight:bold; cursor:pointer;">🎹 Piano</button>
+        <button type="button" class="edu-inst-btn" onclick="selectEduInstrument(this,'ambient')" style="padding:7px 4px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; font-weight:bold; cursor:pointer;">🌌 Ambient</button>
+        <button type="button" class="edu-inst-btn" onclick="selectEduInstrument(this,'zen')" style="padding:7px 4px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; font-weight:bold; cursor:pointer;">🔔 Zen Bell</button>
+        <button type="button" class="edu-inst-btn" onclick="selectEduInstrument(this,'acoustic')" style="padding:7px 4px; border-radius:7px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10px; font-weight:bold; cursor:pointer;">🎸 Acoustic</button>
+      </div>
+      <div id="eduInstStatus" style="font-size:10.5px; color:#94a3b8;">Musik latar tenang otomatis mengecil saat host berbicara.</div>
+    </div>
 
-    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
-      <div style="font-size:12px; font-weight:bold; color:#f87171; margin-bottom:6px;">🎵 Backsound Musik YouTube (Auto-Ducking)</div>
+    <div id="boxMusicHiburan" class="card" style="display:none; padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#e879f9;">
+      <div style="font-size:12px; font-weight:bold; color:#f87171; margin-bottom:6px;">🎵 Musik & Karaoke YouTube (Khusus Hiburan)</div>
       <div style="display:flex; gap:6px; margin-bottom:6px;">
-        <input type="text" id="ytMusicUrl" placeholder="Tempel link YouTube (contoh: https://youtu.be/...)" style="text-align:left; font-size:11px; padding:8px; margin-bottom:0;">
+        <input type="text" id="ytMusicUrl" placeholder="Tempel link lagu YouTube..." style="text-align:left; font-size:11px; padding:8px; margin-bottom:0;">
         <button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Putar</button>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span id="ytMusicStatus" style="font-size:10.5px; color:#94a3b8;">Belum ada musik</span>
-        <button type="button" onclick="stopYoutubeMusic()" style="background:none; border:none; color:#f87171; font-size:10.5px; cursor:pointer;">Stop Musik</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span id="ytMusicStatus" style="font-size:10.5px; color:#94a3b8;">Belum ada lagu diputar</span>
+        <button type="button" onclick="stopYoutubeMusic()" style="background:none; border:none; color:#f87171; font-size:10.5px; cursor:pointer;">Stop Lagu</button>
       </div>
+      <button type="button" onclick="switchS3Tab(document.querySelectorAll('.s3-tab')[1],'tabMateri')" style="width:100%; padding:6px; border-radius:7px; border:1px dashed #e879f9; background:rgba(232,121,249,0.12); color:#f0abfc; font-size:10.5px; font-weight:bold; cursor:pointer;">🎤 Edit Lirik Lagu di Tab Materi →</button>
       <div id="ytPlayer" style="display:none;"></div>
     </div>
+
+    <div id="boxMusicJualan" class="card" style="display:none; padding:10px; margin-bottom:10px; cursor:default; text-align:left; border-color:#334155;">
+      <div style="font-size:11px; color:#94a3b8;">🛍️ Mode Jualan fokus pada suara host & promo etalase (musik dinonaktifkan agar suara penjelasan produk jernih).</div>
+    </div>
+
+   
   </div>
 
   <button type="button" class="btn btn-green" style="margin-top:8px;" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button>
   </div>
-  <div id="s4" class="slide">
-  <h2>4. Pilih Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
-  <p class="sub">Klik karakter pembawa acara AI yang diinginkan</p>
-  <div class="grid">
-    <div class="card" onclick="chooseStyle(this,'Mentor Edukasi')"><h1>👨‍🏫</h1><h3>Mentor Edukasi</h3><p style="font-size:12px;color:#94a3b8">Ramah & terstruktur</p></div>
-    <div class="card" onclick="chooseStyle(this,'Kakak Santai')"><h1>☕</h1><h3>Kakak Santai</h3><p style="font-size:12px;color:#94a3b8">Asik & interaktif</p></div>
-    <div class="card" onclick="chooseStyle(this,'Dosen / Ahli')"><h1>🎓</h1><h3>Dosen / Ahli</h3><p style="font-size:12px;color:#94a3b8">Formal & berbobot</p></div>
+<div id="s4" class="slide">
+  <h2>4. Dekorasi Studio & Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
+  <p class="sub">Pasang aksesoris studio dan pilih gaya pembawa acara</p>
+
+  <div id="s4PreviewSlot" style="display:flex; justify-content:center; margin-bottom:12px;"></div>
+
+  <div id="s4DecorControls" class="card" style="padding:12px; margin-bottom:12px; cursor:default; text-align:left; border-color:#38bdf8;">
+    <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">✨ Aksesoris Studio (<span id="s4DecorNicheLbl">EDUKASI</span>)</div>
+    <div id="s4DecorBtns" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;"></div>
   </div>
+
+  <div id="s4StyleGrid" class="grid"></div>
 </div>
+
 
 <div id="s5" class="slide">
   <h2>5. Control Center & Preview</h2>
@@ -1505,6 +1529,117 @@ function showBox(id) {
   });
 })();
 </script>
+  <script src="studio-decor.js"></script>
+<script>
+(function () {
+  window.selectEduInstrument = function (btn, key) {
+    document.querySelectorAll('.edu-inst-btn').forEach(b => {
+      b.style.borderColor = '#334155'; b.style.background = '#0f172a'; b.style.color = '#cbd5e1';
+    });
+    if (btn) {
+      btn.style.borderColor = '#38bdf8'; btn.style.background = 'rgba(56,189,248,0.25)'; btn.style.color = '#fff';
+    }
+    if (window.StudioDecor) window.StudioDecor.playEduInstrument(key);
+    const st = document.getElementById('eduInstStatus');
+    if (st) st.innerText = key === 'none' ? 'Instrumen dimatikan.' : '🎼 Instrumen aktif (Auto-Ducking siap)';
+  };
+
+  const _prevSelectNiche = window.selectNiche;
+  window.selectNiche = function (el, niche) {
+    if (_prevSelectNiche) _prevSelectNiche(el, niche);
+    const bEdu = document.getElementById('boxMusicEdukasi');
+    const bHib = document.getElementById('boxMusicHiburan');
+    const bJual = document.getElementById('boxMusicJualan');
+    if (bEdu) bEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
+    if (bHib) bHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
+    if (bJual) bJual.style.display = (niche === 'JUALAN') ? 'block' : 'none';
+    if (niche !== 'EDUKASI' && window.StudioDecor) window.StudioDecor.stopEduInstrument();
+    if (niche !== 'HIBURAN' && typeof stopYoutubeMusic === 'function') stopYoutubeMusic();
+  };
+
+  const _prevSpeak2 = window.speakTextSafe;
+  window.speakTextSafe = function (text, onDone) {
+    if (window.StudioDecor) window.StudioDecor.duckEduMusic(true);
+    if (_prevSpeak2) {
+      _prevSpeak2(text, () => {
+        if (window.StudioDecor) window.StudioDecor.duckEduMusic(false);
+        if (onDone) onDone();
+      });
+    }
+  };
+
+  const _prevMixer = window.updateAudioMixer;
+  window.updateAudioMixer = function () {
+    if (_prevMixer) _prevMixer();
+    const mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
+    if (window.StudioDecor) window.StudioDecor.setEduMusicVolume(mVal);
+  };
+
+  const _prevFinish3 = window.finishSlide3;
+  window.finishSlide3 = function () {
+    if (_prevFinish3) _prevFinish3();
+    const n = data.niche || 'EDUKASI';
+    const slot = document.getElementById('s4PreviewSlot');
+    const frame = document.getElementById('studioFrame');
+    if (slot && frame) {
+      frame.style.width = '195px';
+      slot.appendChild(frame);
+    }
+    const lbl = document.getElementById('s4DecorNicheLbl');
+    if (lbl) lbl.innerText = n;
+
+    const decorMap = {
+      EDUKASI: [
+        { key: 'eduBoard', label: '📌 Papan Topik' },
+        { key: 'eduMic', label: '🎙️ Mic Podcast' },
+        { key: 'eduNameTag', label: '🏷️ Name Tag' }
+      ],
+      HIBURAN: [
+        { key: 'hibHeadphone', label: '🎧 Headphone DJ' },
+        { key: 'hibNeon', label: '🪩 Lampu Neon' },
+        { key: 'hibEq', label: '🎛️ Equalizer Meja' }
+      ],
+      JUALAN: [
+        { key: 'jualSaleTag', label: '🔥 Stiker Sale' },
+        { key: 'jualBanner', label: '🛒 Banner Promo' },
+        { key: 'jualCart', label: '🛍️ Kartu Etalase' }
+      ]
+    };
+    const btnWrap = document.getElementById('s4DecorBtns');
+    if (btnWrap && window.StudioDecor) {
+      btnWrap.innerHTML = (decorMap[n] || decorMap.EDUKASI).map(item => {
+        const on = window.StudioDecor.activeItems[item.key];
+        return `<button type="button" onclick="StudioDecor.toggleItem('${item.key}'); this.style.borderColor=StudioDecor.activeItems['${item.key}']?'#34d399':'#334155'; this.style.color=StudioDecor.activeItems['${item.key}']?'#34d399':'#94a3b8';" style="padding:8px 4px;border-radius:8px;border:1.5px solid ${on ? '#34d399' : '#334155'};background:#0f172a;color:${on ? '#34d399' : '#94a3b8'};font-size:10.5px;font-weight:bold;cursor:pointer;">${item.label}</button>`;
+      }).join('');
+    }
+
+    const styleMap = {
+      EDUKASI: [
+        { icon: '👨‍🏫', name: 'Mentor Edukasi', desc: 'Ramah & terstruktur' },
+        { icon: '☕', name: 'Kakak Santai', desc: 'Asik & interaktif' },
+        { icon: '🎓', name: 'Dosen / Ahli', desc: 'Formal & berbobot' }
+      ],
+      HIBURAN: [
+        { icon: '🎧', name: 'DJ & Host Party', desc: 'Energik & seru' },
+        { icon: '🎤', name: 'Host Karaoke', desc: 'Hangat & ekspresif' },
+        { icon: '🤣', name: 'Teman Ngobrol', desc: 'Santai & humoris' }
+      ],
+      JUALAN: [
+        { icon: '🔥', name: 'Host Flash Sale', desc: 'Cepat & persuasif' },
+        { icon: '💎', name: 'Konsultan Produk', desc: 'Detail & meyakinkan' },
+        { icon: '🛍️', name: 'Kakak Racun Spill', desc: 'Ramah & akrab' }
+      ]
+    };
+    const styleGrid = document.getElementById('s4StyleGrid');
+    if (styleGrid) {
+      styleGrid.innerHTML = (styleMap[n] || styleMap.EDUKASI).map(st =>
+        `<div class="card" onclick="chooseStyle(this,'${st.name}')"><h1>${st.icon}</h1><h3>${st.name}</h3><p style="font-size:12px;color:#94a3b8">${st.desc}</p></div>`
+      ).join('');
+    }
+  };
+})();
+</script>
+
 </body>
 </html>
 
