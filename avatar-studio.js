@@ -587,3 +587,117 @@
         ctx.fillRect(0, 0, W, H);
       } else {
         const grad = ctx.createLinearGradient(0, 0, 0, H);
+
+              grad.addColorStop(0, theme.bgGradient[0]);
+        grad.addColorStop(0.55, theme.bgGradient[1]);
+        grad.addColorStop(1, theme.bgGradient[2]);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+      }
+    }
+
+    _prepareCutoutPerson(drawRect, theme) {
+      const pCtx = this.personCtx;
+      const mCtx = this.maskCtx;
+      const W = this.personCanvas.width;
+      const H = this.personCanvas.height;
+
+      pCtx.clearRect(0, 0, W, H);
+      pCtx.save();
+
+      if (this.segmentationMask) {
+        mCtx.clearRect(0, 0, W, H);
+        mCtx.drawImage(this.segmentationMask, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+        pCtx.drawImage(this.maskCanvas, 0, 0);
+        pCtx.globalCompositeOperation = 'source-in';
+      }
+
+      pCtx.drawImage(this.sourceImage, drawRect.x, drawRect.y, drawRect.w, drawRect.h);
+
+      pCtx.globalCompositeOperation = 'source-atop';
+      const relightGrad = pCtx.createLinearGradient(0, drawRect.y, 0, drawRect.y + drawRect.h);
+      relightGrad.addColorStop(0, theme.ambientTint);
+      relightGrad.addColorStop(0.6, 'rgba(0, 0, 0, 0.04)');
+      relightGrad.addColorStop(1, 'rgba(0, 0, 0, 0.22)');
+      pCtx.fillStyle = relightGrad;
+      pCtx.fillRect(0, 0, W, H);
+      pCtx.restore();
+
+      const rCtx = this.rimCtx;
+      rCtx.clearRect(0, 0, W, H);
+      rCtx.save();
+      rCtx.drawImage(this.personCanvas, 0, 0);
+      rCtx.globalCompositeOperation = 'source-in';
+      rCtx.fillStyle = theme.rimColor;
+      rCtx.fillRect(0, 0, W, H);
+      rCtx.restore();
+    }
+
+    _drawRimLightAura(ctx, theme, metrics, headTilt) {
+      ctx.save();
+      ctx.translate(metrics.neckBase.x, metrics.neckBase.y);
+      ctx.rotate(headTilt * 0.5);
+      ctx.translate(-metrics.neckBase.x, -metrics.neckBase.y);
+
+      ctx.globalAlpha = 0.22;
+      ctx.globalCompositeOperation = 'screen';
+      ctx.drawImage(this.rimCanvas, -2.5, -1);
+      ctx.drawImage(this.rimCanvas, 2.5, -1);
+      ctx.restore();
+    }
+
+    _applyLipAndJawWarping(ctx, metrics) {
+      if (this.speechEnergy < 0.02) return;
+      const jawDrop = this.speechEnergy * (metrics.faceWidth * 0.105);
+      const patchW = metrics.mouthWidth * 1.48;
+      const patchH = (metrics.chinBottom.y - metrics.mouthCenter.y) * 1.28;
+      if (patchW <= 4 || patchH <= 4) return;
+
+      const sx = Math.max(0, metrics.mouthCenter.x - patchW);
+      const sy = Math.max(0, metrics.mouthCenter.y - 2);
+      const sw = Math.min(this.personCanvas.width - sx, patchW * 2);
+      const sh = Math.min(this.personCanvas.height - sy, patchH * 1.5);
+      if (sw <= 2 || sh <= 2) return;
+
+      ctx.save();
+      ctx.translate(metrics.mouthCenter.x, metrics.mouthCenter.y);
+      ctx.rotate(metrics.rollAngle);
+
+      const innerMouthH = jawDrop * 0.88;
+      const innerMouthW = metrics.mouthWidth * 0.74;
+      const grad = ctx.createRadialGradient(0, innerMouthH * 0.3, 1, 0, innerMouthH * 0.3, Math.max(2, innerMouthW * 0.6));
+      grad.addColorStop(0, '#2a080d');
+      grad.addColorStop(0.75, '#4c111a');
+      grad.addColorStop(1, 'rgba(76, 17, 26, 0)');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(0, innerMouthH * 0.35, innerMouthW * 0.5, Math.max(1.5, innerMouthH * 0.55), 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.ellipse(0, patchH * 0.45 + jawDrop * 0.5, patchW * 0.52, patchH * 0.58 + jawDrop * 0.4, 0, 0, Math.PI * 2);
+      ctx.clip();
+
+      ctx.rotate(-metrics.rollAngle);
+      ctx.translate(-metrics.mouthCenter.x, -metrics.mouthCenter.y);
+
+      const shiftX = -Math.sin(metrics.rollAngle) * jawDrop;
+      const shiftY = Math.cos(metrics.rollAngle) * jawDrop;
+
+      ctx.drawImage(this.personCanvas, sx, sy, sw, sh, sx + shiftX, sy + shiftY, sw, sh + jawDrop * 0.25);
+      ctx.restore();
+    }
+
+    _drawPlaceholderGuide(ctx, W, H) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '600 22px system-ui, -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Menunggu Scan / Foto Wajah di Tahap 2...', W / 2, H / 2);
+      ctx.restore();
+    }
+  }
+
+  global.AvatarStudio = new AvatarStudioEngine();
+})(window);
