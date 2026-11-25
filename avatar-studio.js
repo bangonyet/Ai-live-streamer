@@ -706,7 +706,7 @@
       ctx.fillText('Menunggu Scan / Foto Wajah di Tahap 2...', W / 2, H / 2);
       ctx.restore();
     }
-  }
+  
     _drawHeadphoneOnHead(ctx, metrics, headTilt, headNodY) {
       const earOffset = metrics.faceWidth * 0.56;
       const cupW = metrics.faceWidth * 0.16;
