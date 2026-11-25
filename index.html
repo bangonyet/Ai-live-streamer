@@ -1508,6 +1508,13 @@ function showBox(id) {
     const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
     const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
     if (!msg) return;
+    const bannedWords = ['wa ', 'whatsapp', 'nomor hp', 'transfer', 'rekening', 'judi', 'slot', 'gacor', 'link bio', 'telegram', 'youtube', 'ig ', 'instagram', 'followers', 'bypass', 'hack'];
+    if (bannedWords.some(w => msg.toLowerCase().includes(w))) {
+      const safeReply = 'Terima kasih sudah mampir kak ' + user.replace('@', '') + '! Biar live kita tetap aman sesuai aturan komunitas, kita ngobrol seru di sini aja ya!';
+      document.getElementById('studioSubCaption').innerText = safeReply;
+      if (typeof speakTextSafe === 'function') speakTextSafe(safeReply);
+      return;
+    }
 
     if (data.niche === 'JUALAN' && window.NicheJualan) {
       window.NicheJualan.handleSpillComment(user, msg);
