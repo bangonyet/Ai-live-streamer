@@ -31,7 +31,7 @@
       if (ovEta) ovEta.style.display = 'none';
 
       if (titleEl) {
-        titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan';
+       titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan';
         titleEl.style.color = '#38bdf8';
       }
       if (inTitle) inTitle.placeholder = 'Judul Materi (misal: Tips Belajar Bahasa Inggris)';
@@ -70,8 +70,9 @@
       this.chunks = this.splitIntoSafeChunks(raw);
       if (statEl) {
         statEl.innerText = words > 0
-          ? `📊 Total: ${words.toLocaleString('id-ID')} kata • Estimasi siaran: ~${durText} (${this.chunks.length} segmen)`
-          : '📊 Mendukung materi panjang hingga puluhan ribu kata (anti-macet)';
+      ? `📊 Total: ${words.toLocaleString('id-ID')} kata • Estimasi siaran: ~${durText} (${this.chunks.length} segmen)`
+      : '📊 Mendukung materi panjang hingga puluhan ribu kata (anti-macet)';
+
       }
     },
 
@@ -116,7 +117,8 @@
       const ov = document.getElementById('studioQnaOverlay');
       if (ov) {
         ov.style.display = 'block';
-        document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + cleanUser;
+     document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + cleanUser;
+
         document.getElementById('qnaAskText').innerText = q;
       }
 
