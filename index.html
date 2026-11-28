@@ -590,65 +590,7 @@ function switchS3Tab(btn, panelId) {
   document.querySelectorAll('.s3-panel').forEach(p => p.style.display = 'none');
   document.getElementById(panelId).style.display = 'block';
 }
- function selectNiche(el, niche) {
-  document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  data.niche = niche;
-  if (window.AvatarStudio) window.AvatarStudio.setNiche(niche);
-
-  const frame = document.getElementById('studioFrame');
-  const badge = document.getElementById('studioNicheBadge');
-  const boxUmum = document.getElementById('boxMateriUmum');
-  const boxJualan = document.getElementById('boxMateriJualan');
-  const titleEl = document.getElementById('materiBoxTitle');
-  const inTitle = document.getElementById('liveTitleInput');
-  const inScript = document.getElementById('liveScriptInput');
-  const etalaseOv = document.getElementById('studioEtalaseOverlay');
-  const fEdu = document.getElementById('boxFiturEdukasi');
-  const fHib = document.getElementById('boxFiturHiburan');
-  const ovQna = document.getElementById('studioQnaOverlay');
-  const ovKar = document.getElementById('studioKaraokeMini');
-  const chkGlass = document.getElementById('chkGlassDesk');
-
-  if (badge) badge.innerText = niche;
-  if (fEdu) fEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
-  if (fHib) fHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
-  if (ovQna) ovQna.style.display = 'none';
-  if (ovKar) ovKar.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
-  if (chkGlass) {
-    chkGlass.checked = (niche === 'HIBURAN');
-    if (typeof window.updateHostTransform === 'function') window.updateHostTransform();
-  }
-
-  if (niche === 'JUALAN') {
-    frame.style.borderColor = '#34d399';
-    setStudioBg('image', 'studio-jualan.jpeg');
-    boxUmum.style.display = 'none';
-    boxJualan.style.display = 'block';
-    if (data.products.length === 0) addProductRow();
-    updateEtalasePreview(0);
-  } else {
-    boxUmum.style.display = 'block';
-    boxJualan.style.display = 'none';
-    if (etalaseOv) etalaseOv.style.display = 'none';
-    if (niche === 'EDUKASI') {
-      frame.style.borderColor = '#38bdf8';
-      setStudioBg('image', 'studio-edukasi.jpg');
-      titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan';
-      titleEl.style.color = '#38bdf8';
-      inTitle.placeholder = 'Judul Materi (misal: Tips Belajar Bahasa Inggris)';
-      inScript.placeholder = 'Tulis poin materi (pisahkan dengan baris baru agar dibaca bergantian)...';
-    } else {
-      frame.style.borderColor = '#c084fc';
-      setStudioBg('image', 'studio-hiburan.jpeg');
-      titleEl.innerText = '🎭 Topik Hiburan & Obrolan Interaktif';
-      titleEl.style.color = '#c084fc';
-      inTitle.placeholder = 'Tema Live (misal: Cerita Horor / Tebak-Tebakan Seru)';
-      inScript.placeholder = 'Tulis topik obrolan santai, candaan, atau sapaan penonton...';
-    }
-  }
-  syncLiveMateri();
- }
+ 
  function selectVoiceMode(mode, btn) {
   data.voice = mode;
   ['btnVoiceFemale', 'btnVoiceMale', 'btnVoiceCustom'].forEach(id => {
