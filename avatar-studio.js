@@ -240,8 +240,9 @@
       let drawX = (W - targetW) / 2 + offsetX + swayX;
       let drawY = (H * 0.12) + offsetY + breathY;
 
-      if (this.faceLandmarks && this.faceLandmarks.length > 152) {
-        const lm = this.faceLandmarks;
+     const lm = Array.isArray(this.faceLandmarks?.[0]) ? this.faceLandmarks[0] : this.faceLandmarks;
+if (lm && lm.length > 152) {
+
         const chinNormY = lm[152].y, foreheadNormY = lm[10].y;
         const faceNormH = Math.max(0.14, chinNormY - foreheadNormY);
         targetH = Math.min(H * 1.45, (H * 0.20 * this.scale) / faceNormH);
@@ -263,7 +264,9 @@
       return { x: drawX, y: drawY, w: targetW, h: targetH };
     }
     _getHeadMetrics(drawRect) {
-      if (!this.faceLandmarks || this.faceLandmarks.length < 455) {
+  const lm = Array.isArray(this.faceLandmarks?.[0]) ? this.faceLandmarks[0] : this.faceLandmarks;
+  if (!lm || lm.length < 455) {
+
         return {
           centerX: drawRect.x + drawRect.w * 0.5,
           centerY: drawRect.y + drawRect.h * 0.32,
@@ -276,7 +279,7 @@
           shoulderY: drawRect.y + drawRect.h * 0.60
         };
       }
-      const lm = this.faceLandmarks;
+    
       const mapPt = (idx) => ({ x: drawRect.x + lm[idx].x * drawRect.w, y: drawRect.y + lm[idx].y * drawRect.h });
       const leftEye = mapPt(33), rightEye = mapPt(263);
       const upperLip = mapPt(13), lowerLip = mapPt(14);
