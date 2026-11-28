@@ -87,10 +87,9 @@
   </div>
   <p id="scanStat" style="margin-top:12px;font-size:12.5px;font-weight:bold;color:#fbbf24">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p>
 </div>
-  
-<div id="s3" class="slide">
+  <div id="s3" class="slide">
   <h2>3. Studio Avatar 2.5D</h2>
-  <p class="sub">Atur ukuran tubuh, sudut kamera, putar kursi/meja & gaya host</p>
+  <p class="sub">Atur tubuh, pakaian/topi/kacamata, kamera & gaya host</p>
 
   <div id="s3AvatarPreviewSlot" style="display:flex; justify-content:center; margin-bottom:10px;">
     <div id="studioFrame" style="position:relative; width:176px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
@@ -99,11 +98,10 @@
         <span id="studioNicheBadge" style="background:rgba(15,23,42,0.8); color:#38bdf8; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">EDUKASI</span>
       </div>
       <canvas id="avatarCanvas" width="540" height="960" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
-
       <div style="position:relative; z-index:3; margin-top:auto; display:flex; flex-direction:column; gap:3px;">
         <div id="studioQnaOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #38bdf8; border-radius:7px; padding:4px 6px; text-align:left;">
           <div id="qnaAskUser" style="font-size:7px; font-weight:bold; color:#38bdf8;">💬 Q&A Penonton</div>
-          <div id="qnaAskText" style="font-size:8px; color:#fff; line-height:1.2; max-height:22px; overflow:hidden;">Pertanyaan penonton tampil di sini</div>
+          <div id="qnaAskText" style="font-size:8px; color:#fff; line-height:1.2; max-height:22px; overflow:hidden;">Pertanyaan penonton</div>
         </div>
         <div id="studioEtalaseOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #fbbf24; border-radius:7px; padding:4px 6px; text-align:left;">
           <div style="display:flex; gap:5px; align-items:center;">
@@ -115,24 +113,18 @@
           </div>
         </div>
         <div id="studioKaraokeMini" style="display:none; margin:0 6px; background:rgba(24,24,27,0.94); border:1px solid #e879f9; border-radius:6px; padding:3px 5px; text-align:left;">
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size:7px; color:#f0abfc; font-weight:bold; margin-bottom:1px;">
-            <span>🎤 KARAOKE</span><span style="color:#34d399;">● ON</span>
-          </div>
-          <div id="karaokeEqBar" style="height:14px; border-radius:3px; background:linear-gradient(90deg,#701a75,#3b0764); display:flex; align-items:center; overflow:hidden; padding:0 3px;">
-            <marquee id="karaokeLyricScroll" scrollamount="3" style="font-size:7.5px; color:#fde047; font-weight:bold;">♪ Musik Karaoke Diputar... ♪</marquee>
-          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:7px; color:#f0abfc; font-weight:bold; margin-bottom:1px;"><span>🎤 KARAOKE</span><span style="color:#34d399;">● ON</span></div>
+          <div id="karaokeEqBar" style="height:14px; border-radius:3px; background:linear-gradient(90deg,#701a75,#3b0764); display:flex; align-items:center; overflow:hidden; padding:0 3px;"><marquee id="karaokeLyricScroll" scrollamount="3" style="font-size:7.5px; color:#fde047; font-weight:bold;">♪ Musik Karaoke Diputar... ♪</marquee></div>
         </div>
       </div>
-
       <div style="position:relative; z-index:3; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 100%); text-align:left;">
         <div id="studioCaption" style="font-size:9px; font-weight:bold; color:#f8fafc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mode: Mentor Edukasi</div>
         <div id="studioSubCaption" style="font-size:8px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Avatar 2.5D siap diatur...</div>
       </div>
     </div>
   </div>
-
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;">
-    <button type="button" class="s3-tab sel" onclick="switchS3Tab(this, 'tabS3Rig')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:10.5px; font-weight:bold; cursor:pointer;">🧍 1. Tubuh</button>
+    <button type="button" class="s3-tab sel" onclick="switchS3Tab(this, 'tabS3Rig')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:10.5px; font-weight:bold; cursor:pointer;">🧍 1. Tubuh/Kostum</button>
     <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabS3Cam')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:10.5px; font-weight:bold; cursor:pointer;">🎥 2. Kamera/Putar</button>
     <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabS3Style')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:10.5px; font-weight:bold; cursor:pointer;">🎭 3. Gaya/Suara</button>
   </div>
@@ -140,18 +132,36 @@
   <div id="tabS3Rig" class="s3-panel" style="text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <span style="font-size:12px; font-weight:bold; color:#38bdf8;">🧍 Atur Besar/Kecil & Posisi Anggota Tubuh</span>
+        <span style="font-size:12px; font-weight:bold; color:#38bdf8;">🧍 Proporsi Anggota Tubuh</span>
         <button type="button" onclick="resetAvatarRig()" style="background:#1e293b; border:1px solid #475569; color:#cbd5e1; font-size:10px; padding:3px 7px; border-radius:5px; cursor:pointer;">Reset</button>
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px; color:#cbd5e1;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px; color:#cbd5e1; margin-bottom:10px;">
         <div><span>🗣️ Ukuran Kepala</span><input type="range" id="rngHeadScale" min="65" max="145" value="100" oninput="updateAvatarRig()" style="width:100%; accent-color:#38bdf8;"></div>
         <div><span>👕 Ukuran Badan</span><input type="range" id="rngBodyScale" min="65" max="135" value="100" oninput="updateAvatarRig()" style="width:100%; accent-color:#34d399;"></div>
         <div><span>🙌 Posisi Tangan</span><input type="range" id="rngArmPose" min="-50" max="50" value="0" oninput="updateAvatarRig()" style="width:100%; accent-color:#c084fc;"></div>
         <div><span>🦵 Posisi Kaki</span><input type="range" id="rngLegSpread" min="-50" max="50" value="0" oninput="updateAvatarRig()" style="width:100%; accent-color:#fbbf24;"></div>
       </div>
+      <div style="font-size:11.5px; font-weight:bold; color:#fbbf24; margin-bottom:5px;">👔 Pakaian Avatar (File Luar / Bawaan)</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:8px;">
+        <button type="button" onclick="pickWearable('outfit','default','')" style="padding:6px 2px; border-radius:6px; border:1px solid #38bdf8; background:#0f172a; color:#fff; font-size:10px; cursor:pointer;">Default</button>
+        <button type="button" onclick="pickWearable('outfit','jas','assets/outfit-jas.png')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">🤵 Jas</button>
+        <button type="button" onclick="pickWearable('outfit','hoodie','assets/outfit-hoodie.png')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">🧥 Hoodie</button>
+        <button type="button" onclick="pickWearable('outfit','batik','assets/outfit-batik.png')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">👘 Batik</button>
+      </div>
+      <div style="font-size:11.5px; font-weight:bold; color:#c084fc; margin-bottom:5px;">🧢 Topi, Kacamata & Headset</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:5px;">
+        <button type="button" onclick="pickWearable('hat','none','')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">🚫 No Topi</button>
+        <button type="button" onclick="pickWearable('hat','topi','assets/hat-topi.png')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">🧢 Topi</button>
+        <button type="button" onclick="pickWearable('hat','peci','assets/hat-peci.png')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">🕌 Peci</button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px;">
+        <button type="button" onclick="pickWearable('glasses','none','')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">🚫 Kaca</button>
+        <button type="button" onclick="pickWearable('glasses','baca','assets/glass-baca.png')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">👓 Baca</button>
+        <button type="button" onclick="pickWearable('glasses','hitam','assets/glass-hitam.png')" style="padding:6px 2px; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#cbd5e1; font-size:10px; cursor:pointer;">🕶️ Hitam</button>
+        <button type="button" id="btnToggleHeadset" onclick="toggleAvatarHeadset(this)" style="padding:6px 2px; border-radius:6px; border:1px solid #34d399; background:rgba(52,211,153,0.2); color:#fff; font-size:10px; cursor:pointer;">🎧 Headset</button>
+      </div>
     </div>
   </div>
-
   <div id="tabS3Cam" class="s3-panel" style="display:none; text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="font-size:12px; font-weight:bold; color:#34d399; margin-bottom:8px;">🎥 Angle Kamera Studio</div>
@@ -161,44 +171,42 @@
         <button type="button" id="btnCamWide" onclick="setCameraAngle('wide')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10.5px; font-weight:bold; cursor:pointer;">🧍 Wide (Kaki)</button>
       </div>
 
-      <div style="font-size:12px; font-weight:bold; color:#fbbf24; margin-bottom:4px;">🔄 Putar Sudut Kursi, Badan & Meja (2.5D)</div>
-      <input type="range" id="rngYawAngle" min="-35" max="35" value="0" oninput="updateAvatarRig()" style="width:100%; accent-color:#fbbf24; margin-bottom:6px;">
+      <div style="font-size:12px; font-weight:bold; color:#fbbf24; margin-bottom:4px;">🔄 Putar Arah Kursi, Badan & Meja (2.5D)</div>
+      <input type="range" id="rngYawAngle" min="-35" max="35" value="0" oninput="updateAvatarRig()" style="width:100%; accent-color:#fbbf24; margin-bottom:4px;">
       <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; margin-bottom:10px;">
-        <span>↖️ Serong Kiri (-35°)</span><span>Depan (0°)</span><span>Serong Kanan (+35°) ↗️</span>
+        <span>↖️ Kiri (-35°)</span><span>Depan (0°)</span><span>Kanan (+35°) ↗️</span>
+      </div>
+
+      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:4px;">🎙️ Sesuaikan Arah / Posisi Mic</div>
+      <input type="range" id="rngMicAngle" min="-60" max="60" value="-25" oninput="updateAvatarRig()" style="width:100%; accent-color:#38bdf8; margin-bottom:4px;">
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; margin-bottom:10px;">
+        <span>⬅️ Mic Kiri</span><span>Tengah</span><span>Mic Kanan ➡️</span>
       </div>
 
       <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:#cbd5e1; cursor:pointer;">
-        <input type="checkbox" id="chkGlassDeskS3" onchange="document.getElementById('chkGlassDesk').checked=this.checked; updateAvatarRig()" style="accent-color:#38bdf8;">
+        <input type="checkbox" id="chkGlassDeskS3" onchange="if(document.getElementById('chkGlassDesk'))document.getElementById('chkGlassDesk').checked=this.checked; updateAvatarRig()" style="accent-color:#38bdf8;">
         <span>Meja Kaca Transparan (terlihat posisi kaki duduk)</span>
       </label>
     </div>
   </div>
-
   <div id="tabS3Style" class="s3-panel" style="display:none; text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🎯 1. Pilih Kategori / Niche Live</div>
       <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
-        <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
-          <div style="font-size:18px;">🎓</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">EDUKASI</div>
-        </div>
-        <div class="card niche-btn" onclick="selectNiche(this, 'HIBURAN')" style="padding:10px 6px; text-align:center;">
-          <div style="font-size:18px;">🎭</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">HIBURAN</div>
-        </div>
-        <div class="card niche-btn" onclick="selectNiche(this, 'JUALAN')" style="padding:10px 6px; text-align:center;">
-          <div style="font-size:18px;">🛍️</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">JUALAN</div>
-        </div>
+        <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;"><div style="font-size:18px;">🎓</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">EDUKASI</div></div>
+        <div class="card niche-btn" onclick="selectNiche(this, 'HIBURAN')" style="padding:10px 6px; text-align:center;"><div style="font-size:18px;">🎭</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">HIBURAN</div></div>
+        <div class="card niche-btn" onclick="selectNiche(this, 'JUALAN')" style="padding:10px 6px; text-align:center;"><div style="font-size:18px;">🛍️</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">JUALAN</div></div>
       </div>
     </div>
 
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="font-size:12px; font-weight:bold; color:#c084fc; margin-bottom:8px;">🗣️ 2. Pilih Karakter Suara Avatar</div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;"  
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
         <button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px; border-radius:8px; border:1.5px solid #c084fc; background:rgba(192,132,252,0.25); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">👩 AI Wanita</button>
         <button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">👨 AI Pria</button>
         <button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ Suara Asli</button>
       </div>
       <div id="voiceStatusTxt" style="font-size:11px; color:#34d399; margin-bottom:6px;">● Aktif: Suara AI Wanita</div>
-
       <div id="customVoiceBox" style="display:none; background:rgba(15,23,42,0.9); border:1px solid #10b981; border-radius:10px; padding:10px; margin-top:8px;">
         <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:4px;">🎙️ Rekam Contoh Suara Asli Anda</div>
         <div style="display:flex; gap:6px; margin-bottom:8px;">
@@ -218,6 +226,7 @@
 
   <button type="button" class="btn btn-green" style="margin-top:6px;" onclick="finishSlide3Avatar()">Simpan Avatar & Set Studio →</button>
 </div>
+
 <div id="s4" class="slide">
   <h2>4. Set Studio & Materi Live</h2>
   <p class="sub">Atur background, posisi host, dekorasi, dan materi siaran</p>
@@ -241,14 +250,17 @@
           <button type="button" id="btnRatio169" onclick="setStudioAspectRatio('16:9')" style="font-size:10px; padding:3px 7px; border-radius:5px; border:1px solid #475569; background:#1e293b; color:#94a3b8; cursor:pointer;">16:9</button>
         </div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
-        <span style="font-size:11px; color:#94a3b8;">BG otomatis mengikuti pilihan Tahap 3</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
+        <span id="bgUploadStatus" style="font-size:10.5px; color:#94a3b8;">BG otomatis mengikuti Tahap 3</span>
         <label style="padding:6px 10px; border-radius:8px; border:1px dashed #fbbf24; background:rgba(251,191,36,0.12); color:#fbbf24; font-size:10.5px; font-weight:bold; cursor:pointer; flex-shrink:0;">
           🖼️ + Upload BG Custom
           <input type="file" accept="image/*" onchange="uploadStudioBg(this)" style="display:none;">
         </label>
       </div>
-
+      <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:#fbbf24; margin-bottom:8px; cursor:pointer;">
+        <input type="checkbox" id="chkHideFurniture" onchange="updateHostTransform()" style="accent-color:#fbbf24;">
+        <span>BG sudah berisi studio (hapus kursi & meja bawaan)</span>
+      </label>
       <div style="border-top:1px solid #334155; padding-top:10px; margin-top:4px;">
         <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:6px;">✨ Aksesoris Studio (<span id="s4DecorNicheLbl">EDUKASI</span>)</div>
         <div id="s4DecorBtns" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;"></div>
@@ -297,10 +309,7 @@
     <div id="boxMateriUmum" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
         <span id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8;">📚 Materi Edukasi & Poin Penjelasan</span>
-        <label id="lblUploadTxt" style="font-size:10px; background:#0284c7; color:#fff; padding:4px 8px; border-radius:6px; font-weight:bold; cursor:pointer; flex-shrink:0;">
-          📄 Upload .TXT
-          <input type="file" accept=".txt,text/plain" onchange="if(window.NicheEdukasi)NicheEdukasi.loadTxtFile(this)" style="display:none;">
-        </label>
+        <label id="lblUploadTxt" style="font-size:10px; background:#0284c7; color:#fff; padding:4px 8px; border-radius:6px; font-weight:bold; cursor:pointer; flex-shrink:0;">📄 Upload .TXT<input type="file" accept=".txt,text/plain" onchange="if(window.NicheEdukasi)NicheEdukasi.loadTxtFile(this)" style="display:none;"></label>
       </div>
       <input type="text" id="liveTitleInput" oninput="syncLiveMateri()" placeholder="Judul Materi (misal: Tips Belajar Bahasa Inggris)" style="text-align:left; font-size:12px; padding:9px; margin-bottom:8px;">
       <textarea id="liveScriptInput" rows="5" oninput="syncLiveMateri(); if(window.NicheEdukasi)NicheEdukasi.updateStats()" placeholder="Tulis atau tempel materi panjang di sini (bisa berjam-jam)..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px;"></textarea>
@@ -319,15 +328,11 @@
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#2dd4bf;">
       <div style="font-size:12px; font-weight:bold; color:#2dd4bf; margin-bottom:8px;">🎚️ Mixer Volume Audio & Jeda Bicara</div>
       <div style="margin-bottom:8px;">
-        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
-          <span>🎙️ Volume Suara Host (AI / Asli)</span><b id="lblHostVol" style="color:#34d399;">100%</b>
-        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;"><span>🎙️ Volume Suara Host (AI / Asli)</span><b id="lblHostVol" style="color:#34d399;">100%</b></div>
         <input type="range" id="rngHostVol" min="0" max="100" value="100" oninput="updateAudioMixer()" style="width:100%; accent-color:#34d399;">
       </div>
       <div style="margin-bottom:8px;">
-        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
-          <span>🎵 Volume Musik Backsound</span><b id="lblMusicVol" style="color:#38bdf8;">65%</b>
-        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;"><span>🎵 Volume Musik Backsound</span><b id="lblMusicVol" style="color:#38bdf8;">65%</b></div>
         <input type="range" id="rngMusicVol" min="0" max="100" value="65" oninput="updateAudioMixer()" style="width:100%; accent-color:#38bdf8;">
       </div>
       <label style="font-size:11px; color:#94a3b8;">Jeda Antar Materi (Detik):</label>
@@ -349,14 +354,8 @@
 
     <div id="boxMusicHiburan" class="card" style="display:none; padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#e879f9;">
       <div style="font-size:12px; font-weight:bold; color:#f87171; margin-bottom:6px;">🎵 Musik & Karaoke YouTube (Khusus Hiburan)</div>
-      <div style="display:flex; gap:6px; margin-bottom:6px;">
-        <input type="text" id="ytMusicUrl" placeholder="Tempel link lagu YouTube..." style="text-align:left; font-size:11px; padding:8px; margin-bottom:0;">
-        <button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Putar</button>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span id="ytMusicStatus" style="font-size:10.5px; color:#94a3b8;">Belum ada lagu diputar</span>
-        <button type="button" onclick="stopYoutubeMusic()" style="background:none; border:none; color:#f87171; font-size:10.5px; cursor:pointer;">Stop Lagu</button>
-      </div>
+      <div style="display:flex; gap:6px; margin-bottom:6px;"><input type="text" id="ytMusicUrl" placeholder="Tempel link lagu YouTube..." style="text-align:left; font-size:11px; padding:8px; margin-bottom:0;"><button type="button" onclick="loadYoutubeMusic()" style="padding:0 12px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Putar</button></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><span id="ytMusicStatus" style="font-size:10.5px; color:#94a3b8;">Belum ada lagu diputar</span><button type="button" onclick="stopYoutubeMusic()" style="background:none; border:none; color:#f87171; font-size:10.5px; cursor:pointer;">Stop Lagu</button></div>
       <button type="button" onclick="switchS4Tab(document.querySelectorAll('.s4-tab'),'tabMateri')" style="width:100%; padding:6px; border-radius:7px; border:1px dashed #e879f9; background:rgba(232,121,249,0.12); color:#f0abfc; font-size:10.5px; font-weight:bold; cursor:pointer;">🎤 Edit Lirik Lagu di Tab Materi →</button>
       <div id="ytPlayer" style="display:none;"></div>
     </div>
@@ -1185,407 +1184,270 @@ function showBox(id) {
 <script src="niche-jualan.js"></script>
 <script src="studio-decor.js"></script>
 <script>
-(function () {
-  window.addEventListener('DOMContentLoaded', async () => {
-    if (window.AvatarStudio) {
-      await window.AvatarStudio.init('#avatarCanvas');
-      window.AvatarStudio.setBackground('studio-edukasi.jpg');
-      window.updateHostTransform();
-      const customAud = document.getElementById('userCustomAudio');
-      if (customAud) window.AvatarStudio.bindAudioElement(customAud);
-      if (window.savedAvatarData && window.savedAvatarData.src) {
-        window.AvatarStudio.setFaceImage(window.savedAvatarData.src, window.savedAvatarData.box);
-      }
-    }
-    const firstNiche = document.querySelector('.niche-btn.sel');
-    if (firstNiche) window.selectNiche(firstNiche, 'EDUKASI');
-  });
-
-  window.setAvatarPhoto = function (src, box) {
-    if (window.AvatarStudio && src) {
-      window.AvatarStudio.setFaceImage(src, box || (window.savedAvatarData && window.savedAvatarData.box));
-    }
-  };
-
-  if (window.avConfig) {
-    let _speakingState = Boolean(window.avConfig.isSpeaking);
-    Object.defineProperty(window.avConfig, 'isSpeaking', {
-      get() { return _speakingState; },
-      set(val) {
-        _speakingState = Boolean(val);
-        if (window.AvatarStudio) {
-          if (_speakingState) window.AvatarStudio.startSpeaking();
-          else window.AvatarStudio.stopSpeaking();
-        }
-      }
-    });
-  }
-
-  window.switchS4Tab = function (btn, panelId) {
-    document.querySelectorAll('.s4-tab').forEach(t => {
-      t.style.borderColor = '#334155';
-      t.style.background = 'rgba(15,23,42,0.8)';
-      t.style.color = '#94a3b8';
-    });
-    if (btn) {
-      btn.style.borderColor = '#2dd4bf';
-      btn.style.background = 'rgba(45,212,191,0.2)';
-      btn.style.color = '#fff';
-    }
-    document.querySelectorAll('.s4-panel').forEach(p => p.style.display = 'none');
-    const panel = document.getElementById(panelId);
-    if (panel) panel.style.display = 'block';
-  };
-  function renderStyleCardsForNiche(niche) {
-    const n = niche || 'EDUKASI';
-    const lbl = document.getElementById('s3StyleNicheLbl');
-    if (lbl) lbl.innerText = n;
-
-    const styleMap = {
-      EDUKASI: [
-        { icon: '👨‍🏫', name: 'Mentor Edukasi', desc: 'Ramah & terstruktur' },
-        { icon: '☕', name: 'Kakak Santai', desc: 'Asik & interaktif' },
-        { icon: '🎓', name: 'Dosen / Ahli', desc: 'Formal & berbobot' }
-      ],
-      HIBURAN: [
-        { icon: '🎧', name: 'DJ & Host Party', desc: 'Energik & seru' },
-        { icon: '🎤', name: 'Host Karaoke', desc: 'Hangat & ekspresif' },
-        { icon: '🤣', name: 'Teman Ngobrol', desc: 'Santai & humoris' }
-      ],
-      JUALAN: [
-        { icon: '🔥', name: 'Host Flash Sale', desc: 'Cepat & persuasif' },
-        { icon: '💎', name: 'Konsultan Produk', desc: 'Detail & meyakinkan' },
-        { icon: '🛍️', name: 'Kakak Racun Spill', desc: 'Ramah & akrab' }
-      ]
-    };
-
-    const list = styleMap[n] || styleMap.EDUKASI;
-    const grid = document.getElementById('s3StyleGrid');
-    if (!grid) return;
-
-    grid.innerHTML = list.map((st, idx) => {
-      const isSel = (idx === 0) ? ' sel' : '';
-      return '<div class="card style-pick-btn' + isSel + '" onclick="pickAvatarStyle(this,\'' + st.name + '\')" style="padding:10px 6px; text-align:center;">' +
-        '<div style="font-size:20px;">' + st.icon + '</div>' +
-        '<div style="font-size:11px; font-weight:bold; margin-top:4px;">' + st.name + '</div>' +
-        '<div style="font-size:9.5px; color:#94a3b8; margin-top:2px;">' + st.desc + '</div>' +
-      '</div>';
-    }).join('');
-
-    data.style = list[0].name;
-    if (window.AvatarStudio) window.AvatarStudio.setHostStyle(data.style);
-    const cap = document.getElementById('studioCaption');
-    if (cap) cap.innerText = 'Mode: ' + data.style;
-  }
-
-  window.pickAvatarStyle = function (el, styleName) {
-    document.querySelectorAll('.style-pick-btn').forEach(c => c.classList.remove('sel'));
-    if (el) el.classList.add('sel');
-    data.style = styleName;
-    if (window.AvatarStudio) window.AvatarStudio.setHostStyle(styleName);
-    const cap = document.getElementById('studioCaption');
-    if (cap) cap.innerText = 'Mode: ' + styleName;
-  };
-
-  window.selectNiche = function (el, niche) {
-    document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
-    if (el) el.classList.add('sel');
-    data.niche = niche;
-
-    const badge = document.getElementById('studioNicheBadge');
-    if (badge) badge.innerText = niche;
-
-    if (window.AvatarStudio && window.AvatarStudio.applyNichePreset) {
-      const preset = window.AvatarStudio.applyNichePreset(niche);
-      if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
-      if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = preset.defaultPosY;
-      if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = Math.round(preset.defaultScale * 100);
-      if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = Math.round(preset.defaultDeskCut * 100);
-      if (document.getElementById('chkGlassDesk')) document.getElementById('chkGlassDesk').checked = (niche === 'HIBURAN');
-    }
-
-    if (niche === 'EDUKASI' && window.NicheEdukasi) window.NicheEdukasi.activate();
-    else if (niche === 'HIBURAN' && window.NicheHiburan) window.NicheHiburan.activate();
-    else if (niche === 'JUALAN' && window.NicheJualan) window.NicheJualan.activate();
-
-    const lblTxt = document.getElementById('lblUploadTxt');
-    const eduStat = document.getElementById('eduMateriStats');
-    if (lblTxt) lblTxt.style.display = (niche === 'EDUKASI') ? 'inline-block' : 'none';
-    if (eduStat) eduStat.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
-
-    const bEdu = document.getElementById('boxMusicEdukasi');
-    const bHib = document.getElementById('boxMusicHiburan');
-    const bJual = document.getElementById('boxMusicJualan');
-    if (bEdu) bEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
-    if (bHib) bHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
-    if (bJual) bJual.style.display = (niche === 'JUALAN') ? 'block' : 'none';
-
-    if (niche !== 'EDUKASI' && window.StudioDecor) window.StudioDecor.stopEduInstrument();
-    if (niche !== 'HIBURAN' && typeof stopYoutubeMusic === 'function') stopYoutubeMusic();
-const boxUmum = document.getElementById('boxMateriUmum');
-const boxJualan = document.getElementById('boxMateriJualan');
-if (boxUmum) boxUmum.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
-if (boxJualan) boxJualan.style.display = (niche === 'JUALAN') ? 'block' : 'none';
-
-    renderStyleCardsForNiche(niche);
-    if (typeof syncLiveMateri === 'function') syncLiveMateri();
-  };
-  window.finishSlide3Avatar = function () {
-    stopAllSpeech();
-    const n = data.niche || 'EDUKASI';
-    const slot = document.getElementById('s4StudioPreviewSlot');
-    const frame = document.getElementById('studioFrame');
-    if (slot && frame) {
-      frame.style.width = '168px';
-      slot.appendChild(frame);
-    }
-
-    const lbl = document.getElementById('s4DecorNicheLbl');
-    if (lbl) lbl.innerText = n;
-
-    const decorMap = {
-      EDUKASI: [
-        { key: 'eduBoard', label: '📌 Papan Topik' },
-        { key: 'eduMic', label: '🎙️ Mic Podcast' },
-        { key: 'eduNameTag', label: '🏷️ Name Tag' }
-      ],
-      HIBURAN: [
-        { key: 'hibHeadphone', label: '🎧 Headphone DJ' },
-        { key: 'hibNeon', label: '🪩 Lampu Neon' },
-        { key: 'hibEq', label: '🎛️ Equalizer Meja' }
-      ],
-      JUALAN: [
-        { key: 'jualSaleTag', label: '🔥 Stiker Sale' },
-        { key: 'jualBanner', label: '🛒 Banner Promo' },
-        { key: 'jualCart', label: '🛍️ Kartu Etalase' }
-      ]
-    };
-
-    const btnWrap = document.getElementById('s4DecorBtns');
-    if (btnWrap && window.StudioDecor) {
-      btnWrap.innerHTML = (decorMap[n] || decorMap.EDUKASI).map(item => {
-        const on = window.StudioDecor.activeItems[item.key];
-        return '<button type="button" onclick="StudioDecor.toggleItem(\'' + item.key + '\'); this.style.borderColor=StudioDecor.activeItems[\'' + item.key + '\']?\'#34d399\':\'#334155\'; this.style.color=StudioDecor.activeItems[\'' + item.key + '\']?\'#34d399\':\'#94a3b8\';" style="padding:8px 4px;border-radius:8px;border:1.5px solid ' + (on ? '#34d399' : '#334155') + ';background:#0f172a;color:' + (on ? '#34d399' : '#94a3b8') + ';font-size:10px;font-weight:bold;cursor:pointer;">' + item.label + '</button>';
-      }).join('');
-    }
-    go(4);
-  };
-
-  window.finishSlide4Studio = function () {
-    syncLiveMateri();
-    stopAllSpeech();
-    if (data.niche === 'JUALAN') {
-      const validProd = data.products.some(p => p.name.trim() !== '');
-      if (!validProd) {
-        alert('Isi minimal 1 Nama Produk di Etalase No. 1 terlebih dahulu!');
-        switchS4Tab(document.querySelectorAll('.s4-tab'), 'tabMateri');
-        return;
-      }
-       } else if (data.niche === 'EDUKASI') {
-
-      const txt = (data.script || '').trim();
-      if (!txt) {
-        alert('Isi minimal 1 kalimat materi atau topik terlebih dahulu agar AI punya bahan bicara!');
-        switchS4Tab(document.querySelectorAll('.s4-tab'), 'tabMateri');
-        return;
-      }
-    }
-    const slot = document.getElementById('s5ReviewPreviewSlot');
-    const frame = document.getElementById('studioFrame');
-    if (slot && frame) {
-      frame.style.width = '172px';
-      slot.appendChild(frame);
-    }
-    const sum = document.getElementById('summaryTxt');
-    if (sum) sum.innerText = (data.niche || 'EDUKASI') + ' • ' + (data.style || 'Mentor Edukasi');
-    go(5);
-  };
-
-  window.setStudioAspectRatio = function (ratio) {
-    const frame = document.getElementById('studioFrame');
-    const b916 = document.getElementById('btnRatio916');
-    const b169 = document.getElementById('btnRatio169');
-    if (ratio === '16:9') {
-      if (frame) { frame.style.width = '100%'; frame.style.maxWidth = '310px'; frame.style.aspectRatio = '16/9'; }
-      if (b169) { b169.style.borderColor = '#38bdf8'; b169.style.background = 'rgba(56,189,248,0.25)'; b169.style.color = '#fff'; }
-      if (b916) { b916.style.borderColor = '#475569'; b916.style.background = '#1e293b'; b916.style.color = '#94a3b8'; }
-    } else {
-      if (frame) { frame.style.width = '168px'; frame.style.maxWidth = ''; frame.style.aspectRatio = '9/16'; }
-      if (b916) { b916.style.borderColor = '#38bdf8'; b916.style.background = 'rgba(56,189,248,0.25)'; b916.style.color = '#fff'; }
-      if (b169) { b169.style.borderColor = '#475569'; b169.style.background = '#1e293b'; b169.style.color = '#94a3b8'; }
-    }
-    if (window.AvatarStudio && window.AvatarStudio.setAspectRatio) window.AvatarStudio.setAspectRatio(ratio);
-  };
-  window.addProductRow = function () { if (window.NicheJualan) window.NicheJualan.addProductRow(); };
-  window.triggerQnaAnswer = function () {
-    const user = document.getElementById('qnaUserIn')?.value || '@penonton';
-    const q = document.getElementById('qnaQuestionIn')?.value || '';
-    if (!q.trim()) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
-    if (window.NicheEdukasi) window.NicheEdukasi.handleQna(user, q);
-  };
-  window.updateKaraokeLyrics = function () {
-    const raw = (document.getElementById('karaokeLyricsIn')?.value || '').trim();
-    const scrollEl = document.getElementById('karaokeLyricScroll');
-    if (scrollEl) scrollEl.innerText = raw ? ('♪ ' + raw.replace(/\n+/g, '   •   ') + ' ♪') : '♪ Masukkan lirik lagu karaoke di Tab 2 Materi... ♪';
-  };
-  window.updateAudioMixer = function () {
-    const hVal = Number(document.getElementById('rngHostVol')?.value ?? 100);
-    const mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
-    window.mixerState.hostVol = hVal / 100; window.mixerState.musicVol = mVal;
-    const lblH = document.getElementById('lblHostVol'), lblM = document.getElementById('lblMusicVol');
-    if (lblH) lblH.innerText = hVal + '%'; if (lblM) lblM.innerText = mVal + '%';
-    const aud = document.getElementById('userCustomAudio');
-    if (aud) aud.volume = window.mixerState.hostVol;
-    if (typeof setYoutubeVolume === 'function' && !window.avConfig?.isSpeaking) setYoutubeVolume(mVal);
-    if (window.StudioDecor) window.StudioDecor.setEduMusicVolume(mVal);
-  };
-  window.updateHostTransform = function () {
-    if (!window.AvatarStudio || !window.AvatarStudio.setTransform) return;
-    window.AvatarStudio.setTransform({
-      posX: Number(document.getElementById('rngHostX')?.value ?? 0),
-      posY: Number(document.getElementById('rngHostY')?.value ?? 0),
-      scale: Number(document.getElementById('rngHostScale')?.value ?? 92) / 100,
-      deskCutY: Number(document.getElementById('rngDeskCut')?.value ?? 58) / 100,
-      glassDesk: Boolean(document.getElementById('chkGlassDesk')?.checked)
-    });
-  };
-  window.resetHostTransform = function () {
-    if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
-    if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = 0;
-    if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 92;
-    if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 58;
-    window.updateHostTransform();
-  };
-  window.selectEduInstrument = function (btn, key) {
-    document.querySelectorAll('.edu-inst-btn').forEach(b => { b.style.borderColor = '#334155'; b.style.background = '#0f172a'; b.style.color = '#cbd5e1'; });
-    if (btn) { btn.style.borderColor = '#38bdf8'; btn.style.background = 'rgba(56,189,248,0.25)'; btn.style.color = '#fff'; }
-    if (window.StudioDecor) window.StudioDecor.playEduInstrument(key);
-    const st = document.getElementById('eduInstStatus');
-    if (st) st.innerText = key === 'none' ? 'Instrumen dimatikan.' : '🎼 Instrumen aktif (Auto-Ducking siap)';
-  };
-  const _origSpeak = window.speakTextSafe;
-  window.speakTextSafe = function (text, onDone) {
-    if (window.StudioDecor) window.StudioDecor.duckEduMusic(true);
-    if (_origSpeak) _origSpeak(text, () => { if (window.StudioDecor) window.StudioDecor.duckEduMusic(false); if (onDone) onDone(); });
-    if ('speechSynthesis' in window && window.AvatarStudio) {
-      setTimeout(() => {
-        const pollWord = setInterval(() => { if (!window.speechSynthesis.speaking) { clearInterval(pollWord); return; } window.AvatarStudio.pulseSpeechWord(); }, 160);
-      }, 60);
-    }
-  };
-  window.scheduleNextLoop = function () {
-    if (!isAutoLooping) return;
-    autoLoopTimer = setTimeout(() => {
-      if (!isAutoLooping) return;
-      let nextText = '';
-      if (data.niche === 'JUALAN' && window.NicheJualan) nextText = window.NicheJualan.getNextPitch();
-      else if (data.niche === 'EDUKASI' && window.NicheEdukasi) nextText = window.NicheEdukasi.getNextChunk();
-      else {
-        const lines = (document.getElementById('liveScriptInput')?.value || '').split('\n').map(s => s.trim()).filter(Boolean);
-        nextText = lines.length ? lines[loopIndex++ % lines.length] : 'Terima kasih yang sudah bergabung, tulis pertanyaan kalian di kolom komentar ya!';
-      }
-      document.getElementById('studioSubCaption').innerText = nextText;
-      window.speakTextSafe(nextText, () => window.scheduleNextLoop());
-    }, data.loopDelay || 4000);
-  };
-  const _origLoadYt = window.loadYoutubeMusic;
-  window.loadYoutubeMusic = function () { if (_origLoadYt) _origLoadYt(); if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(true); };
-  const _origStopYt = window.stopYoutubeMusic;
-  window.stopYoutubeMusic = function () { if (_origStopYt) _origStopYt(); if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(false); };
-  window.handleIncomingComment = async function (customUser, customMsg) {
-    const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
-    const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
-    if (!msg) return;
-    const bannedWords = ['wa ', 'whatsapp', 'nomor hp', 'transfer', 'rekening', 'judi', 'slot', 'gacor', 'link bio', 'telegram', 'youtube', 'ig ', 'instagram', 'followers', 'bypass', 'hack'];
-    if (bannedWords.some(w => msg.toLowerCase().includes(w))) {
-      const safeReply = 'Terima kasih sudah mampir kak ' + user.replace('@', '') + '! Biar live kita tetap aman sesuai aturan komunitas, kita ngobrol seru di sini aja ya!';
-      document.getElementById('studioSubCaption').innerText = safeReply;
-      if (typeof speakTextSafe === 'function') speakTextSafe(safeReply);
-      return;
-    }
-    if (data.niche === 'JUALAN' && window.NicheJualan) { window.NicheJualan.handleSpillComment(user, msg); return; }
-    if (data.niche === 'HIBURAN' && window.NicheHiburan && window.NicheHiburan.handleRequest(user, msg)) return;
-    if (window.NicheEdukasi) await window.NicheEdukasi.handleQna(user, msg);
-  };
-})();
-   window.updateAvatarRig = function () {
-    if (!window.AvatarStudio || !window.AvatarStudio.setRig) return;
-    window.AvatarStudio.setRig({
-      headScale: Number(document.getElementById('rngHeadScale')?.value ?? 100) / 100,
-      bodyScale: Number(document.getElementById('rngBodyScale')?.value ?? 100) / 100,
-      armPose: Number(document.getElementById('rngArmPose')?.value ?? 0),
-      legSpread: Number(document.getElementById('rngLegSpread')?.value ?? 0),
-      yawAngle: Number(document.getElementById('rngYawAngle')?.value ?? 0),
-      glassDesk: Boolean(document.getElementById('chkGlassDeskS3')?.checked)
-    });
-  };
-
-  window.setCameraAngle = function (angle) {
-    ['Closeup', 'Medium', 'Wide'].forEach(name => {
-      const btn = document.getElementById('btnCam' + name);
-      if (btn) {
-        const active = (name.toLowerCase() === angle);
-        btn.style.borderColor = active ? '#34d399' : '#334155';
-        btn.style.background = active ? 'rgba(52,211,153,0.2)' : '#0f172a';
-        btn.style.color = active ? '#fff' : '#cbd5e1';
-      }
-    });
-    if (window.AvatarStudio && window.AvatarStudio.setRig) {
-      window.AvatarStudio.setRig({ cameraAngle: angle });
-    }
-  };
-
-  window.resetAvatarRig = function () {
-    if (document.getElementById('rngHeadScale')) document.getElementById('rngHeadScale').value = 100;
-    if (document.getElementById('rngBodyScale')) document.getElementById('rngBodyScale').value = 100;
-    if (document.getElementById('rngArmPose')) document.getElementById('rngArmPose').value = 0;
-    if (document.getElementById('rngLegSpread')) document.getElementById('rngLegSpread').value = 0;
-    if (document.getElementById('rngYawAngle')) document.getElementById('rngYawAngle').value = 0;
-    window.setCameraAngle('medium');
+window.addEventListener('DOMContentLoaded', async () => {
+  if (window.AvatarStudio) {
+    await window.AvatarStudio.init('#avatarCanvas');
     window.updateAvatarRig();
-  };
-
-  window.verifyUpload = async function (inp) {
-    const st = document.getElementById('scanStat');
-    if (!inp.files || !inp.files[0]) return;
-    if (!document.getElementById('agreeFace').checked) {
-      st.style.color = '#fbbf24';
-      st.innerText = '⚠️ Centang persetujuan dulu!';
-      return;
+    const customAud = document.getElementById('userCustomAudio');
+    if (customAud) window.AvatarStudio.bindAudioElement(customAud);
+    if (window.savedAvatarData && window.savedAvatarData.src) {
+      window.AvatarStudio.setFaceImage(window.savedAvatarData.src, window.savedAvatarData.box);
     }
-    if (!(await loadFaceModels())) return;
-    st.style.color = '#38bdf8';
-    st.innerText = '⏳ Menganalisis foto...';
+  }
+  const firstNiche = document.querySelector('.niche-btn.sel');
+  if (firstNiche) window.selectNiche(firstNiche, 'EDUKASI');
+});
 
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-      const base64Url = ev.target.result;
-      const im = document.getElementById('previewImg');
-      im.src = base64Url;
-      im.style.display = 'block';
-      im.onload = async () => {
-        const det = await faceapi.detectAllFaces(im, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }));
-        if (det.length === 1) {
-          const fBox = det[0].box;
-          window.savedAvatarData = { src: base64Url, box: fBox, w: im.naturalWidth, h: im.naturalHeight };
-          if (window.AvatarStudio) await window.AvatarStudio.setFaceImage(base64Url, fBox);
-          clearInterval(scanInterval);
-          if (camStream) camStream.getTracks().forEach(t => t.stop());
-          st.style.color = '#34d399';
-          st.innerText = '✅ Foto Wajah Valid! Membuka Studio...';
-          setTimeout(() => window.go(3), 900);
-        } else if (det.length > 1) {
-          st.style.color = '#ef4444';
-          st.innerText = '⚠️ Foto berisi lebih dari 1 wajah!';
-        } else {
-          st.style.color = '#ef4444';
-          st.innerText = '❌ Wajah tidak terdeteksi! Gunakan foto jelas.';
-        }
-      };
-    };
-    reader.readAsDataURL(inp.files[0]);
+window.setAvatarPhoto = function (src, box) {
+  if (window.AvatarStudio && src) {
+    window.AvatarStudio.setFaceImage(src, box || (window.savedAvatarData && window.savedAvatarData.box));
+  }
+};
+
+if (window.avConfig) {
+  let _spk = Boolean(window.avConfig.isSpeaking);
+  Object.defineProperty(window.avConfig, 'isSpeaking', {
+    get() { return _spk; },
+    set(val) {
+      _spk = Boolean(val);
+      if (window.AvatarStudio) {
+        if (_spk) window.AvatarStudio.startSpeaking();
+        else window.AvatarStudio.stopSpeaking();
+      }
+    }
+  });
+}
+window.updateAvatarRig = function () {
+  if (!window.AvatarStudio || !window.AvatarStudio.setRig) return;
+  window.AvatarStudio.setRig({
+    headScale: Number(document.getElementById('rngHeadScale')?.value ?? 100) / 100,
+    bodyScale: Number(document.getElementById('rngBodyScale')?.value ?? 100) / 100,
+    armPose: Number(document.getElementById('rngArmPose')?.value ?? 0),
+    legSpread: Number(document.getElementById('rngLegSpread')?.value ?? 0),
+    yawAngle: Number(document.getElementById('rngYawAngle')?.value ?? 0),
+    micAngle: Number(document.getElementById('rngMicAngle')?.value ?? -25),
+    glassDesk: Boolean(document.getElementById('chkGlassDeskS3')?.checked)
+  });
+};
+
+window.pickWearable = function (type, styleKey, url) {
+  if (window.AvatarStudio && window.AvatarStudio.setWearable) {
+    window.AvatarStudio.setWearable(type, styleKey, url);
+  }
+};
+
+window.toggleAvatarHeadset = function (btn) {
+  if (!window.AvatarStudio) return;
+  const next = !window.AvatarStudio.wearables.hasHeadset;
+  window.AvatarStudio.setWearable('headset', next);
+  if (btn) {
+    btn.style.borderColor = next ? '#34d399' : '#475569';
+    btn.style.background = next ? 'rgba(52,211,153,0.2)' : '#0f172a';
+    btn.style.color = next ? '#fff' : '#cbd5e1';
+  }
+};
+
+window.setCameraAngle = function (angle) {
+  ['Closeup', 'Medium', 'Wide'].forEach(name => {
+    const btn = document.getElementById('btnCam' + name);
+    if (btn) {
+      const active = (name.toLowerCase() === angle);
+      btn.style.borderColor = active ? '#34d399' : '#334155';
+      btn.style.background = active ? 'rgba(52,211,153,0.2)' : '#0f172a';
+      btn.style.color = active ? '#fff' : '#cbd5e1';
+    }
+  });
+  if (window.AvatarStudio && window.AvatarStudio.setRig) window.AvatarStudio.setRig({ cameraAngle: angle });
+};
+window.resetAvatarRig = function () {
+  if (document.getElementById('rngHeadScale')) document.getElementById('rngHeadScale').value = 100;
+  if (document.getElementById('rngBodyScale')) document.getElementById('rngBodyScale').value = 100;
+  if (document.getElementById('rngArmPose')) document.getElementById('rngArmPose').value = 0;
+  if (document.getElementById('rngLegSpread')) document.getElementById('rngLegSpread').value = 0;
+  if (document.getElementById('rngYawAngle')) document.getElementById('rngYawAngle').value = 0;
+  if (document.getElementById('rngMicAngle')) document.getElementById('rngMicAngle').value = -25;
+  window.setCameraAngle('medium');
+  window.updateAvatarRig();
+};
+
+function renderStyleCardsForNiche(niche) {
+  const n = niche || 'EDUKASI';
+  const lbl = document.getElementById('s3StyleNicheLbl');
+  if (lbl) lbl.innerText = n;
+  const styleMap = {
+    EDUKASI: [{ icon: '👨‍🏫', name: 'Mentor Edukasi', desc: 'Ramah & terstruktur' }, { icon: '☕', name: 'Kakak Santai', desc: 'Asik & interaktif' }, { icon: '🎓', name: 'Dosen / Ahli', desc: 'Formal & berbobot' }],
+    HIBURAN: [{ icon: '🎧', name: 'DJ & Host Party', desc: 'Energik & seru' }, { icon: '🎤', name: 'Host Karaoke', desc: 'Hangat & ekspresif' }, { icon: '🤣', name: 'Teman Ngobrol', desc: 'Santai & humoris' }],
+    JUALAN: [{ icon: '🔥', name: 'Host Flash Sale', desc: 'Cepat & persuasif' }, { icon: '💎', name: 'Konsultan Produk', desc: 'Detail & meyakinkan' }, { icon: '🛍️', name: 'Kakak Racun Spill', desc: 'Ramah & akrab' }]
   };
+  const list = styleMap[n] || styleMap.EDUKASI;
+  const grid = document.getElementById('s3StyleGrid');
+  if (!grid) return;
+  grid.innerHTML = list.map((st, idx) => '<div class="card style-pick-btn' + (idx === 0 ? ' sel' : '') + '" onclick="pickAvatarStyle(this,\'' + st.name + '\')" style="padding:10px 6px; text-align:center;"><div style="font-size:20px;">' + st.icon + '</div><div style="font-size:11px; font-weight:bold; margin-top:4px;">' + st.name + '</div><div style="font-size:9.5px; color:#94a3b8; margin-top:2px;">' + st.desc + '</div></div>').join('');
+  data.style = list[0].name;
+  if (window.AvatarStudio) window.AvatarStudio.setHostStyle(data.style);
+  const cap = document.getElementById('studioCaption');
+  if (cap) cap.innerText = 'Mode: ' + data.style;
+}
 
+window.pickAvatarStyle = function (el, styleName) {
+  document.querySelectorAll('.style-pick-btn').forEach(c => c.classList.remove('sel'));
+  if (el) el.classList.add('sel');
+  data.style = styleName;
+  if (window.AvatarStudio) window.AvatarStudio.setHostStyle(styleName);
+  const cap = document.getElementById('studioCaption');
+  if (cap) cap.innerText = 'Mode: ' + styleName;
+};
+window.selectNiche = function (el, niche) {
+  document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
+  if (el) el.classList.add('sel');
+  data.niche = niche;
+  const badge = document.getElementById('studioNicheBadge');
+  if (badge) badge.innerText = niche;
+  if (window.AvatarStudio && window.AvatarStudio.applyNichePreset) {
+    const preset = window.AvatarStudio.applyNichePreset(niche);
+    if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
+    if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = preset.defaultPosY;
+    if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = Math.round(preset.defaultScale * 100);
+    if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = Math.round(preset.defaultDeskCut * 100);
+    if (document.getElementById('chkGlassDesk')) document.getElementById('chkGlassDesk').checked = (niche === 'HIBURAN');
+  }
+  if (niche === 'EDUKASI' && window.NicheEdukasi) window.NicheEdukasi.activate();
+  else if (niche === 'HIBURAN' && window.NicheHiburan) window.NicheHiburan.activate();
+  else if (niche === 'JUALAN' && window.NicheJualan) window.NicheJualan.activate();
+
+  const lblTxt = document.getElementById('lblUploadTxt'), eduStat = document.getElementById('eduMateriStats');
+  if (lblTxt) lblTxt.style.display = (niche === 'EDUKASI') ? 'inline-block' : 'none';
+  if (eduStat) eduStat.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
+  const bEdu = document.getElementById('boxMusicEdukasi'), bHib = document.getElementById('boxMusicHiburan'), bJual = document.getElementById('boxMusicJualan');
+  if (bEdu) bEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
+  if (bHib) bHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
+  if (bJual) bJual.style.display = (niche === 'JUALAN') ? 'block' : 'none';
+  if (niche !== 'EDUKASI' && window.StudioDecor) window.StudioDecor.stopEduInstrument();
+  if (niche !== 'HIBURAN' && typeof stopYoutubeMusic === 'function') stopYoutubeMusic();
+  renderStyleCardsForNiche(niche);
+  if (typeof syncLiveMateri === 'function') syncLiveMateri();
+};
+window.switchS4Tab = function (btn, panelId) {
+  document.querySelectorAll('.s4-tab').forEach(t => { t.style.borderColor = '#334155'; t.style.background = 'rgba(15,23,42,0.8)'; t.style.color = '#94a3b8'; });
+  if (btn) { btn.style.borderColor = '#2dd4bf'; btn.style.background = 'rgba(45,212,191,0.2)'; btn.style.color = '#fff'; }
+  document.querySelectorAll('.s4-panel').forEach(p => p.style.display = 'none');
+  const panel = document.getElementById(panelId);
+  if (panel) panel.style.display = 'block';
+};
+
+window.finishSlide3Avatar = function () {
+  stopAllSpeech();
+  const n = data.niche || 'EDUKASI', slot = document.getElementById('s4StudioPreviewSlot'), frame = document.getElementById('studioFrame');
+  if (slot && frame) { frame.style.width = '168px'; slot.appendChild(frame); }
+  const lbl = document.getElementById('s4DecorNicheLbl');
+  if (lbl) lbl.innerText = n;
+  const decorMap = {
+    EDUKASI: [{ key: 'eduBoard', label: '📌 Papan Topik' }, { key: 'eduNameTag', label: '🏷️ Name Tag' }],
+    HIBURAN: [{ key: 'hibNeon', label: '🪩 Lampu Neon' }, { key: 'hibEq', label: '🎛️ Equalizer Meja' }],
+    JUALAN: [{ key: 'jualSaleTag', label: '🔥 Stiker Sale' }, { key: 'jualBanner', label: '🛒 Banner Promo' }]
+  };
+  const btnWrap = document.getElementById('s4DecorBtns');
+  if (btnWrap && window.StudioDecor) {
+    btnWrap.innerHTML = (decorMap[n] || decorMap.EDUKASI).map(item => {
+      const on = window.StudioDecor.activeItems[item.key];
+      return '<button type="button" onclick="StudioDecor.toggleItem(\'' + item.key + '\'); this.style.borderColor=StudioDecor.activeItems[\'' + item.key + '\']?\'#34d399\':\'#334155\'; this.style.color=StudioDecor.activeItems[\'' + item.key + '\']?\'#34d399\':\'#94a3b8\';" style="padding:8px 4px;border-radius:8px;border:1.5px solid ' + (on ? '#34d399' : '#334155') + ';background:#0f172a;color:' + (on ? '#34d399' : '#94a3b8') + ';font-size:10px;font-weight:bold;cursor:pointer;">' + item.label + '</button>';
+    }).join('');
+  }
+  go(4);
+};
+
+window.uploadStudioBg = async function (input) {
+  if (!input.files || !input.files[0] || !window.AvatarStudio) return;
+  const res = await window.AvatarStudio.uploadCustomBackground(input.files[0]);
+  const chk = document.getElementById('chkHideFurniture');
+  const st = document.getElementById('bgUploadStatus');
+  if (chk) chk.checked = res.hideFurniture;
+  if (st) st.innerText = res.hideFurniture
+    ? '✅ BG Studio terdeteksi: Kursi & meja bawaan otomatis disembunyikan.'
+    : '✅ BG Polos terdeteksi: Kursi & meja 2.5D tetap ditampilkan.';
+};
+window.updateHostTransform = function () {
+  if (!window.AvatarStudio || !window.AvatarStudio.setTransform) return;
+  window.AvatarStudio.setTransform({
+    posX: Number(document.getElementById('rngHostX')?.value ?? 0),
+    posY: Number(document.getElementById('rngHostY')?.value ?? 0),
+    scale: Number(document.getElementById('rngHostScale')?.value ?? 92) / 100,
+    deskCutY: Number(document.getElementById('rngDeskCut')?.value ?? 58) / 100,
+    glassDesk: Boolean(document.getElementById('chkGlassDesk')?.checked),
+    hideFurniture: Boolean(document.getElementById('chkHideFurniture')?.checked)
+  });
+};
+
+window.resetHostTransform = function () {
+  if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
+  if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = 0;
+  if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 92;
+  if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 58;
+  window.updateHostTransform();
+};
+
+window.setStudioAspectRatio = function (ratio) {
+  const frame = document.getElementById('studioFrame'), b916 = document.getElementById('btnRatio916'), b169 = document.getElementById('btnRatio169');
+  if (ratio === '16:9') {
+    if (frame) { frame.style.width = '100%'; frame.style.maxWidth = '310px'; frame.style.aspectRatio = '16/9'; }
+    if (b169) { b169.style.borderColor = '#38bdf8'; b169.style.background = 'rgba(56,189,248,0.25)'; b169.style.color = '#fff'; }
+    if (b916) { b916.style.borderColor = '#475569'; b916.style.background = '#1e293b'; b916.style.color = '#94a3b8'; }
+  } else {
+    if (frame) { frame.style.width = '168px'; frame.style.maxWidth = ''; frame.style.aspectRatio = '9/16'; }
+    if (b916) { b916.style.borderColor = '#38bdf8'; b916.style.background = 'rgba(56,189,248,0.25)'; b916.style.color = '#fff'; }
+    if (b169) { b169.style.borderColor = '#475569'; b169.style.background = '#1e293b'; b169.style.color = '#94a3b8'; }
+  }
+  if (window.AvatarStudio && window.AvatarStudio.setAspectRatio) window.AvatarStudio.setAspectRatio(ratio);
+};
+
+window.addProductRow = function () { if (window.NicheJualan) window.NicheJualan.addProductRow(); };
+window.triggerQnaAnswer = function () {
+  const user = document.getElementById('qnaUserIn')?.value || '@penonton', q = document.getElementById('qnaQuestionIn')?.value || '';
+  if (!q.trim()) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
+  if (window.NicheEdukasi) window.NicheEdukasi.handleQna(user, q);
+};
+window.updateKaraokeLyrics = function () {
+  const raw = (document.getElementById('karaokeLyricsIn')?.value || '').trim(), scrollEl = document.getElementById('karaokeLyricScroll');
+  if (scrollEl) scrollEl.innerText = raw ? ('♪ ' + raw.replace(/\n+/g, '   •   ') + ' ♪') : '♪ Masukkan lirik lagu karaoke di Tab 2 Materi... ♪';
+};
+
+window.updateAudioMixer = function () {
+  const hVal = Number(document.getElementById('rngHostVol')?.value ?? 100), mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
+  window.mixerState.hostVol = hVal / 100; window.mixerState.musicVol = mVal;
+  if (document.getElementById('lblHostVol')) document.getElementById('lblHostVol').innerText = hVal + '%';
+  if (document.getElementById('lblMusicVol')) document.getElementById('lblMusicVol').innerText = mVal + '%';
+  const aud = document.getElementById('userCustomAudio'); if (aud) aud.volume = window.mixerState.hostVol;
+  if (typeof setYoutubeVolume === 'function' && !window.avConfig?.isSpeaking) setYoutubeVolume(mVal);
+  if (window.StudioDecor) window.StudioDecor.setEduMusicVolume(mVal);
+};
+
+window.selectEduInstrument = function (btn, key) {
+  document.querySelectorAll('.edu-inst-btn').forEach(b => { b.style.borderColor = '#334155'; b.style.background = '#0f172a'; b.style.color = '#cbd5e1'; });
+  if (btn) { btn.style.borderColor = '#38bdf8'; btn.style.background = 'rgba(56,189,248,0.25)'; btn.style.color = '#fff'; }
+  if (window.StudioDecor) window.StudioDecor.playEduInstrument(key);
+  const st = document.getElementById('eduInstStatus');
+  if (st) st.innerText = key === 'none' ? 'Instrumen dimatikan.' : '🎼 Instrumen aktif (Auto-Ducking siap)';
+};
+
+window.finishSlide4Studio = function () {
+  syncLiveMateri(); stopAllSpeech();
+  if (data.niche === 'JUALAN' && !data.products.some(p => p.name.trim() !== '')) { alert('Isi minimal 1 Nama Produk!'); return; }
+  if (data.niche === 'EDUKASI' && !(data.script || '').trim()) { alert('Isi minimal 1 kalimat materi!'); return; }
+  const slot = document.getElementById('s5ReviewPreviewSlot'), frame = document.getElementById('studioFrame');
+  if (slot && frame) { frame.style.width = '172px'; slot.appendChild(frame); }
+  const sum = document.getElementById('summaryTxt');
+  if (sum) sum.innerText = (data.niche || 'EDUKASI') + ' • ' + (data.style || 'Mentor Edukasi');
+  go(5);
+};
+
+window.handleIncomingComment = async function (customUser, customMsg) {
+  const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
+  const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
+  if (!msg) return;
+  if (data.niche === 'JUALAN' && window.NicheJualan) { window.NicheJualan.handleSpillComment(user, msg); return; }
+  if (data.niche === 'HIBURAN' && window.NicheHiburan && window.NicheHiburan.handleRequest(user, msg)) return;
+  if (window.NicheEdukasi) await window.NicheEdukasi.handleQna(user, msg);
+};
 </script>
 </body>
 </html>
