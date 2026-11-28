@@ -32,9 +32,6 @@
       if (inTitle) inTitle.placeholder = 'Tema Live (misal: Karaoke Santai / Tebak-Tebakan Seru)';
       if (inScript) inScript.placeholder = 'Tulis topik obrolan santai, candaan, atau sapaan penonton...';
 
-      if (typeof global.setStudioBg === 'function') {
-        global.setStudioBg('image', 'studio-hiburan.jpeg');
-      }
       this.syncLyricVisibility();
     },
 
@@ -62,7 +59,7 @@
       if (raw) {
         scrollEl.innerText = '♪ ' + raw.replace(/\n+/g, '   •   ') + ' ♪';
       } else if (this.queue.length > 0) {
-        scrollEl.innerText = '♪ Sedang Memutar: ' + this.queue[0].title + ' (' + this.queue[0].user + ') ♪';
+        scrollEl.innerText = '♪ Sedang Memutar: ' + this.queue.title + ' (' + this.queue.user + ') ♪';
       } else {
         scrollEl.innerText = '♪ Musik Karaoke Sedang Diputar... Selamat Bernyanyi! ♪';
       }
@@ -71,12 +68,11 @@
     handleRequest(user, msg) {
       const cleanName = (user || '@penonton').replace('@', '');
       const reqMatch = String(msg || '').match(/(?:req|request|nyanyi|lagu)\s+(.+)/i);
-      if (!reqMatch || !reqMatch[1]) return false;
+      if (!reqMatch || !reqMatch) return false;
 
-      const songTitle = reqMatch[1].trim();
+      const songTitle = reqMatch.trim();
       this.queue.push({ user: user || '@penonton', title: songTitle });
       this.renderQueue();
-
       const reply = 'Siap kak ' + cleanName + '! Request lagu ' + songTitle + ' sudah masuk antrean nomor ' + this.queue.length + ' ya, ditunggu sebentar!';
       const sub = document.getElementById('studioSubCaption');
       if (sub) sub.innerText = reply;
