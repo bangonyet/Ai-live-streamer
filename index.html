@@ -88,80 +88,104 @@
   <p id="scanStat" style="margin-top:12px;font-size:12.5px;font-weight:bold;color:#fbbf24">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p>
 </div>
   <div id="s3" class="slide">
-  <h2>3. Studio Live AI</h2>
-  <p class="sub">Atur studio, host AI, dan materi siaran Anda</p>
+  <h2>3. Bikin Avatar AI</h2>
+  <p class="sub">Pilih niche live, karakter suara, dan gaya pembawa acara</p>
 
-  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px;">
-    <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
-      <div style="font-size:18px;">🎓</div>
-      <div style="font-size:11.5px; font-weight:bold; margin-top:3px;">EDUKASI</div>
-    </div>
-    <div class="card niche-btn" onclick="selectNiche(this, 'HIBURAN')" style="padding:10px 6px; text-align:center;">
-      <div style="font-size:18px;">🎭</div>
-      <div style="font-size:11.5px; font-weight:bold; margin-top:3px;">HIBURAN</div>
-    </div>
-    <div class="card niche-btn" onclick="selectNiche(this, 'JUALAN')" style="padding:10px 6px; text-align:center;">
-      <div style="font-size:18px;">🛍️</div>
-      <div style="font-size:11.5px; font-weight:bold; margin-top:3px;">JUALAN</div>
-    </div>
- </div>
- <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
-    <div style="display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap;">
-      <div id="studioFrame" style="position:relative; width:168px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; z-index:3;">
-          <span style="background:#ef4444; color:#fff; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">● LIVE</span>
-          <span id="studioNicheBadge" style="background:rgba(15,23,42,0.8); color:#38bdf8; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">EDUKASI</span>
+  <div id="s3AvatarPreviewSlot" style="display:flex; justify-content:center; margin-bottom:12px;">
+    <div id="studioFrame" style="position:relative; width:176px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; z-index:3;">
+        <span style="background:#ef4444; color:#fff; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">● LIVE</span>
+        <span id="studioNicheBadge" style="background:rgba(15,23,42,0.8); color:#38bdf8; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">EDUKASI</span>
+      </div>
+      <canvas id="avatarCanvas" width="540" height="960" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
+
+      <div style="position:relative; z-index:3; margin-top:auto; display:flex; flex-direction:column; gap:3px;">
+        <div id="studioQnaOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #38bdf8; border-radius:7px; padding:4px 6px; text-align:left;">
+          <div id="qnaAskUser" style="font-size:7px; font-weight:bold; color:#38bdf8;">💬 Q&A Penonton</div>
+          <div id="qnaAskText" style="font-size:8px; color:#fff; line-height:1.2; max-height:22px; overflow:hidden;">Pertanyaan penonton tampil di sini</div>
         </div>
-        <canvas id="avatarCanvas" width="540" height="960" style="position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none;"></canvas>
-
-              <div style="position:relative; z-index:3; margin-top:auto; display:flex; flex-direction:column; gap:3px;">
-          <div id="studioQnaOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #38bdf8; border-radius:7px; padding:4px 6px; text-align:left;">
-            <div id="qnaAskUser" style="font-size:7px; font-weight:bold; color:#38bdf8;">💬 Q&A Penonton</div>
-            <div id="qnaAskText" style="font-size:8px; color:#fff; line-height:1.2; max-height:22px; overflow:hidden;">Pertanyaan penonton tampil di sini</div>
-          </div>
-
-          <div id="studioEtalaseOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #fbbf24; border-radius:7px; padding:4px 6px; text-align:left;">
-            <div style="display:flex; gap:5px; align-items:center;">
-              <img id="etalaseProdImg" src="" style="display:none; width:24px; height:24px; object-fit:cover; border-radius:4px; border:1px solid #fbbf24; flex-shrink:0;">
-              <div style="min-width:0; flex:1;">
-                <div id="etalaseBadgeTxt" style="font-size:7px; font-weight:bold; color:#fbbf24;">👇 Cek Keranjang • Etalase No. 1</div>
-                <div id="etalaseTitleTxt" style="font-size:8.5px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Nama Produk</div>
-              </div>
-            </div>
-          </div>
-
-          <div id="studioKaraokeMini" style="display:none; margin:0 6px; background:rgba(24,24,27,0.94); border:1px solid #e879f9; border-radius:6px; padding:3px 5px; text-align:left;">
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:7px; color:#f0abfc; font-weight:bold; margin-bottom:1px;">
-              <span>🎤 KARAOKE</span><span style="color:#34d399;">● ON</span>
-            </div>
-            <div id="karaokeEqBar" style="height:14px; border-radius:3px; background:linear-gradient(90deg,#701a75,#3b0764); display:flex; align-items:center; overflow:hidden; padding:0 3px;">
-              <marquee id="karaokeLyricScroll" scrollamount="3" style="font-size:7.5px; color:#fde047; font-weight:bold;">♪ Musik Karaoke Diputar... ♪</marquee>
+        <div id="studioEtalaseOverlay" style="display:none; margin:0 6px; background:rgba(15,23,42,0.94); border:1px solid #fbbf24; border-radius:7px; padding:4px 6px; text-align:left;">
+          <div style="display:flex; gap:5px; align-items:center;">
+            <img id="etalaseProdImg" src="" style="display:none; width:24px; height:24px; object-fit:cover; border-radius:4px; border:1px solid #fbbf24; flex-shrink:0;">
+            <div style="min-width:0; flex:1;">
+              <div id="etalaseBadgeTxt" style="font-size:7px; font-weight:bold; color:#fbbf24;">👇 Cek Keranjang • Etalase No. 1</div>
+              <div id="etalaseTitleTxt" style="font-size:8.5px; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Nama Produk</div>
             </div>
           </div>
         </div>
-
-
-        <div style="position:relative; z-index:3; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 100%); text-align:left;">
-          <div id="studioCaption" style="font-size:9px; font-weight:bold; color:#f8fafc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mode: Mentor Edukasi</div>
-          <div id="studioSubCaption" style="font-size:8px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Siap dikonfigurasi...</div>
+        <div id="studioKaraokeMini" style="display:none; margin:0 6px; background:rgba(24,24,27,0.94); border:1px solid #e879f9; border-radius:6px; padding:3px 5px; text-align:left;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:7px; color:#f0abfc; font-weight:bold; margin-bottom:1px;">
+            <span>🎤 KARAOKE</span><span style="color:#34d399;">● ON</span>
+          </div>
+          <div id="karaokeEqBar" style="height:14px; border-radius:3px; background:linear-gradient(90deg,#701a75,#3b0764); display:flex; align-items:center; overflow:hidden; padding:0 3px;">
+            <marquee id="karaokeLyricScroll" scrollamount="3" style="font-size:7.5px; color:#fde047; font-weight:bold;">♪ Musik Karaoke Diputar... ♪</marquee>
+          </div>
         </div>
       </div>
 
-      <div style="flex:1; min-width:160px; display:flex; flex-direction:column; gap:6px; text-align:left;">
-        <div style="font-size:11px; color:#cbd5e1; font-weight:bold;">⚡ Kontrol Cepat Live</div>
-        <button type="button" onclick="testAIVoice()" style="padding:8px; border-radius:8px; border:1px solid #38bdf8; background:rgba(56,189,248,0.15); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔊 Tes Suara & Opening</button>
-        <button type="button" id="btnAutoLoop" onclick="toggleAutoLoopSim()" style="padding:8px; border-radius:8px; border:1px solid #10b981; background:rgba(16,185,129,0.15); color:#34d399; font-size:11px; font-weight:bold; cursor:pointer;">🔁 Simulasi Auto-Loop</button>
-        <button type="button" onclick="stopAllSpeech()" style="padding:6px; border-radius:8px; border:1px solid #475569; background:rgba(30,41,59,0.8); color:#94a3b8; font-size:10.5px; cursor:pointer;">⏹️ Hentikan Suara</button>
+      <div style="position:relative; z-index:3; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 100%); text-align:left;">
+        <div id="studioCaption" style="font-size:9px; font-weight:bold; color:#f8fafc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mode: Mentor Edukasi</div>
+        <div id="studioSubCaption" style="font-size:8px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Avatar siap dikustomisasi...</div>
       </div>
     </div>
- </div>
- <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
-    <button type="button" class="s3-tab sel" onclick="switchS3Tab(this, 'tabStudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🎨 1. Studio</button>
-    <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabMateri')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">📝 2. Materi</button>
-    <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabAudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ 3. Audio/Loop</button>
+  </div>
+  <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+    <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🎯 1. Pilih Kategori / Niche Live</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+      <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
+        <div style="font-size:18px;">🎓</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">EDUKASI</div>
+      </div>
+      <div class="card niche-btn" onclick="selectNiche(this, 'HIBURAN')" style="padding:10px 6px; text-align:center;">
+        <div style="font-size:18px;">🎭</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">HIBURAN</div>
+      </div>
+      <div class="card niche-btn" onclick="selectNiche(this, 'JUALAN')" style="padding:10px 6px; text-align:center;">
+        <div style="font-size:18px;">🛍️</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">JUALAN</div>
+      </div>
+    </div>
   </div>
 
-  <div id="tabStudio" class="s3-panel" style="text-align:left;">
+  <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+    <div style="font-size:12px; font-weight:bold; color:#c084fc; margin-bottom:8px;">🗣️ 2. Pilih Karakter Suara Avatar</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
+      <button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px; border-radius:8px; border:1.5px solid #c084fc; background:rgba(192,132,252,0.25); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">👩 AI Wanita</button>
+      <button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">👨 AI Pria</button>
+      <button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ Suara Asli</button>
+    </div>
+    <div id="voiceStatusTxt" style="font-size:11px; color:#34d399; margin-bottom:6px;">● Aktif: Suara AI Wanita</div>
+
+    <div id="customVoiceBox" style="display:none; background:rgba(15,23,42,0.9); border:1px solid #10b981; border-radius:10px; padding:10px; margin-top:8px;">
+      <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:4px;">🎙️ Rekam Contoh Suara Asli Anda</div>
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1; padding:8px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔴 Mulai Rekam</button>
+        <button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1; padding:8px; border-radius:8px; border:1px solid #475569; background:#1e293b; color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">⏹️ Selesai</button>
+      </div>
+      <div id="recTimerTxt" style="font-size:11px; color:#fbbf24; margin-bottom:6px;">Siap merekam via mikrofon HP...</div>
+      <audio id="userCustomAudio" controls style="display:none; width:100%; height:34px;"></audio>
+    </div>
+  </div>
+
+  <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+    <div style="font-size:12px; font-weight:bold; color:#34d399; margin-bottom:8px;">🎭 3. Pilih Gaya Pembawa Acara (<span id="s3StyleNicheLbl">EDUKASI</span>)</div>
+    <div id="s3StyleGrid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;"></div>
+  </div>
+
+  <button type="button" class="btn btn-green" style="margin-top:6px;" onclick="finishSlide3Avatar()">Simpan Avatar & Set Studio →</button>
+</div>
+<div id="s4" class="slide">
+  <h2>4. Set Studio & Materi Live</h2>
+  <p class="sub">Atur background, posisi host, dekorasi, dan materi siaran</p>
+
+  <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
+    <div id="s4StudioPreviewSlot" style="display:flex; justify-content:center; align-items:center;"></div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
+    <button type="button" class="s4-tab sel" onclick="switchS4Tab(this, 'tabStudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🎨 1. Studio</button>
+    <button type="button" class="s4-tab" onclick="switchS4Tab(this, 'tabMateri')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">📝 2. Materi</button>
+    <button type="button" class="s4-tab" onclick="switchS4Tab(this, 'tabAudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">🎵 3. Musik/Loop</button>
+  </div>
+
+  <div id="tabStudio" class="s4-panel" style="text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <span style="font-size:12px; font-weight:bold; color:#38bdf8;">🖼️ Background Studio & Rasio Layar</span>
@@ -180,28 +204,22 @@
           <input type="file" accept="image/*" onchange="uploadStudioBg(this)" style="display:none;">
         </label>
       </div>
+
+      <div style="border-top:1px solid #334155; padding-top:10px; margin-top:4px;">
+        <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:6px;">✨ Aksesoris Studio (<span id="s4DecorNicheLbl">EDUKASI</span>)</div>
+        <div id="s4DecorBtns" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;"></div>
+      </div>
+
       <div style="border-top:1px solid #334155; padding-top:10px; margin-top:4px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <span style="font-size:11.5px; font-weight:bold; color:#38bdf8;">🧍 Posisi Host & Meja Studio</span>
           <button type="button" onclick="resetHostTransform()" style="background:#1e293b; border:1px solid #475569; color:#cbd5e1; font-size:10px; padding:3px 7px; border-radius:5px; cursor:pointer;">Reset</button>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:10.5px;">
-          <div>
-            <span>↔️ Kiri / Kanan</span>
-            <input type="range" id="rngHostX" min="-100" max="100" value="0" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;">
-          </div>
-          <div>
-            <span>↕️ Naik / Turun</span>
-            <input type="range" id="rngHostY" min="-100" max="100" value="0" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;">
-          </div>
-          <div>
-            <span>🔍 Ukuran Host</span>
-            <input type="range" id="rngHostScale" min="40" max="130" value="78" oninput="updateHostTransform()" style="width:100%; accent-color:#34d399;">
-          </div>
-          <div>
-            <span>🪑 Batas Tinggi Meja</span>
-            <input type="range" id="rngDeskCut" min="45" max="95" value="62" oninput="updateHostTransform()" style="width:100%; accent-color:#fbbf24;">
-          </div>
+          <div><span>↔️ Kiri / Kanan</span><input type="range" id="rngHostX" min="-100" max="100" value="0" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;"></div>
+          <div><span>↕️ Naik / Turun</span><input type="range" id="rngHostY" min="-100" max="100" value="0" oninput="updateHostTransform()" style="width:100%; accent-color:#38bdf8;"></div>
+          <div><span>🔍 Ukuran Host</span><input type="range" id="rngHostScale" min="40" max="130" value="92" oninput="updateHostTransform()" style="width:100%; accent-color:#34d399;"></div>
+          <div><span>🪑 Batas Tinggi Meja</span><input type="range" id="rngDeskCut" min="45" max="95" value="58" oninput="updateHostTransform()" style="width:100%; accent-color:#fbbf24;"></div>
         </div>
         <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:#cbd5e1; margin-top:8px; cursor:pointer;">
           <input type="checkbox" id="chkGlassDesk" onchange="updateHostTransform()" style="accent-color:#c084fc;">
@@ -210,7 +228,7 @@
       </div>
     </div>
   </div>
-  <div id="tabMateri" class="s3-panel" style="display:none; text-align:left;">
+  <div id="tabMateri" class="s4-panel" style="display:none; text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="font-size:12px; font-weight:bold; color:#fbbf24; margin-bottom:6px;">👋 Monolog Perkenalan Akun (Opening Live)</div>
       <textarea id="openingScriptInput" rows="2" oninput="syncLiveMateri()" placeholder="Contoh: Halo semuanya selamat datang di live akun kami! Jangan lupa tap-tap layar dan follow dulu ya..." style="width:100%; padding:9px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; font-size:12px; margin-bottom:4px;"></textarea>
@@ -231,10 +249,11 @@
       <textarea id="karaokeLyricsIn" rows="3" oninput="updateKaraokeLyrics()" placeholder="Tempel lirik lagu di sini untuk ditampilkan berjalan di layar live..." style="width:100%; padding:8px; border-radius:8px; border:1px solid #c084fc; background:rgba(15,23,42,0.85); color:#fff; font-size:11.5px; margin-bottom:6px;"></textarea>
       <div style="font-size:10px; color:#cbd5e1;">💡 Gunakan input YouTube Musik di Tab 3 untuk memutar instrumen karaoke.</div>
     </div>
-     <div id="boxMateriUmum" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+
+    <div id="boxMateriUmum" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
         <span id="materiBoxTitle" style="font-size:12px; font-weight:bold; color:#38bdf8;">📚 Materi Edukasi & Poin Penjelasan</span>
-        <label style="font-size:10px; background:#0284c7; color:#fff; padding:4px 8px; border-radius:6px; font-weight:bold; cursor:pointer; flex-shrink:0;">
+        <label id="lblUploadTxt" style="font-size:10px; background:#0284c7; color:#fff; padding:4px 8px; border-radius:6px; font-weight:bold; cursor:pointer; flex-shrink:0;">
           📄 Upload .TXT
           <input type="file" accept=".txt,text/plain" onchange="if(window.NicheEdukasi)NicheEdukasi.loadTxtFile(this)" style="display:none;">
         </label>
@@ -244,7 +263,6 @@
       <div id="eduMateriStats" style="font-size:10.5px; color:#34d399; margin-top:6px;">📊 Mendukung materi panjang hingga puluhan ribu kata (anti-macet)</div>
     </div>
 
-
     <div id="boxMateriJualan" class="card" style="display:none; padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <span style="font-size:12px; font-weight:bold; color:#34d399;">🛍️ Daftar Produk Etalase</span>
@@ -252,61 +270,26 @@
       </div>
       <div id="productListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
-
-    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#a855f7;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span style="font-size:12px; font-weight:bold; color:#c084fc;">🤖 Autopilot Komentar Penonton (Anti-Pelanggaran)</span>
-        <span id="autopilotBadge" style="font-size:9.5px; background:#065f46; color:#34d399; padding:2px 6px; border-radius:4px;">● POLICY GUARD ON</span>
-      </div>
-      <div style="display:flex; gap:6px; margin-bottom:6px;">
-        <input type="text" id="liveChatUser" placeholder="@penonton" value="@kak_sari" style="width:32%; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
-        <input type="text" id="liveChatMsg" placeholder="Komen: req lagu / spill no 1 / apa itu..." style="flex:1; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
-      </div>
-      <button type="button" onclick="handleIncomingComment()" style="width:100%; padding:8px; border-radius:8px; border:none; background:#7e22ce; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">⚡ Proses Komentar Otomatis (Autopilot)</button>
-      <div id="karaokeQueueBox" style="display:none; margin-top:8px; padding-top:6px; border-top:1px dashed #475569; font-size:10.5px; color:#f0abfc;">
-        🎶 <b>Antrean Karaoke:</b> <span id="karaokeQueueTxt">Belum ada antrean</span>
-      </div>
-    </div>
   </div>
-  <div id="tabAudio" class="s3-panel" style="display:none; text-align:left;">
-    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
-      <div style="font-size:12px; font-weight:bold; color:#c084fc; margin-bottom:8px;">🗣️ Pilih Karakter Suara Host</div>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
-        <button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px; border-radius:8px; border:1.5px solid #c084fc; background:rgba(192,132,252,0.25); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">👩 AI Wanita</button>
-        <button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">👨 AI Pria</button>
-        <button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ Suara Asli</button>
-      </div>
-      <div id="voiceStatusTxt" style="font-size:11px; color:#34d399; margin-bottom:8px;">● Aktif: Suara AI Wanita</div>
-
-      <div id="customVoiceBox" style="display:none; background:rgba(15,23,42,0.9); border:1px solid #10b981; border-radius:10px; padding:10px; margin-bottom:10px;">
-        <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:4px;">🎙️ Rekam Contoh Suara Asli Anda</div>
-        <p style="font-size:10.5px; color:#94a3b8; margin-bottom:8px;">Rekam suara Anda. Saat Live / Auto-Loop berjalan, rekaman ini akan diputar otomatis.</p>
-        <div style="display:flex; gap:6px; margin-bottom:8px;">
-          <button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1; padding:8px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔴 Mulai Rekam</button>
-          <button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1; padding:8px; border-radius:8px; border:1px solid #475569; background:#1e293b; color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">⏹️ Selesai</button>
-        </div>
-        <div id="recTimerTxt" style="font-size:11px; color:#fbbf24; margin-bottom:6px;">Siap merekam via mikrofon HP...</div>
-        <audio id="userCustomAudio" controls style="display:none; width:100%; height:34px;"></audio>
-      </div>
-
-      <label style="font-size:11px; color:#94a3b8;">Jeda Antar Materi (Detik):</label>
-      <input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%; padding:8px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; margin-top:4px;">
-    </div>
+  <div id="tabAudio" class="s4-panel" style="display:none; text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#2dd4bf;">
-      <div style="font-size:12px; font-weight:bold; color:#2dd4bf; margin-bottom:8px;">🎚️ Mixer Volume Audio Studio</div>
+      <div style="font-size:12px; font-weight:bold; color:#2dd4bf; margin-bottom:8px;">🎚️ Mixer Volume Audio & Jeda Bicara</div>
       <div style="margin-bottom:8px;">
         <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
           <span>🎙️ Volume Suara Host (AI / Asli)</span><b id="lblHostVol" style="color:#34d399;">100%</b>
         </div>
         <input type="range" id="rngHostVol" min="0" max="100" value="100" oninput="updateAudioMixer()" style="width:100%; accent-color:#34d399;">
       </div>
-      <div>
+      <div style="margin-bottom:8px;">
         <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px;">
           <span>🎵 Volume Musik Backsound</span><b id="lblMusicVol" style="color:#38bdf8;">65%</b>
         </div>
         <input type="range" id="rngMusicVol" min="0" max="100" value="65" oninput="updateAudioMixer()" style="width:100%; accent-color:#38bdf8;">
       </div>
+      <label style="font-size:11px; color:#94a3b8;">Jeda Antar Materi (Detik):</label>
+      <input type="number" value="10" min="3" onchange="data.loopDelay=(this.value||10)*1000" style="width:100%; padding:8px; border-radius:8px; border:1px solid #475569; background:rgba(15,23,42,0.85); color:#fff; margin-top:4px;">
     </div>
+
     <div id="boxMusicEdukasi" class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#38bdf8;">
       <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:6px;">🎼 Instrumen Latar Edukasi (Auto-Ducking)</div>
       <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:6px;">
@@ -330,52 +313,56 @@
         <span id="ytMusicStatus" style="font-size:10.5px; color:#94a3b8;">Belum ada lagu diputar</span>
         <button type="button" onclick="stopYoutubeMusic()" style="background:none; border:none; color:#f87171; font-size:10.5px; cursor:pointer;">Stop Lagu</button>
       </div>
-      <button type="button" onclick="switchS3Tab(document.querySelectorAll('.s3-tab')[1],'tabMateri')" style="width:100%; padding:6px; border-radius:7px; border:1px dashed #e879f9; background:rgba(232,121,249,0.12); color:#f0abfc; font-size:10.5px; font-weight:bold; cursor:pointer;">🎤 Edit Lirik Lagu di Tab Materi →</button>
+      <button type="button" onclick="switchS4Tab(document.querySelectorAll('.s4-tab'),'tabMateri')" style="width:100%; padding:6px; border-radius:7px; border:1px dashed #e879f9; background:rgba(232,121,249,0.12); color:#f0abfc; font-size:10.5px; font-weight:bold; cursor:pointer;">🎤 Edit Lirik Lagu di Tab Materi →</button>
       <div id="ytPlayer" style="display:none;"></div>
     </div>
 
     <div id="boxMusicJualan" class="card" style="display:none; padding:10px; margin-bottom:10px; cursor:default; text-align:left; border-color:#334155;">
       <div style="font-size:11px; color:#94a3b8;">🛍️ Mode Jualan fokus pada suara host & promo etalase (musik dinonaktifkan agar suara penjelasan produk jernih).</div>
     </div>
-
-   
   </div>
 
-  <button type="button" class="btn btn-green" style="margin-top:8px;" onclick="finishSlide3()">Simpan & Pilih Gaya Host →</button>
-  </div>
-<div id="s4" class="slide">
-  <h2>4. Dekorasi Studio & Gaya Host (<span id="nLbl" style="color:#2dd4bf">EDUKASI</span>)</h2>
-  <p class="sub">Pasang aksesoris studio dan pilih gaya pembawa acara</p>
-
-  <div id="s4PreviewSlot" style="display:flex; justify-content:center; margin-bottom:12px;"></div>
-
-  <div id="s4DecorControls" class="card" style="padding:12px; margin-bottom:12px; cursor:default; text-align:left; border-color:#38bdf8;">
-    <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">✨ Aksesoris Studio (<span id="s4DecorNicheLbl">EDUKASI</span>)</div>
-    <div id="s4DecorBtns" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;"></div>
-  </div>
-
-  <div id="s4StyleGrid" class="grid"></div>
+  <button type="button" class="btn btn-green" style="margin-top:8px;" onclick="finishSlide4Studio()">Simpan Studio & Review Live →</button>
 </div>
-
-
 <div id="s5" class="slide">
-  <h2>5. Control Center & Preview</h2>
-  <p class="sub">Periksa pengaturan studio AI sebelum aktivasi</p>
-  <div class="grid">
-    <div style="text-align:left;font-size:14px;line-height:2.2">
-      <label><input type="checkbox" checked> Studio & Ratio (9:16 Vertical)</label><br>
-      <label><input type="checkbox" checked> Materi Live & Pop-up Gambar</label><br>
-      <label><input type="checkbox" checked> Audio Suara AI & Auto-Monolog</label><br>
-      <label><input type="checkbox" checked> Koneksi TikTok / YT / IG</label>
-      <button class="btn btn-green" style="margin-top:14px" onclick="go(6)">Konfirmasi & Lanjut Bayar →</button>
-    </div>
-    <div class="card sel" style="display:flex;flex-direction:column;justify-content:center;min-height:190px">
-      <span style="background:#e11d48;padding:3px 8px;border-radius:6px;font-size:11px;width:fit-content;margin:0 auto 12px">● LIVE READY</span>
-      <h3>✨ AI Virtual Host</h3>
-      <p id="summaryTxt" style="font-size:12px;color:#2dd4bf;margin-top:6px">Siap Siaran</p>
+  <h2>5. Review Live & Simulasi</h2>
+  <p class="sub">Uji coba tampilan akhir, suara, dan komentar sebelum pembayaran</p>
+
+  <div style="display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; margin-bottom:12px;">
+    <div id="s5ReviewPreviewSlot" style="display:flex; justify-content:center;"></div>
+    <div style="flex:1; min-width:170px; display:flex; flex-direction:column; gap:6px; text-align:left;">
+      <div style="font-size:11px; color:#cbd5e1; font-weight:bold;">⚡ Tes Siaran Sebelum Live</div>
+      <button type="button" onclick="testAIVoice()" style="padding:8px; border-radius:8px; border:1px solid #38bdf8; background:rgba(56,189,248,0.15); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔊 Tes Suara & Opening</button>
+      <button type="button" id="btnAutoLoop" onclick="toggleAutoLoopSim()" style="padding:8px; border-radius:8px; border:1px solid #10b981; background:rgba(16,185,129,0.15); color:#34d399; font-size:11px; font-weight:bold; cursor:pointer;">🔁 Simulasi Auto-Loop</button>
+      <button type="button" onclick="stopAllSpeech()" style="padding:6px; border-radius:8px; border:1px solid #475569; background:rgba(30,41,59,0.8); color:#94a3b8; font-size:10.5px; cursor:pointer;">⏹️ Hentikan Suara</button>
     </div>
   </div>
+
+  <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left; border-color:#a855f7;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="font-size:11.5px; font-weight:bold; color:#c084fc;">🤖 Tes Autopilot Komentar Penonton</span>
+      <span style="font-size:9px; background:#065f46; color:#34d399; padding:2px 6px; border-radius:4px;">● POLICY GUARD ON</span>
+    </div>
+    <div style="display:flex; gap:6px; margin-bottom:6px;">
+      <input type="text" id="liveChatUser" placeholder="@penonton" value="@kak_sari" style="width:32%; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
+      <input type="text" id="liveChatMsg" placeholder="Komen: req lagu / spill no 1 / apa itu..." style="flex:1; text-align:left; font-size:11px; padding:7px; margin-bottom:0;">
+    </div>
+    <button type="button" onclick="handleIncomingComment()" style="width:100%; padding:8px; border-radius:8px; border:none; background:#7e22ce; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">⚡ Proses Komentar Otomatis</button>
+    <div id="karaokeQueueBox" style="display:none; margin-top:8px; padding-top:6px; border-top:1px dashed #475569; font-size:10.5px; color:#f0abfc;">
+      🎶 <b>Antrean Karaoke:</b> <span id="karaokeQueueTxt">Belum ada antrean</span>
+    </div>
+  </div>
+
+  <div class="card" style="padding:12px; margin-bottom:12px; cursor:default; text-align:left; font-size:12.5px; line-height:1.9;">
+    <div style="font-weight:bold; color:#2dd4bf; margin-bottom:4px;">📋 Ringkasan Kesiapan Live: <span id="summaryTxt">EDUKASI • Mentor Edukasi</span></div>
+    <label><input type="checkbox" checked> Wajah Avatar Terverifikasi & Sinkron Bibir</label><br>
+    <label><input type="checkbox" checked> Studio, Dekorasi & Rasio Layar Siap</label><br>
+    <label><input type="checkbox" checked> Materi Live & Auto-Guard Komentar Aktif</label>
+  </div>
+
+  <button type="button" class="btn btn-green" onclick="stopAllSpeech(); go(6)">Konfirmasi & Lanjut Pembayaran →</button>
 </div>
+
 <div id="s6" class="slide">
   <h2>6. Pembayaran & Mulai Live</h2>
   <p class="sub">Pilih paket durasi dan selesaikan pembayaran QRIS</p>
@@ -1148,6 +1135,10 @@ function showBox(id) {
   })();
 </script>
 <script src="avatar-studio.js"></script>
+<script src="niche-edukasi.js"></script>
+<script src="niche-hiburan.js"></script>
+<script src="niche-jualan.js"></script>
+<script src="studio-decor.js"></script>
 <script>
 (function () {
   window.addEventListener('DOMContentLoaded', async () => {
@@ -1158,13 +1149,17 @@ function showBox(id) {
       const customAud = document.getElementById('userCustomAudio');
       if (customAud) window.AvatarStudio.bindAudioElement(customAud);
       if (window.savedAvatarData && window.savedAvatarData.src) {
-        window.AvatarStudio.setFaceImage(window.savedAvatarData.src);
+        window.AvatarStudio.setFaceImage(window.savedAvatarData.src, window.savedAvatarData.box);
       }
     }
+    const firstNiche = document.querySelector('.niche-btn.sel');
+    if (firstNiche) window.selectNiche(firstNiche, 'EDUKASI');
   });
 
-  window.setAvatarPhoto = function (src) {
-    if (window.AvatarStudio && src) window.AvatarStudio.setFaceImage(src);
+  window.setAvatarPhoto = function (src, box) {
+    if (window.AvatarStudio && src) {
+      window.AvatarStudio.setFaceImage(src, box || (window.savedAvatarData && window.savedAvatarData.box));
+    }
   };
 
   if (window.avConfig) {
@@ -1181,245 +1176,72 @@ function showBox(id) {
     });
   }
 
-  window.setStudioAspectRatio = function (ratio) {
-    const frame = document.getElementById('studioFrame');
-    const b916 = document.getElementById('btnRatio916');
-    const b169 = document.getElementById('btnRatio169');
-    if (ratio === '16:9') {
-      if (frame) { frame.style.width = '100%'; frame.style.maxWidth = '320px'; frame.style.aspectRatio = '16/9'; }
-      if (b169) { b169.style.borderColor = '#38bdf8'; b169.style.background = 'rgba(56,189,248,0.25)'; b169.style.color = '#fff'; }
-      if (b916) { b916.style.borderColor = '#475569'; b916.style.background = '#1e293b'; b916.style.color = '#94a3b8'; }
-    } else {
-      if (frame) { frame.style.width = '168px'; frame.style.maxWidth = ''; frame.style.aspectRatio = '9/16'; }
-      if (b916) { b916.style.borderColor = '#38bdf8'; b916.style.background = 'rgba(56,189,248,0.25)'; b916.style.color = '#fff'; }
-      if (b169) { b169.style.borderColor = '#475569'; b169.style.background = '#1e293b'; b169.style.color = '#94a3b8'; }
-    }
-    if (window.AvatarStudio && window.AvatarStudio.setAspectRatio) {
-      window.AvatarStudio.setAspectRatio(ratio);
-    }
-  };
- window.addProductRow = function () {
-    const no = data.products.length + 1;
-    data.products.push({ no, name: '', script: '', imgUrl: '' });
-    const container = document.getElementById('productListContainer');
-    if (!container) return;
-    const row = document.createElement('div');
-    row.style.cssText = 'background:rgba(15,23,42,0.85);padding:8px;border-radius:8px;border:1px solid #334155';
-    row.innerHTML =
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">' +
-        '<span style="font-size:11px;color:#fbbf24;font-weight:bold">Etalase No. ' + no + '</span>' +
-        '<label style="font-size:10px;background:#334155;color:#38bdf8;padding:3px 7px;border-radius:5px;cursor:pointer">' +
-          '📷 + Foto Produk<input type="file" accept="image/*" onchange="setProductPhoto(' + (no - 1) + ', this)" style="display:none">' +
-        '</label>' +
-      '</div>' +
-      '<input type="text" placeholder="Nama Produk" oninput="data.products[' + (no - 1) + '].name=this.value; updateEtalasePreview(' + (no - 1) + ')" style="text-align:left;font-size:11px;padding:7px;margin-bottom:5px">' +
-      '<input type="text" placeholder="Deskripsi / Promo Singkat" oninput="data.products[' + (no - 1) + '].script=this.value" style="text-align:left;font-size:11px;padding:7px;margin-bottom:0">';
-    container.appendChild(row);
-  };
-
-  window.setProductPhoto = function (idx, inp) {
-    if (inp.files && inp.files[0] && data.products[idx]) {
-      data.products[idx].imgUrl = URL.createObjectURL(inp.files[0]);
-      window.updateEtalasePreview(idx);
-    }
-  };
-
-  window.updateEtalasePreview = function (idx) {
-    const ov = document.getElementById('studioEtalaseOverlay');
-    const p = data.products[idx];
-    if (ov && p) {
-      ov.style.display = 'block';
-      document.getElementById('etalaseBadgeTxt').innerText = '👇 Cek Keranjang • Etalase No. ' + p.no;
-      document.getElementById('etalaseTitleTxt').innerText = p.name || 'Nama Produk';
-      const imgEl = document.getElementById('etalaseProdImg');
-      if (imgEl) {
-        if (p.imgUrl) { imgEl.src = p.imgUrl; imgEl.style.display = 'block'; }
-        else { imgEl.style.display = 'none'; }
-      }
-      if (window.AvatarStudio && window.AvatarStudio.setActiveProduct) {
-        window.AvatarStudio.setActiveProduct(p.imgUrl || null, 1.0);
-      }
-    }
-  };
-
-  window.triggerQnaAnswer = function () {
-    const user = (document.getElementById('qnaUserIn')?.value || '@penonton').trim();
-    const q = (document.getElementById('qnaQuestionIn')?.value || '').trim();
-    if (!q) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
-    const ov = document.getElementById('studioQnaOverlay');
-    if (ov) {
-      ov.style.display = 'block';
-      document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + user;
-      document.getElementById('qnaAskText').innerText = q;
-    }
-    const jawaban = 'Pertanyaan bagus dari ' + user.replace('@', '') + ': ' + q + '. Mari kita bahas langsung poin pentingnya ya!';
-    document.getElementById('studioSubCaption').innerText = jawaban;
-    if (typeof speakTextSafe === 'function') speakTextSafe(jawaban);
-  };
-
-  window.updateKaraokeLyrics = function () {
-    const raw = (document.getElementById('karaokeLyricsIn')?.value || '').trim();
-    const scrollEl = document.getElementById('karaokeLyricScroll');
-    if (scrollEl) {
-      scrollEl.innerText = raw ? ('♪ ' + raw.replace(/\n+/g, '   •   ') + ' ♪') : '♪ Masukkan lirik lagu karaoke di Tab 2 Materi... ♪';
-    }
-  };
-
-  window.updateAudioMixer = function () {
-    const hVal = Number(document.getElementById('rngHostVol')?.value ?? 100);
-    const mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
-    window.mixerState.hostVol = hVal / 100;
-    window.mixerState.musicVol = mVal;
-    const lblH = document.getElementById('lblHostVol');
-    const lblM = document.getElementById('lblMusicVol');
-    if (lblH) lblH.innerText = hVal + '%';
-    if (lblM) lblM.innerText = mVal + '%';
-    const aud = document.getElementById('userCustomAudio');
-    if (aud) aud.volume = window.mixerState.hostVol;
-    if (typeof setYoutubeVolume === 'function' && !window.avConfig?.isSpeaking) {
-      setYoutubeVolume(mVal);
-    }
-  };
- window.updateHostTransform = function () {
-    if (!window.AvatarStudio || !window.AvatarStudio.setTransform) return;
-    window.AvatarStudio.setTransform({
-      posX: Number(document.getElementById('rngHostX')?.value ?? 0),
-      posY: Number(document.getElementById('rngHostY')?.value ?? 0),
-      scale: Number(document.getElementById('rngHostScale')?.value ?? 78) / 100,
-      deskCutY: Number(document.getElementById('rngDeskCut')?.value ?? 62) / 100,
-      glassDesk: Boolean(document.getElementById('chkGlassDesk')?.checked)
+  window.switchS4Tab = function (btn, panelId) {
+    document.querySelectorAll('.s4-tab').forEach(t => {
+      t.style.borderColor = '#334155';
+      t.style.background = 'rgba(15,23,42,0.8)';
+      t.style.color = '#94a3b8';
     });
+    if (btn) {
+      btn.style.borderColor = '#2dd4bf';
+      btn.style.background = 'rgba(45,212,191,0.2)';
+      btn.style.color = '#fff';
+    }
+    document.querySelectorAll('.s4-panel').forEach(p => p.style.display = 'none');
+    const panel = document.getElementById(panelId);
+    if (panel) panel.style.display = 'block';
   };
+  function renderStyleCardsForNiche(niche) {
+    const n = niche || 'EDUKASI';
+    const lbl = document.getElementById('s3StyleNicheLbl');
+    if (lbl) lbl.innerText = n;
 
-  window.resetHostTransform = function () {
-    if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
-    if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = 0;
-    if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 78;
-    if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 62;
-    window.updateHostTransform();
-  };
+    const styleMap = {
+      EDUKASI: [
+        { icon: '👨‍🏫', name: 'Mentor Edukasi', desc: 'Ramah & terstruktur' },
+        { icon: '☕', name: 'Kakak Santai', desc: 'Asik & interaktif' },
+        { icon: '🎓', name: 'Dosen / Ahli', desc: 'Formal & berbobot' }
+      ],
+      HIBURAN: [
+        { icon: '🎧', name: 'DJ & Host Party', desc: 'Energik & seru' },
+        { icon: '🎤', name: 'Host Karaoke', desc: 'Hangat & ekspresif' },
+        { icon: '🤣', name: 'Teman Ngobrol', desc: 'Santai & humoris' }
+      ],
+      JUALAN: [
+        { icon: '🔥', name: 'Host Flash Sale', desc: 'Cepat & persuasif' },
+        { icon: '💎', name: 'Konsultan Produk', desc: 'Detail & meyakinkan' },
+        { icon: '🛍️', name: 'Kakak Racun Spill', desc: 'Ramah & akrab' }
+      ]
+    };
 
-  window.karaokeQueue = [];
+    const list = styleMap[n] || styleMap.EDUKASI;
+    const grid = document.getElementById('s3StyleGrid');
+    if (!grid) return;
 
-  function checkPolicyGuard(text) {
-    const low = text.toLowerCase();
-    const bannedWords = ['wa ', 'whatsapp', 'nomor hp', 'transfer', 'rekening', 'judi', 'slot', 'gacor', 'link bio', 'telegram', 'youtube', 'ig ', 'instagram', 'followers', 'bypass', 'hack'];
-    return bannedWords.some(w => low.includes(w));
+    grid.innerHTML = list.map((st, idx) => {
+      const isSel = (idx === 0) ? ' sel' : '';
+      return '<div class="card style-pick-btn' + isSel + '" onclick="pickAvatarStyle(this,\'' + st.name + '\')" style="padding:10px 6px; text-align:center;">' +
+        '<div style="font-size:20px;">' + st.icon + '</div>' +
+        '<div style="font-size:11px; font-weight:bold; margin-top:4px;">' + st.name + '</div>' +
+        '<div style="font-size:9.5px; color:#94a3b8; margin-top:2px;">' + st.desc + '</div>' +
+      '</div>';
+    }).join('');
+
+    data.style = list[0].name;
+    if (window.AvatarStudio) window.AvatarStudio.setHostStyle(data.style);
+    const cap = document.getElementById('studioCaption');
+    if (cap) cap.innerText = 'Mode: ' + data.style;
   }
 
-  async function fetchWikiFreeSummary(query) {
-    try {
-      const cleanQ = encodeURIComponent(query.replace(/[?!.]/g, '').trim());
-      const url = 'https://id.wikipedia.org/api/rest_v1/page/summary/' + cleanQ;
-      const res = await fetch(url);
-      if (!res.ok) return null;
-      const json = await res.json();
-      if (json && json.extract) {
-        return json.extract.split('. ').slice(0, 2).join('. ') + '.';
-      }
-    } catch (e) {}
-    return null;
- }
- window.handleIncomingComment = async function (customUser, customMsg) {
-    const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
-    const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
-    if (!msg) return;
-
-    const cleanName = user.replace('@', '');
-    const lowMsg = msg.toLowerCase();
-
-    if (checkPolicyGuard(lowMsg)) {
-      const safeReply = 'Terima kasih sudah mampir kak ' + cleanName + '! Biar live kita tetap aman dan nyaman sesuai aturan komunitas, kita ngobrol seru di sini aja ya. Jangan lupa tap-tap layar dan follow akun ini!';
-      document.getElementById('studioSubCaption').innerText = safeReply;
-      if (typeof speakTextSafe === 'function') speakTextSafe(safeReply);
-      return;
-    }
-
-    if (data.niche === 'JUALAN') {
-      const numMatch = lowMsg.match(/(?:no|nomor|etalase)\s*(\d+)/);
-      let idx = numMatch ? (parseInt(numMatch[1], 10) - 1) : 0;
-      if (idx < 0 || idx >= data.products.length) idx = 0;
-
-      const prod = data.products[idx];
-      if (prod && prod.name) {
-        window.updateEtalasePreview(idx);
-        const reply = 'Halo kak ' + cleanName + '! Ini dia etalase nomor ' + prod.no + ', ' + prod.name + '. ' + (prod.script || 'Stok promonya terbatas banget, langsung klik keranjang kuning sekarang ya kak!');
-        document.getElementById('studioSubCaption').innerText = reply;
-        if (typeof speakTextSafe === 'function') speakTextSafe(reply);
-      } else {
-        const reply = 'Halo kak ' + cleanName + ', selamat datang di live shopping kami! Langsung cek keranjang kuning di bawah ya kak!';
-        document.getElementById('studioSubCaption').innerText = reply;
-        if (typeof speakTextSafe === 'function') speakTextSafe(reply);
-      }
-      return;
-    }
-
-    if (data.niche === 'HIBURAN') {
-      const reqMatch = lowMsg.match(/(?:req|request|nyanyi|lagu)\s+(.+)/i);
-      if (reqMatch && reqMatch[1]) {
-        const songTitle = reqMatch[1].trim();
-        window.karaokeQueue.push({ user: user, title: songTitle });
-        updateQueueDisplay();
-        const reply = 'Siap kak ' + cleanName + '! Request lagu ' + songTitle + ' sudah masuk antrean nomor ' + window.karaokeQueue.length + ' ya, ditunggu sebentar!';
-        document.getElementById('studioSubCaption').innerText = reply;
-        if (typeof speakTextSafe === 'function') speakTextSafe(reply);
-        if (window.karaokeQueue.length === 1) playNextKaraokeQueue();
-        return;
-      }
- }
-  const ov = document.getElementById('studioQnaOverlay');
-    if (ov) {
-      ov.style.display = 'block';
-      document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + user;
-      document.getElementById('qnaAskText').innerText = msg;
-    }
-
-    const userMateri = (document.getElementById('liveScriptInput')?.value || '').split('\n').map(s => s.trim()).filter(Boolean);
-    const keywords = lowMsg.replace(/[?!.,]/g, '').split(' ').filter(w => w.length > 3);
-    let matchedLine = userMateri.find(line => keywords.some(k => line.toLowerCase().includes(k)));
-
-    if (!matchedLine) {
-      const topicGuess = lowMsg.replace(/^(apa itu|siapa|jelaskan|pengertian|cara|kenapa|mengapa)\s+/i, '').trim();
-      const wikiAns = await fetchWikiFreeSummary(topicGuess);
-      matchedLine = wikiAns || 'Poin utamanya adalah kita perlu konsisten belajar dan praktik bertahap sesuai materi kita hari ini.';
-    }
-
-    const eduReply = 'Pertanyaan bagus dari kak ' + cleanName + '! ' + matchedLine;
-    document.getElementById('studioSubCaption').innerText = eduReply;
-    if (typeof speakTextSafe === 'function') speakTextSafe(eduReply);
+  window.pickAvatarStyle = function (el, styleName) {
+    document.querySelectorAll('.style-pick-btn').forEach(c => c.classList.remove('sel'));
+    if (el) el.classList.add('sel');
+    data.style = styleName;
+    if (window.AvatarStudio) window.AvatarStudio.setHostStyle(styleName);
+    const cap = document.getElementById('studioCaption');
+    if (cap) cap.innerText = 'Mode: ' + styleName;
   };
 
-  function updateQueueDisplay() {
-    const box = document.getElementById('karaokeQueueBox');
-    const txt = document.getElementById('karaokeQueueTxt');
-    if (!box || !txt) return;
-    box.style.display = 'block';
-    txt.innerText = window.karaokeQueue.length
-      ? window.karaokeQueue.map((item, i) => (i + 1) + '. ' + item.title + ' (' + item.user + ')').join(' | ')
-      : 'Belum ada antrean';
-  }
-
-  window.playNextKaraokeQueue = function () {
-    if (!window.karaokeQueue.length) return;
-    const current = window.karaokeQueue.shift();
-    updateQueueDisplay();
-    const scrollEl = document.getElementById('karaokeLyricScroll');
-    if (scrollEl) {
-      scrollEl.innerText = '♪ Sedang Diputar: ' + current.title + ' (Request dari ' + current.user + ') • Selamat Bernyanyi! ♪';
-    }
-    const stat = document.getElementById('ytMusicStatus');
-    if (stat) {
-      stat.style.color = '#e879f9';
-      stat.innerText = '🎤 Antrean Aktif: ' + current.title + ' (' + current.user + ')';
-    }
-  };
-})();
-</script>
-<script src="niche-edukasi.js"></script>
-<script src="niche-hiburan.js"></script>
-<script src="niche-jualan.js"></script>
-<script>
-(function () {
   window.selectNiche = function (el, niche) {
     document.querySelectorAll('.niche-btn').forEach(c => c.classList.remove('sel'));
     if (el) el.classList.add('sel');
@@ -1441,157 +1263,34 @@ function showBox(id) {
     else if (niche === 'HIBURAN' && window.NicheHiburan) window.NicheHiburan.activate();
     else if (niche === 'JUALAN' && window.NicheJualan) window.NicheJualan.activate();
 
-    if (typeof syncLiveMateri === 'function') syncLiveMateri();
-  };
+    const lblTxt = document.getElementById('lblUploadTxt');
+    const eduStat = document.getElementById('eduMateriStats');
+    if (lblTxt) lblTxt.style.display = (niche === 'EDUKASI') ? 'inline-block' : 'none';
+    if (eduStat) eduStat.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
 
-  window.addProductRow = function () {
-    if (window.NicheJualan) window.NicheJualan.addProductRow();
-  };
-
-  window.triggerQnaAnswer = function () {
-    const user = document.getElementById('qnaUserIn')?.value || '@penonton';
-    const q = document.getElementById('qnaQuestionIn')?.value || '';
-    if (!q.trim()) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
-    if (window.NicheEdukasi) window.NicheEdukasi.handleQna(user, q);
-  };
-
-  const _origSpeak = window.speakTextSafe;
-  window.speakTextSafe = function (text, onDone) {
-    if (_origSpeak) _origSpeak(text, onDone);
-    if ('speechSynthesis' in window && window.AvatarStudio) {
-      setTimeout(() => {
-        const pollWord = setInterval(() => {
-          if (!window.speechSynthesis.speaking) {
-            clearInterval(pollWord);
-            return;
-          }
-          window.AvatarStudio.pulseSpeechWord();
-        }, 160);
-      }, 60);
-    }
-  };
-
-  window.scheduleNextLoop = function () {
-    if (!isAutoLooping) return;
-    autoLoopTimer = setTimeout(() => {
-      if (!isAutoLooping) return;
-      let nextText = '';
-      if (data.niche === 'JUALAN' && window.NicheJualan) {
-        nextText = window.NicheJualan.getNextPitch();
-      } else if (data.niche === 'EDUKASI' && window.NicheEdukasi) {
-        nextText = window.NicheEdukasi.getNextChunk();
-      } else {
-        const lines = (document.getElementById('liveScriptInput')?.value || '')
-          .split('\n').map(s => s.trim()).filter(Boolean);
-        nextText = lines.length
-          ? lines[loopIndex++ % lines.length]
-          : 'Terima kasih yang sudah bergabung, tulis pertanyaan kalian di kolom komentar ya!';
-      }
-      document.getElementById('studioSubCaption').innerText = nextText;
-      window.speakTextSafe(nextText, () => window.scheduleNextLoop());
-    }, data.loopDelay || 4000);
-  };
-
-  const _origLoadYt = window.loadYoutubeMusic;
-  window.loadYoutubeMusic = function () {
-    if (_origLoadYt) _origLoadYt();
-    if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(true);
-  };
-
-  const _origStopYt = window.stopYoutubeMusic;
-  window.stopYoutubeMusic = function () {
-    if (_origStopYt) _origStopYt();
-    if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(false);
-  };
-
-  window.handleIncomingComment = async function (customUser, customMsg) {
-    const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
-    const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
-    if (!msg) return;
-    const bannedWords = ['wa ', 'whatsapp', 'nomor hp', 'transfer', 'rekening', 'judi', 'slot', 'gacor', 'link bio', 'telegram', 'youtube', 'ig ', 'instagram', 'followers', 'bypass', 'hack'];
-    if (bannedWords.some(w => msg.toLowerCase().includes(w))) {
-      const safeReply = 'Terima kasih sudah mampir kak ' + user.replace('@', '') + '! Biar live kita tetap aman sesuai aturan komunitas, kita ngobrol seru di sini aja ya!';
-      document.getElementById('studioSubCaption').innerText = safeReply;
-      if (typeof speakTextSafe === 'function') speakTextSafe(safeReply);
-      return;
-    }
-
-    if (data.niche === 'JUALAN' && window.NicheJualan) {
-      window.NicheJualan.handleSpillComment(user, msg);
-      return;
-    }
-    if (data.niche === 'HIBURAN' && window.NicheHiburan && window.NicheHiburan.handleRequest(user, msg)) {
-      return;
-    }
-    if (window.NicheEdukasi) {
-      await window.NicheEdukasi.handleQna(user, msg);
-    }
-  };
-
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      const firstNiche = document.querySelector('.niche-btn.sel');
-      if (firstNiche) window.selectNiche(firstNiche, 'EDUKASI');
-    }, 300);
-  });
-})();
-</script>
-  <script src="studio-decor.js"></script>
-<script>
-(function () {
-  window.selectEduInstrument = function (btn, key) {
-    document.querySelectorAll('.edu-inst-btn').forEach(b => {
-      b.style.borderColor = '#334155'; b.style.background = '#0f172a'; b.style.color = '#cbd5e1';
-    });
-    if (btn) {
-      btn.style.borderColor = '#38bdf8'; btn.style.background = 'rgba(56,189,248,0.25)'; btn.style.color = '#fff';
-    }
-    if (window.StudioDecor) window.StudioDecor.playEduInstrument(key);
-    const st = document.getElementById('eduInstStatus');
-    if (st) st.innerText = key === 'none' ? 'Instrumen dimatikan.' : '🎼 Instrumen aktif (Auto-Ducking siap)';
-  };
-
-  const _prevSelectNiche = window.selectNiche;
-  window.selectNiche = function (el, niche) {
-    if (_prevSelectNiche) _prevSelectNiche(el, niche);
     const bEdu = document.getElementById('boxMusicEdukasi');
     const bHib = document.getElementById('boxMusicHiburan');
     const bJual = document.getElementById('boxMusicJualan');
     if (bEdu) bEdu.style.display = (niche === 'EDUKASI') ? 'block' : 'none';
     if (bHib) bHib.style.display = (niche === 'HIBURAN') ? 'block' : 'none';
     if (bJual) bJual.style.display = (niche === 'JUALAN') ? 'block' : 'none';
+
     if (niche !== 'EDUKASI' && window.StudioDecor) window.StudioDecor.stopEduInstrument();
     if (niche !== 'HIBURAN' && typeof stopYoutubeMusic === 'function') stopYoutubeMusic();
-  };
 
-  const _prevSpeak2 = window.speakTextSafe;
-  window.speakTextSafe = function (text, onDone) {
-    if (window.StudioDecor) window.StudioDecor.duckEduMusic(true);
-    if (_prevSpeak2) {
-      _prevSpeak2(text, () => {
-        if (window.StudioDecor) window.StudioDecor.duckEduMusic(false);
-        if (onDone) onDone();
-      });
-    }
+    renderStyleCardsForNiche(niche);
+    if (typeof syncLiveMateri === 'function') syncLiveMateri();
   };
-
-  const _prevMixer = window.updateAudioMixer;
-  window.updateAudioMixer = function () {
-    if (_prevMixer) _prevMixer();
-    const mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
-    if (window.StudioDecor) window.StudioDecor.setEduMusicVolume(mVal);
-  };
-
-  const _prevFinish3 = window.finishSlide3;
-  window.finishSlide3 = function () {
-    if (_prevFinish3) _prevFinish3();
+  window.finishSlide3Avatar = function () {
+    stopAllSpeech();
     const n = data.niche || 'EDUKASI';
-    const slot = document.getElementById('s4PreviewSlot');
+    const slot = document.getElementById('s4StudioPreviewSlot');
     const frame = document.getElementById('studioFrame');
     if (slot && frame) {
-      frame.style.width = '195px';
+      frame.style.width = '168px';
       slot.appendChild(frame);
     }
+
     const lbl = document.getElementById('s4DecorNicheLbl');
     if (lbl) lbl.innerText = n;
 
@@ -1612,41 +1311,157 @@ function showBox(id) {
         { key: 'jualCart', label: '🛍️ Kartu Etalase' }
       ]
     };
+
     const btnWrap = document.getElementById('s4DecorBtns');
     if (btnWrap && window.StudioDecor) {
       btnWrap.innerHTML = (decorMap[n] || decorMap.EDUKASI).map(item => {
         const on = window.StudioDecor.activeItems[item.key];
-        return `<button type="button" onclick="StudioDecor.toggleItem('${item.key}'); this.style.borderColor=StudioDecor.activeItems['${item.key}']?'#34d399':'#334155'; this.style.color=StudioDecor.activeItems['${item.key}']?'#34d399':'#94a3b8';" style="padding:8px 4px;border-radius:8px;border:1.5px solid ${on ? '#34d399' : '#334155'};background:#0f172a;color:${on ? '#34d399' : '#94a3b8'};font-size:10.5px;font-weight:bold;cursor:pointer;">${item.label}</button>`;
+        return '<button type="button" onclick="StudioDecor.toggleItem(\'' + item.key + '\'); this.style.borderColor=StudioDecor.activeItems[\'' + item.key + '\']?\'#34d399\':\'#334155\'; this.style.color=StudioDecor.activeItems[\'' + item.key + '\']?\'#34d399\':\'#94a3b8\';" style="padding:8px 4px;border-radius:8px;border:1.5px solid ' + (on ? '#34d399' : '#334155') + ';background:#0f172a;color:' + (on ? '#34d399' : '#94a3b8') + ';font-size:10px;font-weight:bold;cursor:pointer;">' + item.label + '</button>';
       }).join('');
     }
+    go(4);
+  };
 
-    const styleMap = {
-      EDUKASI: [
-        { icon: '👨‍🏫', name: 'Mentor Edukasi', desc: 'Ramah & terstruktur' },
-        { icon: '☕', name: 'Kakak Santai', desc: 'Asik & interaktif' },
-        { icon: '🎓', name: 'Dosen / Ahli', desc: 'Formal & berbobot' }
-      ],
-      HIBURAN: [
-        { icon: '🎧', name: 'DJ & Host Party', desc: 'Energik & seru' },
-        { icon: '🎤', name: 'Host Karaoke', desc: 'Hangat & ekspresif' },
-        { icon: '🤣', name: 'Teman Ngobrol', desc: 'Santai & humoris' }
-      ],
-      JUALAN: [
-        { icon: '🔥', name: 'Host Flash Sale', desc: 'Cepat & persuasif' },
-        { icon: '💎', name: 'Konsultan Produk', desc: 'Detail & meyakinkan' },
-        { icon: '🛍️', name: 'Kakak Racun Spill', desc: 'Ramah & akrab' }
-      ]
-    };
-    const styleGrid = document.getElementById('s4StyleGrid');
-    if (styleGrid) {
-      styleGrid.innerHTML = (styleMap[n] || styleMap.EDUKASI).map(st =>
-        `<div class="card" onclick="chooseStyle(this,'${st.name}')"><h1>${st.icon}</h1><h3>${st.name}</h3><p style="font-size:12px;color:#94a3b8">${st.desc}</p></div>`
-      ).join('');
+  window.finishSlide4Studio = function () {
+    syncLiveMateri();
+    stopAllSpeech();
+    if (data.niche === 'JUALAN') {
+      const validProd = data.products.some(p => p.name.trim() !== '');
+      if (!validProd) {
+        alert('Isi minimal 1 Nama Produk di Etalase No. 1 terlebih dahulu!');
+        switchS4Tab(document.querySelectorAll('.s4-tab'), 'tabMateri');
+        return;
+      }
+    } else {
+      const txt = (data.script || '').trim();
+      if (!txt) {
+        alert('Isi minimal 1 kalimat materi atau topik terlebih dahulu agar AI punya bahan bicara!');
+        switchS4Tab(document.querySelectorAll('.s4-tab'), 'tabMateri');
+        return;
+      }
     }
+    const slot = document.getElementById('s5ReviewPreviewSlot');
+    const frame = document.getElementById('studioFrame');
+    if (slot && frame) {
+      frame.style.width = '172px';
+      slot.appendChild(frame);
+    }
+    const sum = document.getElementById('summaryTxt');
+    if (sum) sum.innerText = (data.niche || 'EDUKASI') + ' • ' + (data.style || 'Mentor Edukasi');
+    go(5);
+  };
+
+  window.setStudioAspectRatio = function (ratio) {
+    const frame = document.getElementById('studioFrame');
+    const b916 = document.getElementById('btnRatio916');
+    const b169 = document.getElementById('btnRatio169');
+    if (ratio === '16:9') {
+      if (frame) { frame.style.width = '100%'; frame.style.maxWidth = '310px'; frame.style.aspectRatio = '16/9'; }
+      if (b169) { b169.style.borderColor = '#38bdf8'; b169.style.background = 'rgba(56,189,248,0.25)'; b169.style.color = '#fff'; }
+      if (b916) { b916.style.borderColor = '#475569'; b916.style.background = '#1e293b'; b916.style.color = '#94a3b8'; }
+    } else {
+      if (frame) { frame.style.width = '168px'; frame.style.maxWidth = ''; frame.style.aspectRatio = '9/16'; }
+      if (b916) { b916.style.borderColor = '#38bdf8'; b916.style.background = 'rgba(56,189,248,0.25)'; b916.style.color = '#fff'; }
+      if (b169) { b169.style.borderColor = '#475569'; b169.style.background = '#1e293b'; b169.style.color = '#94a3b8'; }
+    }
+    if (window.AvatarStudio && window.AvatarStudio.setAspectRatio) window.AvatarStudio.setAspectRatio(ratio);
+  };
+  window.addProductRow = function () { if (window.NicheJualan) window.NicheJualan.addProductRow(); };
+  window.triggerQnaAnswer = function () {
+    const user = document.getElementById('qnaUserIn')?.value || '@penonton';
+    const q = document.getElementById('qnaQuestionIn')?.value || '';
+    if (!q.trim()) { alert('Tulis pertanyaan penonton terlebih dahulu!'); return; }
+    if (window.NicheEdukasi) window.NicheEdukasi.handleQna(user, q);
+  };
+  window.updateKaraokeLyrics = function () {
+    const raw = (document.getElementById('karaokeLyricsIn')?.value || '').trim();
+    const scrollEl = document.getElementById('karaokeLyricScroll');
+    if (scrollEl) scrollEl.innerText = raw ? ('♪ ' + raw.replace(/\n+/g, '   •   ') + ' ♪') : '♪ Masukkan lirik lagu karaoke di Tab 2 Materi... ♪';
+  };
+  window.updateAudioMixer = function () {
+    const hVal = Number(document.getElementById('rngHostVol')?.value ?? 100);
+    const mVal = Number(document.getElementById('rngMusicVol')?.value ?? 65);
+    window.mixerState.hostVol = hVal / 100; window.mixerState.musicVol = mVal;
+    const lblH = document.getElementById('lblHostVol'), lblM = document.getElementById('lblMusicVol');
+    if (lblH) lblH.innerText = hVal + '%'; if (lblM) lblM.innerText = mVal + '%';
+    const aud = document.getElementById('userCustomAudio');
+    if (aud) aud.volume = window.mixerState.hostVol;
+    if (typeof setYoutubeVolume === 'function' && !window.avConfig?.isSpeaking) setYoutubeVolume(mVal);
+    if (window.StudioDecor) window.StudioDecor.setEduMusicVolume(mVal);
+  };
+  window.updateHostTransform = function () {
+    if (!window.AvatarStudio || !window.AvatarStudio.setTransform) return;
+    window.AvatarStudio.setTransform({
+      posX: Number(document.getElementById('rngHostX')?.value ?? 0),
+      posY: Number(document.getElementById('rngHostY')?.value ?? 0),
+      scale: Number(document.getElementById('rngHostScale')?.value ?? 92) / 100,
+      deskCutY: Number(document.getElementById('rngDeskCut')?.value ?? 58) / 100,
+      glassDesk: Boolean(document.getElementById('chkGlassDesk')?.checked)
+    });
+  };
+  window.resetHostTransform = function () {
+    if (document.getElementById('rngHostX')) document.getElementById('rngHostX').value = 0;
+    if (document.getElementById('rngHostY')) document.getElementById('rngHostY').value = 0;
+    if (document.getElementById('rngHostScale')) document.getElementById('rngHostScale').value = 92;
+    if (document.getElementById('rngDeskCut')) document.getElementById('rngDeskCut').value = 58;
+    window.updateHostTransform();
+  };
+  window.selectEduInstrument = function (btn, key) {
+    document.querySelectorAll('.edu-inst-btn').forEach(b => { b.style.borderColor = '#334155'; b.style.background = '#0f172a'; b.style.color = '#cbd5e1'; });
+    if (btn) { btn.style.borderColor = '#38bdf8'; btn.style.background = 'rgba(56,189,248,0.25)'; btn.style.color = '#fff'; }
+    if (window.StudioDecor) window.StudioDecor.playEduInstrument(key);
+    const st = document.getElementById('eduInstStatus');
+    if (st) st.innerText = key === 'none' ? 'Instrumen dimatikan.' : '🎼 Instrumen aktif (Auto-Ducking siap)';
+  };
+  const _origSpeak = window.speakTextSafe;
+  window.speakTextSafe = function (text, onDone) {
+    if (window.StudioDecor) window.StudioDecor.duckEduMusic(true);
+    if (_origSpeak) _origSpeak(text, () => { if (window.StudioDecor) window.StudioDecor.duckEduMusic(false); if (onDone) onDone(); });
+    if ('speechSynthesis' in window && window.AvatarStudio) {
+      setTimeout(() => {
+        const pollWord = setInterval(() => { if (!window.speechSynthesis.speaking) { clearInterval(pollWord); return; } window.AvatarStudio.pulseSpeechWord(); }, 160);
+      }, 60);
+    }
+  };
+  window.scheduleNextLoop = function () {
+    if (!isAutoLooping) return;
+    autoLoopTimer = setTimeout(() => {
+      if (!isAutoLooping) return;
+      let nextText = '';
+      if (data.niche === 'JUALAN' && window.NicheJualan) nextText = window.NicheJualan.getNextPitch();
+      else if (data.niche === 'EDUKASI' && window.NicheEdukasi) nextText = window.NicheEdukasi.getNextChunk();
+      else {
+        const lines = (document.getElementById('liveScriptInput')?.value || '').split('\n').map(s => s.trim()).filter(Boolean);
+        nextText = lines.length ? lines[loopIndex++ % lines.length] : 'Terima kasih yang sudah bergabung, tulis pertanyaan kalian di kolom komentar ya!';
+      }
+      document.getElementById('studioSubCaption').innerText = nextText;
+      window.speakTextSafe(nextText, () => window.scheduleNextLoop());
+    }, data.loopDelay || 4000);
+  };
+  const _origLoadYt = window.loadYoutubeMusic;
+  window.loadYoutubeMusic = function () { if (_origLoadYt) _origLoadYt(); if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(true); };
+  const _origStopYt = window.stopYoutubeMusic;
+  window.stopYoutubeMusic = function () { if (_origStopYt) _origStopYt(); if (window.NicheHiburan) window.NicheHiburan.setMusicPlaying(false); };
+  window.handleIncomingComment = async function (customUser, customMsg) {
+    const user = (customUser || document.getElementById('liveChatUser')?.value || '@penonton').trim();
+    const msg = (customMsg || document.getElementById('liveChatMsg')?.value || '').trim();
+    if (!msg) return;
+    const bannedWords = ['wa ', 'whatsapp', 'nomor hp', 'transfer', 'rekening', 'judi', 'slot', 'gacor', 'link bio', 'telegram', 'youtube', 'ig ', 'instagram', 'followers', 'bypass', 'hack'];
+    if (bannedWords.some(w => msg.toLowerCase().includes(w))) {
+      const safeReply = 'Terima kasih sudah mampir kak ' + user.replace('@', '') + '! Biar live kita tetap aman sesuai aturan komunitas, kita ngobrol seru di sini aja ya!';
+      document.getElementById('studioSubCaption').innerText = safeReply;
+      if (typeof speakTextSafe === 'function') speakTextSafe(safeReply);
+      return;
+    }
+    if (data.niche === 'JUALAN' && window.NicheJualan) { window.NicheJualan.handleSpillComment(user, msg); return; }
+    if (data.niche === 'HIBURAN' && window.NicheHiburan && window.NicheHiburan.handleRequest(user, msg)) return;
+    if (window.NicheEdukasi) await window.NicheEdukasi.handleQna(user, msg);
   };
 })();
 </script>
-
 </body>
 </html>
+
+
+
 
