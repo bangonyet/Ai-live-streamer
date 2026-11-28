@@ -2,11 +2,13 @@
   'use strict';
 
   const PROTO = 'ht' + 'tps://';
-  const WIKI_API = PROTO + 'id.wikipedia.org/api/rest_v1/page/summary/';
+  const WIKI_SEARCH = PROTO + 'id.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srsearch=';
+  const WIKI_SUM = PROTO + 'id.wikipedia.org/api/rest_v1/page/summary/';
 
   const NicheEdukasi = {
     chunks: [],
     currentIndex: 0,
+    lastTopic: '',
 
     activate() {
       const frame = document.getElementById('studioFrame');
@@ -29,20 +31,11 @@
       if (ovQna) ovQna.style.display = 'none';
       if (ovKar) ovKar.style.display = 'none';
       if (ovEta) ovEta.style.display = 'none';
-
-      if (titleEl) {
-       titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan';
-        titleEl.style.color = '#38bdf8';
-      }
+      if (titleEl) { titleEl.innerText = '📚 Materi Edukasi & Poin Penjelasan'; titleEl.style.color = '#38bdf8'; }
       if (inTitle) inTitle.placeholder = 'Judul Materi (misal: Tips Belajar Bahasa Inggris)';
-      if (inScript) inScript.placeholder = 'Tulis atau tempel materi panjang di sini (bisa berjam-jam)...';
-
-      if (typeof global.setStudioBg === 'function') {
-        global.setStudioBg('image', 'studio-edukasi.jpg');
-      }
+      if (inScript) inScript.placeholder = 'Tulis atau tempel materi panjang di sini...';
       this.updateStats();
     },
-
     loadTxtFile(input) {
       if (!input.files || !input.files[0]) return;
       const reader = new FileReader();
@@ -63,44 +56,28 @@
       const statEl = document.getElementById('eduMateriStats');
       const words = raw ? raw.split(/\s+/).length : 0;
       const mins = Math.max(1, Math.round(words / 130));
-      const durText = mins >= 60
-        ? Math.floor(mins / 60) + ' jam ' + (mins % 60) + ' menit'
-        : mins + ' menit';
-
+      const durText = mins >= 60 ? Math.floor(mins / 60) + ' jam ' + (mins % 60) + ' menit' : mins + ' menit';
       this.chunks = this.splitIntoSafeChunks(raw);
       if (statEl) {
         statEl.innerText = words > 0
-      ? `📊 Total: ${words.toLocaleString('id-ID')} kata • Estimasi siaran: ~${durText} (${this.chunks.length} segmen)`
-      : '📊 Mendukung materi panjang hingga puluhan ribu kata (anti-macet)';
-
+          ? `📊 Total: ${words.toLocaleString('id-ID')} kata • Estimasi siaran: ~${durText} (${this.chunks.length} segmen)`
+          : '📊 Mendukung materi panjang hingga puluhan ribu kata (anti-macet)';
       }
     },
 
     splitIntoSafeChunks(text) {
       if (!text) return [];
-      const rawSentences = text
-        .replace(/\r\n/g, '\n')
-        .split(/(?<=[.!?])\s+|\n+/)
-        .map(s => s.trim())
-        .filter(Boolean);
-
+      const rawSentences = text.replace(/\r\n/g, '\n').split(/(?<=[.!?])\s+|\n+/).map(s => s.trim()).filter(Boolean);
       const result = [];
       for (const sentence of rawSentences) {
-        if (sentence.length <= 150) {
-          result.push(sentence);
-        } else {
-          const parts = sentence.match(/.{1,145}(?:\s|$)/g) || [sentence];
-          parts.forEach(p => { if (p.trim()) result.push(p.trim()); });
-        }
+        if (sentence.length <= 150) result.push(sentence);
+        else { const parts = sentence.match(/.{1,145}(?:\s|$)/g) || [sentence]; parts.forEach(p => { if (p.trim()) result.push(p.trim()); }); }
       }
       return result;
     },
-
     getNextChunk() {
       const raw = (document.getElementById('liveScriptInput')?.value || '').trim();
-      if (!this.chunks.length && raw) {
-        this.chunks = this.splitIntoSafeChunks(raw);
-      }
+      if (!this.chunks.length && raw) this.chunks = this.splitIntoSafeChunks(raw);
       if (!this.chunks.length) {
         return 'Terima kasih yang sudah bergabung di live edukasi hari ini, tulis pertanyaan kalian di kolom komentar ya!';
       }
@@ -117,32 +94,48 @@
       const ov = document.getElementById('studioQnaOverlay');
       if (ov) {
         ov.style.display = 'block';
-     document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + cleanUser;
-
+        document.getElementById('qnaAskUser').innerText = '💬 Pertanyaan dari ' + cleanUser;
         document.getElementById('qnaAskText').innerText = q;
       }
 
-      const lowQ = q.toLowerCase();
-      const keywords = lowQ.replace(/[?!.,]/g, '').split(' ').filter(w => w.length > 3);
-      let matched = this.chunks.find(c => keywords.some(k => c.toLowerCase().includes(k)));
+      const sub = document.getElementById('studioSubCaption');
+      if (sub) sub.innerText = '⏳ Mencari jawaban akurat...';
 
-      if (!matched) {
+      const stopWords = ['yang', 'adalah', 'untuk', 'dengan', 'bagaimana', 'kenapa', 'mengapa', 'apa', 'itu', 'ini', 'dan', 'atau', 'kak', 'min', 'dong'];
+      const keywords = q.toLowerCase().replace(/[?!.,]/g, '').split(/\s+/).filter(w => w.length > 2 && !stopWords.includes(w));
+
+      let bestChunk = '', bestScore = 0;
+      for (const chunk of this.chunks) {
+        const lowChunk = chunk.toLowerCase();
+        let score = 0;
+        for (const kw of keywords) if (lowChunk.includes(kw)) score++;
+        if (score > bestScore) { bestScore = score; bestChunk = chunk; }
+      }
+      if (!bestChunk) {
+        const cleanTopic = keywords.length > 0 ? keywords.join(' ') : (this.lastTopic || q);
+        this.lastTopic = cleanTopic;
         try {
-          const topic = lowQ.replace(/^(apa itu|siapa|jelaskan|pengertian|cara|kenapa|mengapa)\s+/i, '').trim();
-          const res = await fetch(WIKI_API + encodeURIComponent(topic.replace(/[?!.]/g, '')));
-          if (res.ok) {
-            const json = await res.json();
-            if (json && json.extract) {
-              matched = json.extract.split('. ').slice(0, 2).join('. ') + '.';
+          const searchRes = await fetch(WIKI_SEARCH + encodeURIComponent(cleanTopic));
+          if (searchRes.ok) {
+            const searchJson = await searchRes.json();
+            const topHit = searchJson?.query?.search?.?.title;
+            if (topHit) {
+              const sumRes = await fetch(WIKI_SUM + encodeURIComponent(topHit));
+              if (sumRes.ok) {
+                const sumJson = await sumRes.json();
+                if (sumJson && sumJson.extract) {
+                  bestChunk = sumJson.extract.split('. ').slice(0, 2).join('. ') + '.';
+                }
+              }
             }
           }
         } catch (e) {}
       }
 
-      const answer = 'Pertanyaan bagus dari ' + cleanUser.replace('@', '') + '! '
-        + (matched || 'Poin pentingnya adalah kita perlu konsisten mempraktikkan langkah-langkah sesuai materi kita hari ini.');
+      const liveTitle = (global.data && global.data.title) ? global.data.title : 'materi hari ini';
+      const fallbackReply = `Untuk topik ${liveTitle}, poin utamanya adalah memahami dasar konsepnya terlebih dahulu lalu mempraktikkannya secara bertahap.`;
+      const answer = `Pertanyaan bagus dari kak ${cleanUser.replace('@', '')}! ${bestChunk || fallbackReply}`;
 
-      const sub = document.getElementById('studioSubCaption');
       if (sub) sub.innerText = answer;
       if (typeof global.speakTextSafe === 'function') global.speakTextSafe(answer);
     }
