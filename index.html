@@ -87,11 +87,19 @@
   </div>
   <p id="scanStat" style="margin-top:12px;font-size:12.5px;font-weight:bold;color:#fbbf24">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p>
 </div>
-  <div id="s3" class="slide">
-  <h2>3. Bikin Avatar AI</h2>
-  <p class="sub">Pilih niche live, karakter suara, dan gaya pembawa acara</p>
+  
+<div id="s4" class="slide">
+  <h2>4. Set Studio & Materi Live</h2>
+  <p class="sub">Atur background, posisi host, dekorasi, dan materi siaran</p>
 
-  <div id="s3AvatarPreviewSlot" style="display:flex; justify-content:center; margin-bottom:12px;">
+  <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
+    <div id="s4StudioPreviewSlot" style="display:flex; justify-content:center; align-items:center;"></div>
+  </div>
+  <div id="s3" class="slide">
+  <h2>3. Studio Avatar 2.5D</h2>
+  <p class="sub">Atur ukuran tubuh, sudut kamera, putar kursi/meja & gaya host</p>
+
+  <div id="s3AvatarPreviewSlot" style="display:flex; justify-content:center; margin-bottom:10px;">
     <div id="studioFrame" style="position:relative; width:176px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #38bdf8; background-color:#0f172a; flex-shrink:0; display:flex; flex-direction:column; justify-content:space-between;">
       <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; z-index:3;">
         <span style="background:#ef4444; color:#fff; font-size:8px; font-weight:bold; padding:2px 5px; border-radius:4px;">● LIVE</span>
@@ -125,59 +133,75 @@
 
       <div style="position:relative; z-index:3; padding:6px; background:linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 100%); text-align:left;">
         <div id="studioCaption" style="font-size:9px; font-weight:bold; color:#f8fafc; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Mode: Mentor Edukasi</div>
-        <div id="studioSubCaption" style="font-size:8px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Avatar siap dikustomisasi...</div>
-      </div>
-    </div>
-  </div>
-  <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
-    <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🎯 1. Pilih Kategori / Niche Live</div>
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
-      <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
-        <div style="font-size:18px;">🎓</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">EDUKASI</div>
-      </div>
-      <div class="card niche-btn" onclick="selectNiche(this, 'HIBURAN')" style="padding:10px 6px; text-align:center;">
-        <div style="font-size:18px;">🎭</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">HIBURAN</div>
-      </div>
-      <div class="card niche-btn" onclick="selectNiche(this, 'JUALAN')" style="padding:10px 6px; text-align:center;">
-        <div style="font-size:18px;">🛍️</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">JUALAN</div>
+        <div id="studioSubCaption" style="font-size:8px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Avatar 2.5D siap diatur...</div>
       </div>
     </div>
   </div>
 
-  <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
-    <div style="font-size:12px; font-weight:bold; color:#c084fc; margin-bottom:8px;">🗣️ 2. Pilih Karakter Suara Avatar</div>
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
-      <button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px; border-radius:8px; border:1.5px solid #c084fc; background:rgba(192,132,252,0.25); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">👩 AI Wanita</button>
-      <button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">👨 AI Pria</button>
-      <button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ Suara Asli</button>
-    </div>
-    <div id="voiceStatusTxt" style="font-size:11px; color:#34d399; margin-bottom:6px;">● Aktif: Suara AI Wanita</div>
+  <!-- TAB KONTROL TAHAP 3 -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;">
+    <button type="button" class="s3-tab sel" onclick="switchS3Tab(this, 'tabS3Rig')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:10.5px; font-weight:bold; cursor:pointer;">🧍 1. Tubuh</button>
+    <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabS3Cam')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:10.5px; font-weight:bold; cursor:pointer;">🎥 2. Kamera/Putar</button>
+    <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabS3Style')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:10.5px; font-weight:bold; cursor:pointer;">🎭 3. Gaya/Suara</button>
+  </div>
 
-    <div id="customVoiceBox" style="display:none; background:rgba(15,23,42,0.9); border:1px solid #10b981; border-radius:10px; padding:10px; margin-top:8px;">
-      <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:4px;">🎙️ Rekam Contoh Suara Asli Anda</div>
-      <div style="display:flex; gap:6px; margin-bottom:8px;">
-        <button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1; padding:8px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔴 Mulai Rekam</button>
-        <button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1; padding:8px; border-radius:8px; border:1px solid #475569; background:#1e293b; color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">⏹️ Selesai</button>
+  <!-- PANEL 1: PROPORSI TUBUH -->
+  <div id="tabS3Rig" class="s3-panel" style="text-align:left;">
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:12px; font-weight:bold; color:#38bdf8;">🧍 Atur Besar/Kecil & Posisi Anggota Tubuh</span>
+        <button type="button" onclick="resetAvatarRig()" style="background:#1e293b; border:1px solid #475569; color:#cbd5e1; font-size:10px; padding:3px 7px; border-radius:5px; cursor:pointer;">Reset</button>
       </div>
-      <div id="recTimerTxt" style="font-size:11px; color:#fbbf24; margin-bottom:6px;">Siap merekam via mikrofon HP...</div>
-      <audio id="userCustomAudio" controls style="display:none; width:100%; height:34px;"></audio>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px; color:#cbd5e1;">
+        <div><span>🗣️ Ukuran Kepala</span><input type="range" id="rngHeadScale" min="65" max="145" value="100" oninput="updateAvatarRig()" style="width:100%; accent-color:#38bdf8;"></div>
+        <div><span>👕 Ukuran Badan</span><input type="range" id="rngBodyScale" min="65" max="135" value="100" oninput="updateAvatarRig()" style="width:100%; accent-color:#34d399;"></div>
+        <div><span>🙌 Posisi Tangan</span><input type="range" id="rngArmPose" min="-50" max="50" value="0" oninput="updateAvatarRig()" style="width:100%; accent-color:#c084fc;"></div>
+        <div><span>🦵 Posisi Kaki</span><input type="range" id="rngLegSpread" min="-50" max="50" value="0" oninput="updateAvatarRig()" style="width:100%; accent-color:#fbbf24;"></div>
+      </div>
     </div>
   </div>
 
-  <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
-    <div style="font-size:12px; font-weight:bold; color:#34d399; margin-bottom:8px;">🎭 3. Pilih Gaya Pembawa Acara (<span id="s3StyleNicheLbl">EDUKASI</span>)</div>
-    <div id="s3StyleGrid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;"></div>
+  <!-- PANEL 2: ANGLE KAMERA & PUTAR KURSI/MEJA -->
+  <div id="tabS3Cam" class="s3-panel" style="display:none; text-align:left;">
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#34d399; margin-bottom:8px;">🎥 Angle Kamera Studio</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
+        <button type="button" id="btnCamCloseup" onclick="setCameraAngle('closeup')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10.5px; font-weight:bold; cursor:pointer;">🔍 Close-Up</button>
+        <button type="button" id="btnCamMedium" onclick="setCameraAngle('medium')" style="padding:8px 4px; border-radius:8px; border:1.5px solid #34d399; background:rgba(52,211,153,0.2); color:#fff; font-size:10.5px; font-weight:bold; cursor:pointer;">🪑 Medium</button>
+        <button type="button" id="btnCamWide" onclick="setCameraAngle('wide')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#cbd5e1; font-size:10.5px; font-weight:bold; cursor:pointer;">🧍 Wide (Kaki)</button>
+      </div>
+
+      <div style="font-size:12px; font-weight:bold; color:#fbbf24; margin-bottom:4px;">🔄 Putar Sudut Kursi, Badan & Meja (2.5D)</div>
+      <input type="range" id="rngYawAngle" min="-35" max="35" value="0" oninput="updateAvatarRig()" style="width:100%; accent-color:#fbbf24; margin-bottom:6px;">
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; margin-bottom:10px;">
+        <span>↖️ Serong Kiri (-35°)</span><span>Depan (0°)</span><span>Serong Kanan (+35°) ↗️</span>
+      </div>
+
+      <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:#cbd5e1; cursor:pointer;">
+        <input type="checkbox" id="chkGlassDeskS3" onchange="document.getElementById('chkGlassDesk').checked=this.checked; updateAvatarRig()" style="accent-color:#38bdf8;">
+        <span>Meja Kaca Transparan (terlihat posisi kaki duduk)</span>
+      </label>
+    </div>
   </div>
 
-  <button type="button" class="btn btn-green" style="margin-top:6px;" onclick="finishSlide3Avatar()">Simpan Avatar & Set Studio →</button>
-</div>
-<div id="s4" class="slide">
-  <h2>4. Set Studio & Materi Live</h2>
-  <p class="sub">Atur background, posisi host, dekorasi, dan materi siaran</p>
+  <!-- PANEL 3: NICHE, SUARA & GAYA HOST -->
+  <div id="tabS3Style" class="s3-panel" style="display:none; text-align:left;">
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🎯 1. Pilih Kategori / Niche Live</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+        <div class="card niche-btn sel" onclick="selectNiche(this, 'EDUKASI')" style="padding:10px 6px; text-align:center;">
+          <div style="font-size:18px;">🎓</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">EDUKASI</div>
+        </div>
+        <div class="card niche-btn" onclick="selectNiche(this, 'HIBURAN')" style="padding:10px 6px; text-align:center;">
+          <div style="font-size:18px;">🎭</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">HIBURAN</div>
+        </div>
+        <div class="card niche-btn" onclick="selectNiche(this, 'JUALAN')" style="padding:10px 6px; text-align:center;">
+          <div style="font-size:18px;">🛍️</div><div style="font-size:11px; font-weight:bold; margin-top:3px;">JUALAN</div>
+        </div>
+      </div>
+    </div>
 
-  <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
-    <div id="s4StudioPreviewSlot" style="display:flex; justify-content:center; align-items:center;"></div>
-  </div>
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
 
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
     <button type="button" class="s4-tab sel" onclick="switchS4Tab(this, 'tabStudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🎨 1. Studio</button>
@@ -1461,6 +1485,84 @@ if (boxJualan) boxJualan.style.display = (niche === 'JUALAN') ? 'block' : 'none'
     if (window.NicheEdukasi) await window.NicheEdukasi.handleQna(user, msg);
   };
 })();
+   window.updateAvatarRig = function () {
+    if (!window.AvatarStudio || !window.AvatarStudio.setRig) return;
+    window.AvatarStudio.setRig({
+      headScale: Number(document.getElementById('rngHeadScale')?.value ?? 100) / 100,
+      bodyScale: Number(document.getElementById('rngBodyScale')?.value ?? 100) / 100,
+      armPose: Number(document.getElementById('rngArmPose')?.value ?? 0),
+      legSpread: Number(document.getElementById('rngLegSpread')?.value ?? 0),
+      yawAngle: Number(document.getElementById('rngYawAngle')?.value ?? 0),
+      glassDesk: Boolean(document.getElementById('chkGlassDeskS3')?.checked)
+    });
+  };
+
+  window.setCameraAngle = function (angle) {
+    ['Closeup', 'Medium', 'Wide'].forEach(name => {
+      const btn = document.getElementById('btnCam' + name);
+      if (btn) {
+        const active = (name.toLowerCase() === angle);
+        btn.style.borderColor = active ? '#34d399' : '#334155';
+        btn.style.background = active ? 'rgba(52,211,153,0.2)' : '#0f172a';
+        btn.style.color = active ? '#fff' : '#cbd5e1';
+      }
+    });
+    if (window.AvatarStudio && window.AvatarStudio.setRig) {
+      window.AvatarStudio.setRig({ cameraAngle: angle });
+    }
+  };
+
+  window.resetAvatarRig = function () {
+    if (document.getElementById('rngHeadScale')) document.getElementById('rngHeadScale').value = 100;
+    if (document.getElementById('rngBodyScale')) document.getElementById('rngBodyScale').value = 100;
+    if (document.getElementById('rngArmPose')) document.getElementById('rngArmPose').value = 0;
+    if (document.getElementById('rngLegSpread')) document.getElementById('rngLegSpread').value = 0;
+    if (document.getElementById('rngYawAngle')) document.getElementById('rngYawAngle').value = 0;
+    window.setCameraAngle('medium');
+    window.updateAvatarRig();
+  };
+
+  window.verifyUpload = async function (inp) {
+    const st = document.getElementById('scanStat');
+    if (!inp.files || !inp.files[0]) return;
+    if (!document.getElementById('agreeFace').checked) {
+      st.style.color = '#fbbf24';
+      st.innerText = '⚠️ Centang persetujuan dulu!';
+      return;
+    }
+    if (!(await loadFaceModels())) return;
+    st.style.color = '#38bdf8';
+    st.innerText = '⏳ Menganalisis foto...';
+
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      const base64Url = ev.target.result;
+      const im = document.getElementById('previewImg');
+      im.src = base64Url;
+      im.style.display = 'block';
+      im.onload = async () => {
+        const det = await faceapi.detectAllFaces(im, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 }));
+        if (det.length === 1) {
+          const fBox = det[0].box;
+          window.savedAvatarData = { src: base64Url, box: fBox, w: im.naturalWidth, h: im.naturalHeight };
+          if (window.AvatarStudio) await window.AvatarStudio.setFaceImage(base64Url, fBox);
+          clearInterval(scanInterval);
+          if (camStream) camStream.getTracks().forEach(t => t.stop());
+          st.style.color = '#34d399';
+          st.innerText = '✅ Foto Wajah Valid! Membuka Studio...';
+          setTimeout(() => window.go(3), 900);
+        } else if (det.length > 1) {
+          st.style.color = '#ef4444';
+          st.innerText = '⚠️ Foto berisi lebih dari 1 wajah!';
+        } else {
+          st.style.color = '#ef4444';
+          st.innerText = '❌ Wajah tidak terdeteksi! Gunakan foto jelas.';
+        }
+      };
+    };
+    reader.readAsDataURL(inp.files[0]);
+  };
+
 </script>
 </body>
 </html>
