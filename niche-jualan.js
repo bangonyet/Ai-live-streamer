@@ -21,13 +21,7 @@
       if (ovQna) ovQna.style.display = 'none';
       if (ovKar) ovKar.style.display = 'none';
 
-      if (typeof global.setStudioBg === 'function') {
-        global.setStudioBg('image', 'studio-jualan.jpeg');
-      }
-
-      if (global.data && global.data.products.length === 0) {
-        this.addProductRow();
-      }
+      if (global.data && global.data.products.length === 0) this.addProductRow();
       this.previewProduct(0);
     },
 
@@ -54,8 +48,8 @@
     },
 
     setProductPhoto(idx, inp) {
-      if (inp.files && inp.files[0] && global.data && global.data.products[idx]) {
-        global.data.products[idx].imgUrl = URL.createObjectURL(inp.files[0]);
+      if (inp.files && inp.files && global.data && global.data.products[idx]) {
+        global.data.products[idx].imgUrl = URL.createObjectURL(inp.files);
         this.previewProduct(idx);
       }
     },
@@ -64,26 +58,20 @@
       const ov = document.getElementById('studioEtalaseOverlay');
       const p = global.data ? global.data.products[idx] : null;
       this.currentProductIdx = idx;
-
       if (ov && p) {
         ov.style.display = 'block';
         document.getElementById('etalaseBadgeTxt').innerText = '👇 Cek Keranjang • Etalase No. ' + p.no;
         document.getElementById('etalaseTitleTxt').innerText = p.name || 'Nama Produk';
         const imgEl = document.getElementById('etalaseProdImg');
         if (imgEl) {
-          if (p.imgUrl) {
-            imgEl.src = p.imgUrl;
-            imgEl.style.display = 'block';
-          } else {
-            imgEl.style.display = 'none';
-          }
+          if (p.imgUrl) { imgEl.src = p.imgUrl; imgEl.style.display = 'block'; }
+          else imgEl.style.display = 'none';
         }
         if (global.AvatarStudio && global.AvatarStudio.setActiveProduct) {
           global.AvatarStudio.setActiveProduct(p.imgUrl || null, 1.0);
         }
       }
     },
-
     getNextPitch() {
       const prods = global.data ? global.data.products : [];
       if (!prods.length) {
@@ -100,7 +88,7 @@
       const cleanName = (user || '@penonton').replace('@', '');
       const prods = global.data ? global.data.products : [];
       const numMatch = String(msg || '').toLowerCase().match(/(?:no|nomor|etalase)\s*(\d+)/);
-      let idx = numMatch ? (parseInt(numMatch[1], 10) - 1) : 0;
+      let idx = numMatch ? (parseInt(numMatch, 10) - 1) : 0;
       if (idx < 0 || idx >= prods.length) idx = 0;
 
       const prod = prods[idx];
