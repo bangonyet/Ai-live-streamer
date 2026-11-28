@@ -88,14 +88,7 @@
   <p id="scanStat" style="margin-top:12px;font-size:12.5px;font-weight:bold;color:#fbbf24">⚠️ Centang persetujuan di atas, lalu scan atau upload foto wajah.</p>
 </div>
   
-<div id="s4" class="slide">
-  <h2>4. Set Studio & Materi Live</h2>
-  <p class="sub">Atur background, posisi host, dekorasi, dan materi siaran</p>
-
-  <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
-    <div id="s4StudioPreviewSlot" style="display:flex; justify-content:center; align-items:center;"></div>
-  </div>
-  <div id="s3" class="slide">
+<div id="s3" class="slide">
   <h2>3. Studio Avatar 2.5D</h2>
   <p class="sub">Atur ukuran tubuh, sudut kamera, putar kursi/meja & gaya host</p>
 
@@ -138,14 +131,12 @@
     </div>
   </div>
 
-  <!-- TAB KONTROL TAHAP 3 -->
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px;">
     <button type="button" class="s3-tab sel" onclick="switchS3Tab(this, 'tabS3Rig')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:10.5px; font-weight:bold; cursor:pointer;">🧍 1. Tubuh</button>
     <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabS3Cam')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:10.5px; font-weight:bold; cursor:pointer;">🎥 2. Kamera/Putar</button>
     <button type="button" class="s3-tab" onclick="switchS3Tab(this, 'tabS3Style')" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.8); color:#94a3b8; font-size:10.5px; font-weight:bold; cursor:pointer;">🎭 3. Gaya/Suara</button>
   </div>
 
-  <!-- PANEL 1: PROPORSI TUBUH -->
   <div id="tabS3Rig" class="s3-panel" style="text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -161,7 +152,6 @@
     </div>
   </div>
 
-  <!-- PANEL 2: ANGLE KAMERA & PUTAR KURSI/MEJA -->
   <div id="tabS3Cam" class="s3-panel" style="display:none; text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="font-size:12px; font-weight:bold; color:#34d399; margin-bottom:8px;">🎥 Angle Kamera Studio</div>
@@ -184,7 +174,6 @@
     </div>
   </div>
 
-  <!-- PANEL 3: NICHE, SUARA & GAYA HOST -->
   <div id="tabS3Style" class="s3-panel" style="display:none; text-align:left;">
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
       <div style="font-size:12px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">🎯 1. Pilih Kategori / Niche Live</div>
@@ -202,6 +191,40 @@
     </div>
 
     <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#c084fc; margin-bottom:8px;">🗣️ 2. Pilih Karakter Suara Avatar</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;"  
+        <button type="button" id="btnVoiceFemale" onclick="selectVoiceMode('female',this)" style="padding:8px 4px; border-radius:8px; border:1.5px solid #c084fc; background:rgba(192,132,252,0.25); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">👩 AI Wanita</button>
+        <button type="button" id="btnVoiceMale" onclick="selectVoiceMode('male',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">👨 AI Pria</button>
+        <button type="button" id="btnVoiceCustom" onclick="selectVoiceMode('custom',this)" style="padding:8px 4px; border-radius:8px; border:1px solid #334155; background:rgba(15,23,42,0.85); color:#cbd5e1; font-size:11px; font-weight:bold; cursor:pointer;">🎙️ Suara Asli</button>
+      </div>
+      <div id="voiceStatusTxt" style="font-size:11px; color:#34d399; margin-bottom:6px;">● Aktif: Suara AI Wanita</div>
+
+      <div id="customVoiceBox" style="display:none; background:rgba(15,23,42,0.9); border:1px solid #10b981; border-radius:10px; padding:10px; margin-top:8px;">
+        <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:4px;">🎙️ Rekam Contoh Suara Asli Anda</div>
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <button type="button" id="btnRecStart" onclick="startUserVoiceRec()" style="flex:1; padding:8px; border-radius:8px; border:none; background:#ef4444; color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🔴 Mulai Rekam</button>
+          <button type="button" id="btnRecStop" onclick="stopUserVoiceRec()" disabled style="flex:1; padding:8px; border-radius:8px; border:1px solid #475569; background:#1e293b; color:#94a3b8; font-size:11px; font-weight:bold; cursor:pointer;">⏹️ Selesai</button>
+        </div>
+        <div id="recTimerTxt" style="font-size:11px; color:#fbbf24; margin-bottom:6px;">Siap merekam via mikrofon HP...</div>
+        <audio id="userCustomAudio" controls style="display:none; width:100%; height:34px;"></audio>
+      </div>
+    </div>
+
+    <div class="card" style="padding:12px; margin-bottom:10px; cursor:default; text-align:left;">
+      <div style="font-size:12px; font-weight:bold; color:#34d399; margin-bottom:8px;">🎭 3. Pilih Gaya Pembawa Acara (<span id="s3StyleNicheLbl">EDUKASI</span>)</div>
+      <div id="s3StyleGrid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;"></div>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-green" style="margin-top:6px;" onclick="finishSlide3Avatar()">Simpan Avatar & Set Studio →</button>
+</div>
+<div id="s4" class="slide">
+  <h2>4. Set Studio & Materi Live</h2>
+  <p class="sub">Atur background, posisi host, dekorasi, dan materi siaran</p>
+
+  <div style="position:sticky; top:6px; z-index:20; background:rgba(6,9,19,0.92); padding:8px; border-radius:14px; border:1px solid rgba(45,212,191,0.35); margin-bottom:12px; backdrop-filter:blur(6px);">
+    <div id="s4StudioPreviewSlot" style="display:flex; justify-content:center; align-items:center;"></div>
+  </div>
 
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
     <button type="button" class="s4-tab sel" onclick="switchS4Tab(this, 'tabStudio')" style="padding:8px 4px; border-radius:8px; border:1px solid #2dd4bf; background:rgba(45,212,191,0.2); color:#fff; font-size:11px; font-weight:bold; cursor:pointer;">🎨 1. Studio</button>
@@ -225,7 +248,6 @@
           <input type="file" accept="image/*" onchange="uploadStudioBg(this)" style="display:none;">
         </label>
       </div>
-
 
       <div style="border-top:1px solid #334155; padding-top:10px; margin-top:4px;">
         <div style="font-size:11.5px; font-weight:bold; color:#34d399; margin-bottom:6px;">✨ Aksesoris Studio (<span id="s4DecorNicheLbl">EDUKASI</span>)</div>
@@ -346,6 +368,7 @@
 
   <button type="button" class="btn btn-green" style="margin-top:8px;" onclick="finishSlide4Studio()">Simpan Studio & Review Live →</button>
 </div>
+
 <div id="s5" class="slide">
   <h2>5. Review Live & Simulasi</h2>
   <p class="sub">Uji coba tampilan akhir, suara, dan komentar sebelum pembayaran</p>
